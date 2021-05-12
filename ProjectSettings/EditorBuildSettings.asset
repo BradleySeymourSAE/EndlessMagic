@@ -1,0 +1,17 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1045 &1
+EditorBuildSettings:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Scenes:
+  - enabled: 1
+    path: Assets/Scenes/EndlessMagic_StartingMenu.unity
+    guid: 9e8edf22ca941ac4792e177b44c4d73e
+  - enabled: 1
+    path: Assets/Scenes/EndlessMagic_CharacterCreation.unity
+    guid: a797e5d462c3f2846a3e72cdb78fbdb9
+  - enabled: 1
+    path: Assets/Scenes/EndlessMagic_GameLevel_01.unity
+    guid: 87138fd890c91bb45be32b9670d573bf
+  m_configObjects: {}
