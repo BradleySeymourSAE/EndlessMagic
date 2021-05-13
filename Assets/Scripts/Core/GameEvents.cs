@@ -38,7 +38,6 @@ public static class GameEvents
 	public delegate void AsyncOperationFloatParameterDelegate(AsyncOperation p_AsyncOperation, float p_FloatParameter);
 
 
-
 	#endregion
 
 
@@ -60,7 +59,10 @@ public static class GameEvents
 	/// </summary>
 	public static IntParameterDelegate CoopCharacterCreationStartEvent;
 
-
+	/// <summary>
+	///		Called to set the current active players after the input event has been received 
+	/// </summary>
+	public static IntParameterDelegate SetCurrentActivePlayers;
 	#endregion
 
 }

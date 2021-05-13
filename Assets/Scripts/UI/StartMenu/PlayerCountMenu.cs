@@ -120,7 +120,6 @@ public class PlayerCountMenu
 		m_GameUIManager.DisplayMainMenu(true);
 	}
 
-
 	/// <summary>
 	///		Begins the game in cooperative mode 
 	/// </summary>
@@ -160,8 +159,6 @@ public class PlayerCountMenu
 
 		}
 	}
-
-
 
 	/// <summary>
 	///		Handles the Changed Input Value 
