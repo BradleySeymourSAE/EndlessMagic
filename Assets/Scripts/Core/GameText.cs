@@ -55,9 +55,18 @@ public static class GameText
 
 	public const string PlayerCountUI_Title = "Players?";
 	public const string PlayerCountUI_Subtitle = "How many players?";
-	public const string PlayerCountUI_InputPlaceholder = "2";
+	public const string PlayerCountUI_InputPlaceholder = "0";
 	public const string PlayerCountUI_ContinueButton = "Continue";
 	public const string PlayerCountUI_BackButton = "Return";
+
+	#endregion
+
+
+	#region Loading Screen UI 
+
+	public const string LoadingScreenUI_Title = "Loading";
+	public const string LoadingScreenUI_Progress = "0";
+
 
 	#endregion
 

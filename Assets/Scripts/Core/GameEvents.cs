@@ -35,15 +35,30 @@ public static class GameEvents
 
 	public delegate void SoundCategoryParameterDelegate(SoundCategory p_SoundCategory);
 
+	public delegate void AsyncOperationFloatParameterDelegate(AsyncOperation p_AsyncOperation, float p_FloatParameter);
+
+
 
 	#endregion
 
 
 	#region Events
 
+
+	/// <summary>
+	///		Once called - Plays button Selected Sound Effects 
+	/// </summary>
 	public static VoidDelegate PlayGUISelectedEvent;
 
+	/// <summary>
+	///		Once called - Plays the Menu Transition Sound Effect 
+	/// </summary>
 	public static VoidDelegate PlayMenuTransitionEvent;
+
+	/// <summary>
+	///		Called using the input amount of players, sets up the camera references (Split screen)
+	/// </summary>
+	public static IntParameterDelegate CoopCharacterCreationStartEvent;
 
 
 	#endregion

@@ -553,6 +553,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 488278871}
+  - component: {fileID: 488278872}
   m_Layer: 0
   m_Name: CharacterCreationManager
   m_TagString: Untagged
@@ -574,6 +575,39 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &488278872
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 488278870}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 37957bd3c022a0f4eb515357fc276dbf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  cinemachinePlayerCameras:
+  - {fileID: 1088186389}
+  - {fileID: 1006244101}
+  - {fileID: 671972973}
+  - {fileID: 1446326351}
+  m_SelectableWizardPrefabs:
+  - {fileID: 1450514350943513865, guid: 4be13af4edc7fd842951fb68bf5e6e76, type: 3}
+  - {fileID: 573210992517192542, guid: 3d89a03ee26302c44a5f3a2a7a06dde2, type: 3}
+  - {fileID: 5792909416322948974, guid: dd8eaee0e19b4034383319b788757008, type: 3}
+  - {fileID: 3088549459956780044, guid: 1cefe925c6804a2438258c7ff271252f, type: 3}
+  - {fileID: 7948023535483965052, guid: 972c9e58b3572b34082eb2a357d718ab, type: 3}
+  m_SelectableBroomPrefabs:
+  - {fileID: 2569760691544840665, guid: 1322106f6e84c324bb329263e28a8287, type: 3}
+  - {fileID: 4372498891498262091, guid: 9062dbbe22f4e1543918caa07cd947d1, type: 3}
+  wizardPrefabSpawnPoints: []
+  m_ActivePlayerCameras: []
+  m_Debugging: 1
+  m_UseWireMeshSphere: 1
+  m_GizmoSphereSize: 0.48
+  m_CameraGizmoColor: {r: 1, g: 0, b: 0, a: 1}
+  m_CameraAimPositionColor: {r: 0, g: 1, b: 0, a: 1}
 --- !u!1 &530162313
 GameObject:
   m_ObjectHideFlags: 0

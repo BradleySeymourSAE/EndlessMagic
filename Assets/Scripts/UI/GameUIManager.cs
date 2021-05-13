@@ -2,10 +2,10 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using TMPro;
 #endregion
-
 
 /// <summary>
 ///		Game UI Manager - Handles the UI Views across Scenes  
@@ -60,7 +60,6 @@ public class GameUIManager : MonoBehaviour
 		GameEvents.PlayMenuTransitionEvent -= PlayMenuSwitched;
 	}
 
-
 	private void Awake()
 	{
 		if (Instance != null)
@@ -81,6 +80,7 @@ public class GameUIManager : MonoBehaviour
 		CreditsMenuUI.Setup(this);
 		SettingsMenuUI.Setup(this);
 		PlayerCountMenuUI.Setup(this);
+
 
 		AudioManager.PlaySound(SoundCategory.UI_StartMenuBackgroundMusic);
 
@@ -121,6 +121,72 @@ public class GameUIManager : MonoBehaviour
 	/// </summary>
 	/// <param name="show"></param>
 	public void DisplayPlayerCountMenu(bool show) => PlayerCountMenuUI.DisplayScreen(show);
+
+
+	#region @TODO - Scene Async Loading 
+
+
+	/*  Currently this is not working, I didn't have the time to finish this up today so I am just leaving this out for now 
+	 *  and I will work on it a bit more when I get back from picking up casey haha :P 
+	 *  
+	 *  
+	 *  
+	 *  
+	 *  
+	/// <summary>
+	///		Begins loading the scene 
+	/// </summary>
+	/// <param name="Scene"></param>
+	/// <returns></returns>
+	public IEnumerator LoadSceneAsync(Scenes p_SceneType)
+	{
+		DisplayLoadingScreen(true);
+
+
+		yield return StartCoroutine(FadeLoadingScreen(1, 1));
+
+
+
+		AsyncOperation operation = SceneManager.LoadSceneAsync(GameScenes.SelectGameSceneBySceneType(p_SceneType));
+
+		while (!operation.isDone)
+		{
+			yield return null;
+		}
+
+		yield return StartCoroutine(FadeLoadingScreen(0, 1));
+
+		DisplayLoadingScreen(false);
+
+		yield return null;
+	}
+
+	/// <summary>
+	///		Fades the loading screen 
+	/// </summary>
+	/// <param name="p_FadeAlpha"></param>
+	/// <param name="p_Duration"></param>
+	/// <returns></returns>
+	private IEnumerator FadeLoadingScreen(float p_FadeAlpha, float p_Duration)
+	{
+		float start = LoadingScreenUI.canvasGroup.alpha;
+		float time = 0;
+
+		while (time < p_Duration)
+		{
+			LoadingScreenUI.canvasGroup.alpha = Mathf.Lerp(start, p_FadeAlpha, time / p_Duration);
+
+			time += Time.deltaTime;
+
+			yield return null;
+		}
+
+		LoadingScreenUI.canvasGroup.alpha = p_FadeAlpha;
+	}
+
+	*/
+
+	#endregion
 
 	#endregion
 
