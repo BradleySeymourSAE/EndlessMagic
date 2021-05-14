@@ -3,7 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.InputSystem.Users;
+using UnityEngine.InputSystem.LowLevel;
+using System.Linq;
 #endregion
 
 
@@ -26,7 +27,7 @@ public enum PlayerIdentity { None = 0, P1 = 1, P2 = 2, P3 = 3, P4 = 4 };
 ///		Data class for storing details for a device that's connected 
 /// </summary>
 [System.Serializable]
-public class GameDeviceData
+public class GameInputDevice
 {
 	/// <summary>
 	///		The name of the input device 
@@ -48,11 +49,26 @@ public class GameDeviceData
 	/// </summary>
 	public int identity;
 
-	[SerializeField]
+}
+
+[System.Serializable]
+public class PlayerInputDevice
+{
+
 	/// <summary>
-	///		Reference to the Data associated with the currently connected input device 
+	///		The Connected Player Identity name
 	/// </summary>
-	public InputDevice device;
+	public string name;
+
+	/// <summary>
+	///		List of player input devices 
+	/// </summary>
+	public List<GameInputDevice> devices;
+
+	/// <summary>
+	///		The player's identity 
+	/// </summary>
+	public PlayerIdentity identity;
 
 }
 
@@ -80,19 +96,31 @@ public class GameManager : MonoBehaviour
 	#region Private Variables
 
 	/// <summary>
-	///		Current total connected devices (Minus 1 because Mouse & Keyboard should be set as a single player? ) 
+	///		Current total connected devices
 	/// </summary>
 	[SerializeField] private int m_TotalConnectedDevices;
 
 	/// <summary>
+	///		The current total connected players
+	/// </summary>
+	[SerializeField] private int m_TotalConnectedPlayers;
+
+	/// <summary>
 	///		List of currently connected devices 
 	/// </summary>
-	[SerializeField] private List<GameDeviceData> m_ConnectedDevices = new List<GameDeviceData>();
+	[SerializeField] private List<GameInputDevice> m_ConnectedDevices = new List<GameInputDevice>();
+
+	[SerializeField] private List<PlayerInputDevice> m_ConnectedPlayers = new List<PlayerInputDevice>();
 
 	/// <summary>
 	///		Whether we are currently debugging 
 	/// </summary>
 	[SerializeField] private bool m_Debugging = true;
+
+	/// <summary>
+	///		Reference to the game start coroutine 
+	/// </summary>
+	private Coroutine m_GameStartRoutine;
 
 
 	#region Connected Device Types  @TODO - I will clean this up when I get the chance - Just testing the code atm 
@@ -109,7 +137,10 @@ public class GameManager : MonoBehaviour
 
 	#endregion
 
-	public int ActiveDevices
+	/// <summary>
+	///		Gets and sets the currently connected devices 
+	/// </summary>
+	public int GetConnectedDevices
 	{
 		get
 		{
@@ -119,25 +150,51 @@ public class GameManager : MonoBehaviour
 		{
 			m_TotalConnectedDevices = value;
 
-			m_TotalConnectedDevices = Mathf.Clamp(m_TotalConnectedDevices, 0, 4);
-
+			GameEvents.HandleUpdateConnectedDevicesUI?.Invoke();
 		}
 	}
+
+	public int GetConnectedPlayers
+	{
+		get
+		{
+			return m_TotalConnectedPlayers;
+		}
+		set
+		{
+			m_TotalConnectedPlayers = value;
+
+			GameEvents.HandleUpdateConnectedPlayersUI?.Invoke();
+		}
+	}
+
 
 	#region Unity References
 
 
 	private void OnEnable()
 	{
+		// Input System Events Subscribing
 		InputSystem.onDeviceChange += HandleOnControllerInputDeviceChanged;
-		GameEvents.SetCurrentActivePlayers += UpdateActivePlayers;
+		InputSystem.onEvent += HandleControllerInputEvent;
+
+		// Game Events Subscribing
+		GameEvents.onSetCurrentConnectedDevices += UpdateCurrentConnectedDevices;
+		GameEvents.LoadConnectedDevicesEvent += LoadDevices;
+		GameEvents.SetConnectedPlayersEvent += SetConnectedPlayers;
 	}
 
 
 	private void OnDisable()
 	{
+		// Input System Events Unsubscribe
 		InputSystem.onDeviceChange -= HandleOnControllerInputDeviceChanged;
-		GameEvents.SetCurrentActivePlayers -= UpdateActivePlayers;
+		InputSystem.onEvent -= HandleControllerInputEvent;
+
+		// Game Events Unsubscribe 
+		GameEvents.onSetCurrentConnectedDevices -= UpdateCurrentConnectedDevices;
+		GameEvents.LoadConnectedDevicesEvent -= LoadDevices;
+		GameEvents.SetConnectedPlayersEvent -= SetConnectedPlayers;
 	}
 
 
@@ -156,53 +213,63 @@ public class GameManager : MonoBehaviour
 
 	private void Start()
 	{
-		
-		// Clear the list of connected devices 
-		m_ConnectedDevices.Clear();
+		// Runs the Game Start Logic 
 
-		int deviceIndex = 0;
-
-		// Loop through the input system connected devices 
-		foreach (InputDevice Device in InputSystem.devices)
+		if (m_GameStartRoutine != null)
 		{
-			deviceIndex++;
-
-			// Get the current input device 
-			InputDevice s_inputDevice = InputSystem.GetDeviceById(Device.deviceId);
-
-
-			// Set the input device's data 
-			GameDeviceData newDevice = new GameDeviceData
-			{
-				name = s_inputDevice.name,
-				controller = GetInputControllerDevice(s_inputDevice.name),
-				identity = s_inputDevice.deviceId,
-				device = Device,
-			};
-
-			// If the device's controller is a keyboard or a mouse device
-			if (newDevice.controller == InputController.Keyboard || newDevice.controller == InputController.Mouse)
-			{
-				// Then we want to assign player 1 identity to that player by default 
-				newDevice.player = PlayerIdentity.P1;
-			}
-			else
-			{
-				// Othwise we can set the player identity to the player's connected index 
-				newDevice.player = PlayerIdentity.None;
-			}
-
-
-			// Add the 
-			m_ConnectedDevices.Add(newDevice);
+			StopCoroutine(m_GameStartRoutine);
 		}
 
-		ActiveDevices = m_ConnectedDevices.Count;
+		m_GameStartRoutine = StartCoroutine(HandleGameStartLogic());
+	}
+
+	private IEnumerator HandleGameStartLogic()
+	{
+		// Loads the currently connected devices 
+		Debug.Log("[GameManager.HandleGameStartLogic]: " + "Loading connected devices...");
+		GameEvents.LoadConnectedDevicesEvent?.Invoke();
+
+		Debug.Log("[GameManager.HandleGameStartLogic]: " + "Waiting a second before continuing..");
+		yield return new WaitForSeconds(0.5f);
+
+
+
+		yield return null;
 	}
 
 	#endregion
 
 	#region Public Methods
+
+	/// <summary>
+	///		Getter & Setts for the Devices 
+	/// </summary>
+	public List<GameInputDevice> Devices
+	{
+		get
+		{
+			return m_ConnectedDevices;
+		}
+		set
+		{
+			m_ConnectedDevices = value;
+		}
+	}
+
+	/// <summary>
+	///		Getter & Setter for Connected Players 
+	/// </summary>
+	public List<PlayerInputDevice> ConnectedPlayers
+	{
+		get
+		{
+			return m_ConnectedPlayers;
+		}
+		set
+		{
+			m_ConnectedPlayers = value;
+		}
+	}
 
 	/// <summary>
 	///		Returns the type of input controller by the InputSystems.InputDevice name property 
@@ -251,6 +318,28 @@ public class GameManager : MonoBehaviour
 
 	#region Private Methods
 
+	private void HandleControllerInputEvent(InputEventPtr p_EventPtr, InputDevice p_InputDevice)
+	{
+		// Ignore anything that isn't a state event 
+		if (!p_EventPtr.IsA<StateEvent>() && !p_EventPtr.IsA<DeltaStateEvent>())
+		{
+			return;
+		}	
+
+
+		var gamepad = p_InputDevice as Gamepad;
+
+		if (gamepad == null)
+		{
+			return;
+		}
+
+		if (gamepad.buttonSouth.isPressed)
+		{
+			Debug.Log(gamepad.name + " pressed " + gamepad.buttonSouth);
+		}
+	}
+
 	/// <summary>
 	///		Handles when a controller has either been added, removed, disconected or reconnected
 	/// </summary>
@@ -264,12 +353,11 @@ public class GameManager : MonoBehaviour
 				{ 
 				Debug.Log("[GameManager.HandleOnControllerInputDeviceChanged]: " + "Added Input Device... " + p_InputDeviceState);
 
-				GameDeviceData s_newDevice = new GameDeviceData
+				GameInputDevice s_newDevice = new GameInputDevice
 				{
 					name = p_InputDevice.name,
 					controller = GetInputControllerDevice(p_InputDevice.name),
-					identity = p_InputDevice.deviceId,
-					device = p_InputDevice.device,
+					identity = p_InputDevice.deviceId
 				};
 
 
@@ -297,7 +385,7 @@ public class GameManager : MonoBehaviour
 					// If the device identity is the same as the input device's ID 
 					if (m_ConnectedDevices[i].identity == p_InputDevice.deviceId)
 					{
-						GameDeviceData device = m_ConnectedDevices[i];
+						GameInputDevice device = m_ConnectedDevices[i];
 						// Remove the device from the list of connected devices 
 						m_ConnectedDevices.Remove(device);
 					}
@@ -311,7 +399,7 @@ public class GameManager : MonoBehaviour
 
 				// This is where we would store data locally
 
-				GameEvents.SetCurrentActivePlayers?.Invoke(-1);
+				GameEvents.onSetCurrentConnectedDevices?.Invoke(-1);
 
 				break;
 				}
@@ -321,19 +409,100 @@ public class GameManager : MonoBehaviour
 
 					// Then once the controller is reconnected we can apply the data we stored in a private list here.. 
 
-				GameEvents.SetCurrentActivePlayers?.Invoke(1);
+				GameEvents.onSetCurrentConnectedDevices?.Invoke(1);
 
 				break;
 				}
 		}
 	}
 
-
 	/// <summary>
 	///		Updates the active players using the SetCurrentActivePlayersEvent Called from HandleOnControllerInputDeviceChanged 
 	/// </summary>
-	/// <param name="UpdatedPlayerCount"></param>
-	private void UpdateActivePlayers(int UpdatedPlayerCount) => ActiveDevices += UpdatedPlayerCount; 
+	/// <param name="UpdatedDeviceIndex"></param>
+	private void UpdateCurrentConnectedDevices(int UpdatedDeviceIndex) => GetConnectedDevices += UpdatedDeviceIndex; 
+
+	private void LoadDevices()
+	{
+		// Clear the list of connected devices 
+		m_ConnectedDevices.Clear();
+
+		int deviceIndex = 0;
+
+		// Loop through the input system connected devices 
+		foreach (InputDevice Device in InputSystem.devices)
+		{
+			deviceIndex++;
+
+			// Get the current input device 
+			InputDevice s_inputDevice = InputSystem.GetDeviceById(Device.deviceId);
+
+
+			// Set the input device's data 
+			GameInputDevice newDevice = new GameInputDevice
+			{
+				name = s_inputDevice.name,
+				controller = GetInputControllerDevice(s_inputDevice.name),
+				identity = s_inputDevice.deviceId
+			};
+
+			// If the device's controller is a keyboard or a mouse device
+			if (newDevice.controller == InputController.Keyboard || newDevice.controller == InputController.Mouse)
+			{
+				// Then we want to assign player 1 identity to that player by default 
+				newDevice.player = PlayerIdentity.P1;
+			}
+			else
+			{
+				// Othwise we can set the player identity to the player's connected index 
+				newDevice.player = PlayerIdentity.None;
+			}
+
+
+			// Add the 
+			m_ConnectedDevices.Add(newDevice);
+		}
+
+		GameEvents.SetConnectedPlayersEvent?.Invoke(m_ConnectedDevices);
+
+		GetConnectedDevices = m_ConnectedDevices.Count;
+	}
+	
+	/// <summary>
+	///		Sets the connected players
+	/// </summary>
+	/// <param name="p_ConnectedPlayerDevices"></param>
+	private void SetConnectedPlayers(List<GameInputDevice> p_ConnectedPlayerDevices)
+	{
+		// Clear the connected players list 
+		m_ConnectedPlayers.Clear();
+
+		// If the connected player has both keyboard and mouse 
+		bool s_HasKeyboardAndMouse = p_ConnectedPlayerDevices.Any(inputController => inputController.controller == InputController.Keyboard) && p_ConnectedPlayerDevices.Any(input => input.controller == InputController.Mouse);
+
+		// If the player device does 
+		if (s_HasKeyboardAndMouse)
+		{
+
+			// Create a temporary list 
+			List<GameInputDevice> temp = new List<GameInputDevice> 
+			{ 
+				p_ConnectedPlayerDevices.Find(i => i.controller == InputController.Keyboard),
+				p_ConnectedPlayerDevices.Find(x => x.controller == InputController.Mouse),
+			};
+
+
+			m_ConnectedPlayers.Add(new PlayerInputDevice { name = "Player 1", devices = temp, identity = PlayerIdentity.P1 });
+		}
+		else
+		{
+			Debug.Log("Not keyboard and mouse");
+		}
+
+
+		m_TotalConnectedPlayers = m_ConnectedPlayers.Count;
+
+	}
 
 	#endregion
 

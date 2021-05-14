@@ -58,6 +58,10 @@ public static class GameText
 	public const string PlayerCountUI_ContinueButton = "Continue";
 	public const string PlayerCountUI_BackButton = "Return";
 
+	public const string PlayerCountUI_PlayerStatus_Locked = "--- Locked ---";
+	public const string PlayerCountUI_PlayerStatus_ConnectController = "Connect a controller";
+
+
 	#endregion
 
 

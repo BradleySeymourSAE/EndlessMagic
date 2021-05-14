@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using UnityEngine.InputSystem;
 using TMPro;
 #endregion
 
@@ -52,12 +53,14 @@ public class GameUIManager : MonoBehaviour
 	{
 		GameEvents.PlayGUISelectedEvent += PlayUISelected;
 		GameEvents.PlayMenuTransitionEvent += PlayMenuSwitched;
+		GameEvents.HandleUpdateConnectedDevicesUI += UpdateConnectedDevicesUI;
 	}
 
 	private void OnDisable()
 	{
 		GameEvents.PlayGUISelectedEvent -= PlayUISelected;
 		GameEvents.PlayMenuTransitionEvent -= PlayMenuSwitched;
+		GameEvents.HandleUpdateConnectedDevicesUI -= UpdateConnectedDevicesUI;
 	}
 
 	private void Awake()
@@ -92,7 +95,6 @@ public class GameUIManager : MonoBehaviour
 		DisplaySettingsMenu(false); // Hides the Settings Menu UI 
 		DisplayPlayerCountMenu(false); // Hides the Player Count UI 
 	}
-
 
 	#endregion
 
@@ -203,6 +205,8 @@ public class GameUIManager : MonoBehaviour
 	/// 	Play the UI sound when you transition between menu's 
 	/// </summary>
 	private void PlayMenuSwitched() => AudioManager.PlaySound(SoundCategory.GUI_MenuSwitched);
+
+	private void UpdateConnectedDevicesUI() => PlayerCountMenuUI.SetConnectedDevices();
 
 
 	#endregion

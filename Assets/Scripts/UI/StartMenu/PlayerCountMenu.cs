@@ -36,7 +36,9 @@ public class PlayerCountMenu
 	/// <summary>
 	///		Reference to the player join container
 	/// </summary>
-	public GameObject playerJoinContainer;
+	public List<GameObject> playerJoinContainers;
+
+	public List<TMP_Text> playerJoinStatusTextFields;
 
 	/// <summary>
 	///		Plays the game in cooperative mode 
@@ -58,9 +60,11 @@ public class PlayerCountMenu
 	private GameUIManager m_GameUIManager;
 
 	/// <summary>
-	///		The amount of players we want to add into the character creation screen 
+	///		The total amount of currently connected devices 
 	/// </summary>
-	private int m_PlayerCount;
+	private int m_ConnectedDevices;
+
+	private int m_ConnectedPlayers;
 
 	/// <summary>
 	///		The player input container background color 
@@ -93,7 +97,13 @@ public class PlayerCountMenu
 		title.text = GameText.PlayerCountUI_Title;
 		subtitle.text = GameText.PlayerCountUI_Subtitle;
 
-		m_PlayerCount = m_GameManager.ActiveDevices;
+		m_ConnectedDevices = m_GameManager.GetConnectedDevices;
+		m_ConnectedPlayers = m_GameManager.ConnectedPlayers.Count;
+
+
+		Debug.Log("[PlayerCountMenu.Setup]: " + "Connected Devices: " + m_ConnectedDevices);
+		Debug.Log("[PlayerCountMenu.Setup]: " + "Connected Players: " + m_ConnectedPlayers);
+
 		
 		ContinueButton.GetComponentInChildren<Text>().text = GameText.PlayerCountUI_ContinueButton;
 		ContinueButton.onClick.RemoveAllListeners();
@@ -105,23 +115,7 @@ public class PlayerCountMenu
 		CloseButton.onClick.AddListener(ReturnToMainMenu);
 
 
-		// Loop through each child in the player join container's transform 
-		for (int i = 0; i < playerJoinContainer.transform.childCount; i++)
-		{
-			// Get the child transform 
-			Transform s_PlayerContainer = playerJoinContainer.transform.GetChild(i);
-
-			// get the image component from the player join container game object 
-			Image playerBackground = s_PlayerContainer.GetComponent<Image>();
-
-			// Set the background image of the sprite 
-			playerBackground.sprite = m_PlayerInputBackgroundImage;
-
-			// Set the background color for the child game objects of the player join container 
-			playerBackground.color = m_PlayerInputContainerBackgroundColor;
-
-		}
-
+		UpdateTextFields();
 	}
 
 	/// <summary>
@@ -135,6 +129,49 @@ public class PlayerCountMenu
 		PlayerCountMenuScreen.SetActive(ShouldDisplayPlayerCountMenu);
 	}
 
+	public void SetConnectedDevices()
+	{
+		m_ConnectedDevices = GameManager.Instance.GetConnectedDevices;
+		m_ConnectedPlayers = GameManager.Instance.ConnectedPlayers.Count;
+
+
+		Debug.Log("Connected Devices: " + m_ConnectedDevices);
+		Debug.Log("Connected Players: " + m_ConnectedPlayers);
+
+
+
+		UpdateTextFields();
+	}
+
+	private void UpdateTextFields()
+	{
+		// The current Index => 1, 2, 3, 4 
+		int currentIndex = 0;
+
+		// Loop through the text fields => 0, 1, 2, 3
+		for (int i = 0; i < playerJoinStatusTextFields.Count; i++)
+		{
+			// Increase the index 
+			currentIndex++;
+
+			TMP_Text textField = playerJoinStatusTextFields[i];
+
+			if (m_ConnectedPlayers >= currentIndex)
+			{
+				textField.text = GameText.PlayerCountUI_PlayerStatus_Locked;
+			}
+			else if (m_ConnectedPlayers < currentIndex && m_ConnectedDevices > currentIndex)
+			{
+				textField.text = "Press start to join";
+			}
+			else
+			{
+				textField.text = GameText.PlayerCountUI_PlayerStatus_ConnectController;
+			}
+		}
+	}
+
+	public void SetConnectedPlayers(int value) => m_ConnectedPlayers = value;
 	#endregion
 
 	#region Private Methods
@@ -166,7 +203,7 @@ public class PlayerCountMenu
 		Debug.Log("[PlayerCountMenu.HandleCooperativeCharacterCreation]: " + "Loading Co-op Character Creation Scene... " + GameScenes.EndlessMagic_CharacterCreation);
 		
 		
-		AsyncOperation s_LoadingOperation = SceneManager.LoadSceneAsync(GameScenes.SelectGameSceneBySceneType(Scenes.EndlessMagic_CharacterCreation));
+		SceneManager.LoadSceneAsync(GameScenes.SelectGameSceneBySceneType(Scenes.EndlessMagic_CharacterCreation));
 
 
 		// Invoke the Coop Character Creation Start Event using the input amount of players.
@@ -175,22 +212,16 @@ public class PlayerCountMenu
 	
 
 
-		if (m_PlayerCount > 1 && m_PlayerCount <= 4)
+		if (m_ConnectedPlayers > 1)
 		{
 
-			Debug.LogWarning("[PlayerCountMenu.DisplayCharacterCreationScreen]: " + "Tried to call event from here with " + m_PlayerCount + " players - however ran into an issue");
+			Debug.LogWarning("[PlayerCountMenu.DisplayCharacterCreationScreen]: " + "Tried to call event from here with " + m_ConnectedDevices + " players - however ran into an issue");
 
-
-			// Tried to start a loading event here, as I need the amount of players before the scene loads in order to set up the cameras.. -__-
-
-			// However, Now that I think about it I could just transfer the stuff from the Character Creation Scene and build it into the start menu which would probably
-			// work better anyways.
-
-			// Will work on this once I get back from picking casey up :) 
-
-
+			Debug.Break();
 		}
 	}
+
+
 
 	/* 
 	 *	This will likely need to be removed as it is not relevant to what we are creating now 
