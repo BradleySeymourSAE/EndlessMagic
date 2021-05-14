@@ -13,17 +13,47 @@ using UnityEngine.InputSystem.Users;
 /// <summary>
 ///		Device Platform ID's - These are what I know anyways, Playstation I have not tested yet but I am guessing 
 /// </summary>
-public enum DevicePlatform { Unknown = -1, PC = 1, Xbox = 13, Playstation = 14 };
+public enum InputController { Unknown = 0, Keyboard = 1, Mouse = 2, Xbox = 3, Playstation = 4 };
+
+/// <summary>
+///		The players controller ID - Used to select which player is player 1, 2, 3, 4 and so on 
+/// </summary>
+public enum PlayerIdentity { None = 0, P1 = 1, P2 = 2, P3 = 3, P4 = 4 };
+
+
 
 /// <summary>
 ///		Data class for storing details for a device that's connected 
 /// </summary>
 [System.Serializable]
-public class Device
+public class GameDeviceData
 {
+	/// <summary>
+	///		The name of the input device 
+	/// </summary>
 	public string name;
-	public DevicePlatform platform;
+
+	/// <summary>
+	///		The type of input device the controller is 
+	/// </summary>
+	public InputController controller;
+
+	/// <summary>
+	///  Which identity is the device attached to 
+	/// </summary>
+	public PlayerIdentity player;
+
+	/// <summary>
+	///		The unique id of the device 
+	/// </summary>
 	public int identity;
+
+	[SerializeField]
+	/// <summary>
+	///		Reference to the Data associated with the currently connected input device 
+	/// </summary>
+	public InputDevice device;
+
 }
 
 #endregion
@@ -57,7 +87,7 @@ public class GameManager : MonoBehaviour
 	/// <summary>
 	///		List of currently connected devices 
 	/// </summary>
-	[SerializeField] private List<Device> m_ConnectedDevices = new List<Device>();
+	[SerializeField] private List<GameDeviceData> m_ConnectedDevices = new List<GameDeviceData>();
 
 	/// <summary>
 	///		Whether we are currently debugging 
@@ -67,9 +97,9 @@ public class GameManager : MonoBehaviour
 
 	#region Connected Device Types  @TODO - I will clean this up when I get the chance - Just testing the code atm 
 
-	private const string Xbox_ControllerDevice = "Xbox Controller";
+	private const string Xbox_ControllerDevice = "XInputControllerWindows";
 
-	private const string PS4_ControllerDevice = "PS4 Controller";
+	private const string PS4_ControllerDevice = "DualShock4GamepadHID";
 
 	private const string PC_MouseDevice = "Mouse";
 
@@ -130,31 +160,44 @@ public class GameManager : MonoBehaviour
 		// Clear the list of connected devices 
 		m_ConnectedDevices.Clear();
 
+		int deviceIndex = 0;
+
 		// Loop through the input system connected devices 
-		for (int i = 0; i < InputSystem.devices.Count; i++)
+		foreach (InputDevice Device in InputSystem.devices)
 		{
-			// Get the input system devices index device id property 
-			int s_InputDeviceId = InputSystem.devices[i].deviceId;
+			deviceIndex++;
 
-			// Then find the device by using the local variable input device id 
-			InputDevice s_Device = InputSystem.GetDeviceById(s_InputDeviceId);
+			PlayerIdentity s_Player;
 
-			Debug.Log("[GameManager.Start]: " + "Found Input Device: " + s_Device.displayName + " Device ID: " + s_Device.deviceId);
+			// Get the current input device 
+			InputDevice s_inputDevice = InputSystem.GetDeviceById(Device.deviceId);
 
 
-			DevicePlatform s_CurrentDevicePlatform = GetDevicePlatform(s_Device.displayName);
-
-			Device device = new Device { 
-				platform = s_CurrentDevicePlatform,
-				identity = s_Device.deviceId, 
-				name = s_Device.displayName
+			// Set the input device's data 
+			GameDeviceData newDevice = new GameDeviceData
+			{
+				name = s_inputDevice.name,
+				controller = GetInputControllerDevice(s_inputDevice.name),
+				identity = s_inputDevice.deviceId,
+				device = Device,
 			};
 
-		
+			// If the device's controller is a keyboard or a mouse device
+			if (newDevice.controller == InputController.Keyboard || newDevice.controller == InputController.Mouse)
+			{
+				// Then we want to assign player 1 identity to that player by default 
+				newDevice.player = PlayerIdentity.P1;
+			}
+			else
+			{
+				// Othwise we can set the player identity to the player's connected index 
+				newDevice.player = PlayerIdentity.None;
+			}
 
-			m_ConnectedDevices.Add(device);
+
+			// Add the 
+			m_ConnectedDevices.Add(newDevice);
 		}
-
 
 		ActivePlayers = m_ConnectedDevices.Count - 1;
 	}
@@ -164,40 +207,43 @@ public class GameManager : MonoBehaviour
 	#region Public Methods
 
 	/// <summary>
-	///		@TODO - Move this to another location, Probably the game assets script 
-	///		Gets the devices platform
+	///		Returns the type of input controller by the InputSystems.InputDevice name property 
 	/// </summary>
-	/// <param name="Device"></param>
-	/// <returns></returns>
-	public DevicePlatform GetDevicePlatform(string Device)
+	/// <param name="p_DeviceName">The name of the input device</param>
+	/// <returns>The Input Controller Type</returns>
+	public InputController GetInputControllerDevice(string p_DeviceName)
 	{
-		var device = DevicePlatform.Unknown;
+		var device = InputController.Unknown;
 
 
-		switch (Device)
+		switch (p_DeviceName)
 		{
-			case PC_KeyboardDevice:
 			case PC_MouseDevice:
+				{
+					device = InputController.Mouse;
+				}
+				break;
+			case PC_KeyboardDevice:
 				{ 
-					device = DevicePlatform.PC;
+					device = InputController.Keyboard;
 				}
 				break;
 			case Xbox_ControllerDevice:
 				{
-					device = DevicePlatform.Xbox;
+					device = InputController.Xbox;
 				}
 				break;
 			case PS4_ControllerDevice:
 				{
-					device = DevicePlatform.Playstation;
+					device = InputController.Playstation;
 				}
 				break;
-		}
-
-
-		if (device == DevicePlatform.Unknown)
-		{
-			Debug.LogWarning("[GameManager.GetDevicePlatform]: " + "Could not find that device, it is unknown!");
+			default:
+				{
+					device = InputController.Unknown;
+					Debug.LogWarning("[GameManager.GetDevicePlatform]: " + "Could not find that device, it is unknown!");
+				}
+				break;
 		}
 
 		return device;
@@ -220,40 +266,52 @@ public class GameManager : MonoBehaviour
 				{ 
 				Debug.Log("[GameManager.HandleOnControllerInputDeviceChanged]: " + "Added Input Device... " + p_InputDeviceState);
 
-				Device s_newDevice = new Device
+				GameDeviceData s_newDevice = new GameDeviceData
 				{
+					name = p_InputDevice.name,
+					controller = GetInputControllerDevice(p_InputDevice.name),
 					identity = p_InputDevice.deviceId,
-					name = p_InputDevice.displayName,
-					platform = GetDevicePlatform(p_InputDevice.displayName),
+					device = p_InputDevice.device,
 				};
 
-				m_ConnectedDevices.Add(s_newDevice);
-			
-				// GameEvents.SetCurrentActivePlayers?.Invoke(1);
+
+				// If the new device has already been connected we want to return 
+				if (m_ConnectedDevices.Contains(s_newDevice))
+				{
+					return;
+				}
+				else
+				{
+					// Otherwise we can add the device in 
+					m_ConnectedDevices.Add(s_newDevice);
+				}
 				
 				break;
 				}
 			case InputDeviceChange.Removed: // When an input device is removed 
 				{ 
+
 				Debug.Log("[GameManager.HandleOnControllerInputDeviceChanged]: " + "Removed Input Device... " + p_InputDeviceState);
 
-				// GameEvents.SetCurrentActivePlayers?.Invoke(-1);
-
+				// Loop through each device in the connected devices list 
 				for (int i = 0; i < m_ConnectedDevices.Count; i++)
+				{
+					// If the device identity is the same as the input device's ID 
+					if (m_ConnectedDevices[i].identity == p_InputDevice.deviceId)
 					{
-						if (m_ConnectedDevices[i].identity == p_InputDevice.deviceId)
-						{
-							Device device = m_ConnectedDevices[i];
-
-							m_ConnectedDevices.Remove(device);
-						}
+						GameDeviceData device = m_ConnectedDevices[i];
+						// Remove the device from the list of connected devices 
+						m_ConnectedDevices.Remove(device);
 					}
+				}
 
 				break;
 				}
 			case InputDeviceChange.Disconnected: // When a controller disconnects 
 				{ 
 				Debug.Log("[GameManager.HandleOnControllerInputDeviceChanged]: " + "Disconnected Input Device... " + p_InputDeviceState);
+
+				// This is where we would store data locally
 
 				GameEvents.SetCurrentActivePlayers?.Invoke(-1);
 
@@ -262,6 +320,8 @@ public class GameManager : MonoBehaviour
 			case InputDeviceChange.Reconnected: // When a controller reconnects 
 				{ 
 				Debug.Log("[GameManager.HandleOnControllerInputDeviceChanged]: " + "Reconnected Input Device... " + p_InputDeviceState);
+
+					// Then once the controller is reconnected we can apply the data we stored in a private list here.. 
 
 				GameEvents.SetCurrentActivePlayers?.Invoke(1);
 
