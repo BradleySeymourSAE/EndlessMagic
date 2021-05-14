@@ -34,9 +34,9 @@ public class PlayerCountMenu
 	public TMP_Text subtitle;
 
 	/// <summary>
-	///		Player Count Menu Input Field
+	///		Reference to the player join container
 	/// </summary>
-	public TMP_InputField PlayerCountInputField;
+	public GameObject playerJoinContainer;
 
 	/// <summary>
 	///		Plays the game in cooperative mode 
@@ -62,6 +62,18 @@ public class PlayerCountMenu
 	/// </summary>
 	private int m_PlayerCount;
 
+	/// <summary>
+	///		The player input container background color 
+	/// </summary>
+	[SerializeField] private Color m_PlayerInputContainerBackgroundColor = Color.black;
+
+	[SerializeField] private Sprite m_PlayerInputBackgroundImage;
+
+	/// <summary>
+	///		Reference to the Game Manager Instance 
+	/// </summary>
+	GameManager m_GameManager;
+
 	#endregion
 
 	#region Public Methods 
@@ -73,23 +85,43 @@ public class PlayerCountMenu
 	{
 		m_GameUIManager = p_GameUIManager;
 
+		if (Object.FindObjectOfType<GameManager>() != null)
+		{
+			m_GameManager = Object.FindObjectOfType<GameManager>();
+		}	
+
 		title.text = GameText.PlayerCountUI_Title;
 		subtitle.text = GameText.PlayerCountUI_Subtitle;
 
-		m_PlayerCount = 0;
+		m_PlayerCount = m_GameManager.ActiveDevices;
 		
 		ContinueButton.GetComponentInChildren<Text>().text = GameText.PlayerCountUI_ContinueButton;
 		ContinueButton.onClick.RemoveAllListeners();
 		ContinueButton.onClick.AddListener(HandleCooperativeCharacterCreation);
 		ContinueButton.interactable = false;
 
-		PlayerCountInputField.text = m_PlayerCount.ToString();
-		PlayerCountInputField.onValueChanged.RemoveAllListeners();
-		PlayerCountInputField.onValueChanged.AddListener(InputChanged);
-
 		CloseButton.GetComponentInChildren<Text>().text = GameText.PlayerCountUI_BackButton;
 		CloseButton.onClick.RemoveAllListeners();
 		CloseButton.onClick.AddListener(ReturnToMainMenu);
+
+
+		// Loop through each child in the player join container's transform 
+		for (int i = 0; i < playerJoinContainer.transform.childCount; i++)
+		{
+			// Get the child transform 
+			Transform s_PlayerContainer = playerJoinContainer.transform.GetChild(i);
+
+			// get the image component from the player join container game object 
+			Image playerBackground = s_PlayerContainer.GetComponent<Image>();
+
+			// Set the background image of the sprite 
+			playerBackground.sprite = m_PlayerInputBackgroundImage;
+
+			// Set the background color for the child game objects of the player join container 
+			playerBackground.color = m_PlayerInputContainerBackgroundColor;
+
+		}
+
 	}
 
 	/// <summary>
@@ -160,6 +192,9 @@ public class PlayerCountMenu
 		}
 	}
 
+	/* 
+	 *	This will likely need to be removed as it is not relevant to what we are creating now 
+	 * 
 	/// <summary>
 	///		Handles the Changed Input Value 
 	/// </summary>
@@ -189,6 +224,9 @@ public class PlayerCountMenu
 		}
 	}
 
+	*/
+
 	#endregion
+
 
 }

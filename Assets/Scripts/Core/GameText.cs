@@ -53,9 +53,8 @@ public static class GameText
 
 	#region Player Count Menu 
 
-	public const string PlayerCountUI_Title = "Players?";
-	public const string PlayerCountUI_Subtitle = "How many players?";
-	public const string PlayerCountUI_InputPlaceholder = "0";
+	public const string PlayerCountUI_Title = "Co-op";
+	public const string PlayerCountUI_Subtitle = "Press start to ready up";
 	public const string PlayerCountUI_ContinueButton = "Continue";
 	public const string PlayerCountUI_BackButton = "Return";
 

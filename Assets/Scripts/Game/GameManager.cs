@@ -80,9 +80,9 @@ public class GameManager : MonoBehaviour
 	#region Private Variables
 
 	/// <summary>
-	///		Current Active Players Index 
+	///		Current total connected devices (Minus 1 because Mouse & Keyboard should be set as a single player? ) 
 	/// </summary>
-	[SerializeField] private int m_ActivePlayersIndex;
+	[SerializeField] private int m_TotalConnectedDevices;
 
 	/// <summary>
 	///		List of currently connected devices 
@@ -109,17 +109,17 @@ public class GameManager : MonoBehaviour
 
 	#endregion
 
-	public int ActivePlayers
+	public int ActiveDevices
 	{
 		get
 		{
-			return m_ActivePlayersIndex;
+			return m_TotalConnectedDevices;
 		}
 		set
 		{
-			m_ActivePlayersIndex = value;
+			m_TotalConnectedDevices = value;
 
-			m_ActivePlayersIndex = Mathf.Clamp(m_ActivePlayersIndex, 0, 4);
+			m_TotalConnectedDevices = Mathf.Clamp(m_TotalConnectedDevices, 0, 4);
 
 		}
 	}
@@ -167,8 +167,6 @@ public class GameManager : MonoBehaviour
 		{
 			deviceIndex++;
 
-			PlayerIdentity s_Player;
-
 			// Get the current input device 
 			InputDevice s_inputDevice = InputSystem.GetDeviceById(Device.deviceId);
 
@@ -199,7 +197,7 @@ public class GameManager : MonoBehaviour
 			m_ConnectedDevices.Add(newDevice);
 		}
 
-		ActivePlayers = m_ConnectedDevices.Count - 1;
+		ActiveDevices = m_ConnectedDevices.Count;
 	}
 
 	#endregion
@@ -335,7 +333,7 @@ public class GameManager : MonoBehaviour
 	///		Updates the active players using the SetCurrentActivePlayersEvent Called from HandleOnControllerInputDeviceChanged 
 	/// </summary>
 	/// <param name="UpdatedPlayerCount"></param>
-	private void UpdateActivePlayers(int UpdatedPlayerCount) => ActivePlayers += UpdatedPlayerCount; 
+	private void UpdateActivePlayers(int UpdatedPlayerCount) => ActiveDevices += UpdatedPlayerCount; 
 
 	#endregion
 
