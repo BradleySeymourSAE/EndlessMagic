@@ -59,12 +59,7 @@ public static class GameEvents
 	/// <summary>
 	///		Called after onSetCurrentConnectedDevices, which changes the amount of connected devices, this updates the UI 
 	/// </summary>
-	public static VoidDelegate HandleUpdateConnectedDevicesUI;
-
-	/// <summary>
-	///		Called after onSetCurrentConnectedPlayers, which changes the amount of players that are active 
-	/// </summary>
-	public static VoidDelegate HandleUpdateConnectedPlayersUI;
+	public static VoidDelegate HandleUpdateDevicesEvent;
 
 	/// <summary>
 	///		Called on start to load the currently connected devices
@@ -72,14 +67,14 @@ public static class GameEvents
 	public static VoidDelegate LoadConnectedDevicesEvent;
 
 	/// <summary>
-	///		Called using the input amount of players, sets up the camera references (Split screen)
-	/// </summary>
-	public static IntParameterDelegate CoopCharacterCreationStartEvent;
-
-	/// <summary>
 	///		Called to set the current active players after the input event has been received 
 	/// </summary>
 	public static IntParameterDelegate onSetCurrentConnectedDevices;
+
+	/// <summary>
+	///		Called using the Device ID to add the player's device as an input 
+	/// </summary>
+	public static IntParameterDelegate AddPlayerInputDeviceEvent;
 
 	/// <summary>
 	///		Sets the connected players 

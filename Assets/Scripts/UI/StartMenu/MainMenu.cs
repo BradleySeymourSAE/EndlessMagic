@@ -9,10 +9,11 @@ using TMPro;
 
 
 
+
+[System.Serializable]
 /// <summary>
 ///		Data class for the Main Menu UI 
 /// </summary>
-[System.Serializable]
 public class MainMenu
 {
 

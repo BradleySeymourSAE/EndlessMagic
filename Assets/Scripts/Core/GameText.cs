@@ -13,6 +13,8 @@ using TMPro;
 public static class GameText
 {
 
+	#region UI 
+
 	#region Main Menu
 
 	public const string MainMenuUI_Title = "Endless Magic";
@@ -59,6 +61,7 @@ public static class GameText
 	public const string PlayerCountUI_BackButton = "Return";
 
 	public const string PlayerCountUI_PlayerStatus_Locked = "--- Locked ---";
+	public const string PlayerCountUI_PlayerStatus_PressStart = "Press start to join!";
 	public const string PlayerCountUI_PlayerStatus_ConnectController = "Connect a controller";
 
 
@@ -72,5 +75,21 @@ public static class GameText
 
 
 	#endregion
+
+	#endregion
+
+	#region Input Keys 
+
+	public const string XboxControllerDevice = "";
+
+	public const string PS4ControllerDevice = "Sony Interactive Entertainment";
+
+	public const string MouseDevice = "Mouse";
+
+	public const string KeyboardDevice = "Keyboard";
+
+
+	#endregion
+
 
 }

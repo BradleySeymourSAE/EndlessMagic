@@ -53,14 +53,14 @@ public class GameUIManager : MonoBehaviour
 	{
 		GameEvents.PlayGUISelectedEvent += PlayUISelected;
 		GameEvents.PlayMenuTransitionEvent += PlayMenuSwitched;
-		GameEvents.HandleUpdateConnectedDevicesUI += UpdateConnectedDevicesUI;
+		GameEvents.HandleUpdateDevicesEvent += UpdatedDevices;
 	}
 
 	private void OnDisable()
 	{
 		GameEvents.PlayGUISelectedEvent -= PlayUISelected;
 		GameEvents.PlayMenuTransitionEvent -= PlayMenuSwitched;
-		GameEvents.HandleUpdateConnectedDevicesUI -= UpdateConnectedDevicesUI;
+		GameEvents.HandleUpdateDevicesEvent -= UpdatedDevices;
 	}
 
 	private void Awake()
@@ -124,90 +124,30 @@ public class GameUIManager : MonoBehaviour
 	/// <param name="show"></param>
 	public void DisplayPlayerCountMenu(bool show) => PlayerCountMenuUI.DisplayScreen(show);
 
-
-	#region @TODO - Scene Async Loading 
-
-
-	/*  Currently this is not working, I didn't have the time to finish this up today so I am just leaving this out for now 
-	 *  and I will work on it a bit more when I get back from picking up casey haha :P 
-	 *  
-	 *  
-	 *  
-	 *  
-	 *  
 	/// <summary>
-	///		Begins loading the scene 
+	///		Toggles allowing multiple device input 
 	/// </summary>
-	/// <param name="Scene"></param>
 	/// <returns></returns>
-	public IEnumerator LoadSceneAsync(Scenes p_SceneType)
-	{
-		DisplayLoadingScreen(true);
-
-
-		yield return StartCoroutine(FadeLoadingScreen(1, 1));
-
-
-
-		AsyncOperation operation = SceneManager.LoadSceneAsync(GameScenes.SelectGameSceneBySceneType(p_SceneType));
-
-		while (!operation.isDone)
-		{
-			yield return null;
-		}
-
-		yield return StartCoroutine(FadeLoadingScreen(0, 1));
-
-		DisplayLoadingScreen(false);
-
-		yield return null;
-	}
-
-	/// <summary>
-	///		Fades the loading screen 
-	/// </summary>
-	/// <param name="p_FadeAlpha"></param>
-	/// <param name="p_Duration"></param>
-	/// <returns></returns>
-	private IEnumerator FadeLoadingScreen(float p_FadeAlpha, float p_Duration)
-	{
-		float start = LoadingScreenUI.canvasGroup.alpha;
-		float time = 0;
-
-		while (time < p_Duration)
-		{
-			LoadingScreenUI.canvasGroup.alpha = Mathf.Lerp(start, p_FadeAlpha, time / p_Duration);
-
-			time += Time.deltaTime;
-
-			yield return null;
-		}
-
-		LoadingScreenUI.canvasGroup.alpha = p_FadeAlpha;
-	}
-
-	*/
-
-	#endregion
+	public bool AllowMultipleDeviceInput() => PlayerCountMenuUI.IsVisible() == true;
 
 	#endregion
 
 	#region Private Methods
-
 
 	/// <summary>
 	///		 Play the UI sound when you click on any of the UI elements 
 	/// </summary>
 	private void PlayUISelected() => AudioManager.PlaySound(SoundCategory.GUI_Selected);
 
-
 	/// <summary>
 	/// 	Play the UI sound when you transition between menu's 
 	/// </summary>
 	private void PlayMenuSwitched() => AudioManager.PlaySound(SoundCategory.GUI_MenuSwitched);
 
-	private void UpdateConnectedDevicesUI() => PlayerCountMenuUI.SetConnectedDevices();
-
+	/// <summary>
+	///		Handles updating the currently connected devices for the player count menu UI 
+	/// </summary>
+	private void UpdatedDevices() => PlayerCountMenuUI.UpdateConnectedDevices();
 
 	#endregion
 

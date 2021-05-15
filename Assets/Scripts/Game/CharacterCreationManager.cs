@@ -52,11 +52,6 @@ public class CharacterCreationManager : MonoBehaviour
 	
 	[SerializeField] private List<Transform> wizardPrefabSpawnPoints = new List<Transform>();
 
-	/// <summary>
-	///		The active Player Camera's in the Scene 
-	/// </summary>
-	[SerializeField] private List<GameObject> m_ActivePlayerCameras = new List<GameObject>();
-
 
 	[Header("--- Debugging ---")]
 	/// <summary>
@@ -89,18 +84,6 @@ public class CharacterCreationManager : MonoBehaviour
 
 
 	#region Unity References
-
-
-	private void OnEnable()
-	{
-		GameEvents.CoopCharacterCreationStartEvent += Setup;
-	}
-
-
-	private void OnDisable()
-	{
-		GameEvents.CoopCharacterCreationStartEvent -= Setup;
-	}
 
 
 	/// <summary>
@@ -150,46 +133,6 @@ public class CharacterCreationManager : MonoBehaviour
 
 
 	#region Public Methods
-
-
-	#endregion
-
-
-	#region Private Methods
-
-	/// <summary>
-	///		Sets up the camera's 
-	/// </summary>
-	/// <param name="p_PlayerCount"></param>
-	private void Setup(int p_PlayerCount)
-	{
-
-		Debug.Log("[CharacterCreationManager.Setup]: " + "Character Creation Manager has been called! Setting up cameras for " + p_PlayerCount + " players!");
-
-		// Clear the active player camera's list 
-		m_ActivePlayerCameras.Clear();
-
-			// Loop through the amount of cameras needed 
-			for (int i = 0; i < p_PlayerCount; i++)
-			{
-			
-
-				// Get the player camera game object 
-				GameObject s_VirtualCamera = cinemachinePlayerCameras[i].gameObject;
-
-
-		
-
-		
-
-
-
-				m_ActivePlayerCameras.Add(s_VirtualCamera.gameObject);
-
-				
-			}
-
-	}
 
 
 	#endregion

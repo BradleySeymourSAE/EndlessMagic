@@ -8,7 +8,6 @@ using TMPro;
 #endregion
 
 
-
 [System.Serializable]
 /// <summary>
 ///		Data class for the Settings Menu UI 
@@ -73,11 +72,6 @@ public class PlayerCountMenu
 
 	[SerializeField] private Sprite m_PlayerInputBackgroundImage;
 
-	/// <summary>
-	///		Reference to the Game Manager Instance 
-	/// </summary>
-	GameManager m_GameManager;
-
 	#endregion
 
 	#region Public Methods 
@@ -89,21 +83,8 @@ public class PlayerCountMenu
 	{
 		m_GameUIManager = p_GameUIManager;
 
-		if (Object.FindObjectOfType<GameManager>() != null)
-		{
-			m_GameManager = Object.FindObjectOfType<GameManager>();
-		}	
-
 		title.text = GameText.PlayerCountUI_Title;
 		subtitle.text = GameText.PlayerCountUI_Subtitle;
-
-		m_ConnectedDevices = m_GameManager.GetConnectedDevices;
-		m_ConnectedPlayers = m_GameManager.ConnectedPlayers.Count;
-
-
-		Debug.Log("[PlayerCountMenu.Setup]: " + "Connected Devices: " + m_ConnectedDevices);
-		Debug.Log("[PlayerCountMenu.Setup]: " + "Connected Players: " + m_ConnectedPlayers);
-
 		
 		ContinueButton.GetComponentInChildren<Text>().text = GameText.PlayerCountUI_ContinueButton;
 		ContinueButton.onClick.RemoveAllListeners();
@@ -115,7 +96,7 @@ public class PlayerCountMenu
 		CloseButton.onClick.AddListener(ReturnToMainMenu);
 
 
-		UpdateTextFields();
+		UpdateConnectedDevices();
 	}
 
 	/// <summary>
@@ -129,49 +110,65 @@ public class PlayerCountMenu
 		PlayerCountMenuScreen.SetActive(ShouldDisplayPlayerCountMenu);
 	}
 
-	public void SetConnectedDevices()
+	/// <summary>
+	///		Returns whether the player count menu screen is currently visible  
+	/// </summary>
+	/// <returns></returns>
+	public bool IsVisible() => PlayerCountMenuScreen.active == true;
+
+	/// <summary>
+	///		Updates the UI to display the currently connected devices and set the continue button to interactable if the 
+	///		amount of players is greater than 1 but less than or equal to 4 
+	/// </summary>
+	public void UpdateConnectedDevices()
 	{
-		m_ConnectedDevices = GameManager.Instance.GetConnectedDevices;
-		m_ConnectedPlayers = GameManager.Instance.ConnectedPlayers.Count;
-
-
-		Debug.Log("Connected Devices: " + m_ConnectedDevices);
-		Debug.Log("Connected Players: " + m_ConnectedPlayers);
-
-
-
-		UpdateTextFields();
-	}
-
-	private void UpdateTextFields()
-	{
-		// The current Index => 1, 2, 3, 4 
-		int currentIndex = 0;
-
-		// Loop through the text fields => 0, 1, 2, 3
-		for (int i = 0; i < playerJoinStatusTextFields.Count; i++)
+		// Check the game manager instance exists 
+		if (GameManager.Instance)
+		{ 
+			m_ConnectedDevices = GameManager.Instance.GetConnectedDeviceIndex;
+			m_ConnectedPlayers = GameManager.Instance.GetConnectedPlayersIndex;
+		}
+		else
 		{
-			// Increase the index 
-			currentIndex++;
+			Debug.LogWarning("[PlayerCountMenu.UpdateConnectedDevices]: " + "There is no GameManager Instance!");
+			m_ConnectedDevices = 0;
+			m_ConnectedPlayers = 0;
+		}
 
-			TMP_Text textField = playerJoinStatusTextFields[i];
+		Debug.Log("[PlayerCountMenu.UpdateConnectedDevices]: " + "Connected Devices: " + m_ConnectedDevices);
+		Debug.Log("[PlayerCountMenu.UpdateConnectedDevices]: " + "Connected Players: " + m_ConnectedPlayers);
 
-			if (m_ConnectedPlayers >= currentIndex)
+
+		// If the amount of connected players is greater than 1 and less than or equal to 4 then the continue button can be pressed 
+		ContinueButton.interactable = m_ConnectedPlayers > 1 && m_ConnectedPlayers <= 4;
+
+		
+		int currentIndex = 0; // The current Index => 1, 2, 3, 4 
+
+		for (int i = 0; i < playerJoinStatusTextFields.Count; i++)  // i = 0, 1, 2, 3
+		{
+			
+			currentIndex++; // Increase the current index 
+
+			TMP_Text textField = playerJoinStatusTextFields[i]; 
+
+			if (m_ConnectedPlayers >= currentIndex) // if the connected players index is greater than or equal to the current index value
 			{
-				textField.text = GameText.PlayerCountUI_PlayerStatus_Locked;
+				textField.text = GameText.PlayerCountUI_PlayerStatus_Locked; // then the player has joined 
 			}
+			// Otherwise, if the connected players index is less than the current index and the total connected devices is greater than the current index 
 			else if (m_ConnectedPlayers < currentIndex && m_ConnectedDevices > currentIndex)
 			{
-				textField.text = "Press start to join";
+				textField.text = GameText.PlayerCountUI_PlayerStatus_PressStart; // then the player can join by pressing start on their controller 
 			}
 			else
 			{
+				// Otherwise, there is no controller connected 
 				textField.text = GameText.PlayerCountUI_PlayerStatus_ConnectController;
 			}
 		}
 	}
 
-	public void SetConnectedPlayers(int value) => m_ConnectedPlayers = value;
 	#endregion
 
 	#region Private Methods
@@ -202,62 +199,11 @@ public class PlayerCountMenu
 		// Load the character creation scene 
 		Debug.Log("[PlayerCountMenu.HandleCooperativeCharacterCreation]: " + "Loading Co-op Character Creation Scene... " + GameScenes.EndlessMagic_CharacterCreation);
 		
-		
+		// Load the Character Creation Scene Asyncronously
 		SceneManager.LoadSceneAsync(GameScenes.SelectGameSceneBySceneType(Scenes.EndlessMagic_CharacterCreation));
 
-
-		// Invoke the Coop Character Creation Start Event using the input amount of players.
-		// This will be used as a reference to set up the camera's 
-
-	
-
-
-		if (m_ConnectedPlayers > 1)
-		{
-
-			Debug.LogWarning("[PlayerCountMenu.DisplayCharacterCreationScreen]: " + "Tried to call event from here with " + m_ConnectedDevices + " players - however ran into an issue");
-
-			Debug.Break();
-		}
 	}
-
-
-
-	/* 
-	 *	This will likely need to be removed as it is not relevant to what we are creating now 
-	 * 
-	/// <summary>
-	///		Handles the Changed Input Value 
-	/// </summary>
-	/// <param name="p_InputValue"></param>
-	private void InputChanged(string p_InputValue)
-	{
-		// Local variable for storing the result 
-		int result;
-
-		// Check the input is a number value
-		bool isNumberValue = int.TryParse(p_InputValue, out result);
-
-		if (isNumberValue)
-		{
-			
-			// Set the continue button to enabled only if the result is greater than 0 or less than or equal to 4 
-			ContinueButton.interactable = result > 1 && result <= 4;
-			
-			
-			m_PlayerCount = result;
-			Debug.Log("[PlayerCountMenu.InputChanged]: " + " Player Count: " + m_PlayerCount);
-		}
-		else
-		{
-			// Is not a number, so we set the continue button as not interactable 
-			ContinueButton.interactable = false;
-		}
-	}
-
-	*/
 
 	#endregion
-
 
 }

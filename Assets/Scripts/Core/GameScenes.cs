@@ -21,16 +21,10 @@ public static class GameScenes
 
 
 
-	#region Start Menu / UI 
+	#region Scene ID's
 
 	public const string EndlessMagic_StartingMenu = "EndlessMagic_StartingMenu";
-
 	public const string EndlessMagic_CharacterCreation = "EndlessMagic_CharacterCreation";
-
-	#endregion
-
-	#region Game & Level
-
 	public const string EndlessMagic_GameLevel_01 = "EndlessMagic_GameLevel_01";
 
 	#endregion
