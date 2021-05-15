@@ -8,6 +8,8 @@ using Cinemachine;
 
 
 
+public enum SplitScreenType { SinglePlayer = 1, TwoPlayer = 2, ThreePlayer = 3, FourPlayer = 4 };
+
 /// <summary>
 ///		Character Creation Manager - Handles Creating & Selecting Characters from within
 ///		the character creation selection screen 
@@ -24,6 +26,7 @@ public class CharacterCreationManager : MonoBehaviour
 	public List<Transform> cinemachinePlayerCameras = new List<Transform>();
 
 
+	public SplitScreenType SplitScreen = SplitScreenType.SinglePlayer;
 
 	#endregion
 
@@ -79,7 +82,24 @@ public class CharacterCreationManager : MonoBehaviour
 	/// </summary>
 	[SerializeField] private Color m_CameraAimPositionColor = Color.green;
 
+	public Dictionary<Rect, View> cameraViewrectDictionary = new Dictionary<Rect, View>
+	{
+		{ new Rect(0, 0, 1, 1), View.Single },
+		{ new Rect(0, 0.5f, 1, 1), View.Top },
+		{ new Rect(0, -0.5f, 1, 1), View.Bottom },
+		{ new Rect(-0.5f, 0.5f, 1, 1), View.TopLeft },
+		{ new Rect(0.5f, 0.5f, 1, 1), View.TopRight },
+		{ new Rect(0.5f, -0.5f, 1, 1), View.BottomRight },
+		{ new Rect(-0.5f, -0.5f, 1, 1), View.BottomLeft }
+	};
 
+	public enum View { Single, Top, TopLeft, TopRight, Bottom, BottomRight, BottomLeft };
+
+
+
+	[SerializeField] private List<Camera> m_PlayerCameras = new List<Camera>();
+
+	private int m_EnabledCameras;
 	#endregion
 
 
@@ -129,12 +149,151 @@ public class CharacterCreationManager : MonoBehaviour
 	}
 
 
-	#endregion
+	private void Awake()
+	{
+		if (GameManager.Instance)
+		{
+			m_EnabledCameras = GameManager.Instance.GetConnectedPlayersIndex;
+		}
 
+		SplitScreen = GetScreenType(m_EnabledCameras);
+
+		m_PlayerCameras.Clear();
+
+
+		int currentIndex = 0; 
+		for (int i = 0; i < cinemachinePlayerCameras.Count; i++)
+		{
+			currentIndex++;
+
+			GameObject camera = cinemachinePlayerCameras[i].gameObject;
+
+			Debug.Log("Total Enabled Player Cameras: " + m_EnabledCameras);
+
+			// Check if the camera should be enabled 
+			bool isCameraEnabled = m_EnabledCameras >= currentIndex == true;
+
+			// Set the camera's active state 
+			SetCameraActiveState(camera, isCameraEnabled);
+
+
+			Camera s_Camera = camera.GetComponent<Camera>();
+
+
+		
+			m_PlayerCameras.Add(s_Camera);
+		}
+
+		SetCameras(SplitScreen);
+	}
+
+	#endregion
 
 	#region Public Methods
 
 
 	#endregion
+
+	private void SetCameras(SplitScreenType SplitScreen)
+	{
+			switch (SplitScreen)
+			{
+				case SplitScreenType.SinglePlayer:
+					{
+
+						foreach (KeyValuePair<Rect, View> element in cameraViewrectDictionary)
+						{
+							if (element.Value == View.Single)
+							{
+								m_PlayerCameras[0].rect = element.Key;
+							}
+						}
+					}
+					break;
+				case SplitScreenType.TwoPlayer:
+					{
+						foreach (KeyValuePair<Rect, View> element in cameraViewrectDictionary)
+						{
+							if (element.Value == View.Top)
+							{
+								m_PlayerCameras[0].rect = element.Key;
+							}
+							else if (element.Value == View.Bottom)
+							{
+								m_PlayerCameras[1].rect = element.Key;
+							}
+						}
+					}
+					break;
+				case SplitScreenType.ThreePlayer:
+					{
+						foreach (KeyValuePair<Rect, View> element in cameraViewrectDictionary)
+						{
+							if (element.Value == View.Top)
+							{
+								m_PlayerCameras[0].rect = element.Key;
+							}
+							else if (element.Value == View.BottomLeft)
+							{
+								m_PlayerCameras[1].rect = element.Key;
+							}
+							else if (element.Value == View.BottomRight)
+							{
+								m_PlayerCameras[2].rect = element.Key;
+							}	
+						}
+					}
+					break;
+				case SplitScreenType.FourPlayer:
+					{
+						foreach (KeyValuePair<Rect, View> element in cameraViewrectDictionary)
+						{
+							if (element.Value == View.TopLeft)
+							{
+								m_PlayerCameras[0].rect = element.Key;
+							}
+							else if (element.Value == View.TopRight)
+							{
+								m_PlayerCameras[1].rect = element.Key;
+							}	
+							else if (element.Value == View.BottomLeft)
+							{
+								m_PlayerCameras[2].rect = element.Key;
+							}
+							else if (element.Value == View.BottomRight)
+							{
+								m_PlayerCameras[3].rect = element.Key;
+							}
+						}
+					}
+					break;
+			}
+	}
+
+	/// <summary>
+	///		Toggles setting the camera's active state 
+	/// </summary>
+	/// <param name="p_Camera"></param>
+	/// <param name="ShouldCameraBeEnabled"></param>
+	private void SetCameraActiveState(GameObject p_Camera, bool ShouldCameraBeEnabled) => p_Camera.SetActive(ShouldCameraBeEnabled);
+
+	private SplitScreenType GetScreenType(int p_TotalPlayers)
+	{
+		switch (p_TotalPlayers)
+		{
+			case 1:
+				return SplitScreenType.SinglePlayer;
+			case 2:
+				return SplitScreenType.TwoPlayer;
+			case 3:
+				return SplitScreenType.ThreePlayer;
+			case 4:
+				return SplitScreenType.FourPlayer;
+			default:
+				Debug.LogWarning("[CharacterCreationManager.GetScreenType]: " + "Could not determine the split screen type.");
+				return SplitScreenType.SinglePlayer;
+		}
+
+	}
 
 }

@@ -82,7 +82,7 @@ public static class GameText
 
 	public const string XboxControllerDevice = "";
 
-	public const string PS4ControllerDevice = "Sony Interactive Entertainment";
+	public const string PS4ControllerDevice = "Sony Computer Entertainment";
 
 	public const string MouseDevice = "Mouse";
 

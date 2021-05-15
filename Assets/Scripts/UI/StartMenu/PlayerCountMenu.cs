@@ -140,7 +140,7 @@ public class PlayerCountMenu
 
 
 		// If the amount of connected players is greater than 1 and less than or equal to 4 then the continue button can be pressed 
-		ContinueButton.interactable = m_ConnectedPlayers > 1 && m_ConnectedPlayers <= 4;
+		ContinueButton.interactable = m_ConnectedPlayers > 0 && m_ConnectedPlayers <= 4;
 
 		
 		int currentIndex = 0; // The current Index => 1, 2, 3, 4 

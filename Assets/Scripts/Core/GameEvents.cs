@@ -39,6 +39,9 @@ public static class GameEvents
 
 	public delegate void AsyncOperationFloatParameterDelegate(AsyncOperation p_AsyncOperation, float p_FloatParameter);
 
+	public delegate void SplitScreenParameterDelegate(SplitScreenType p_SplitScreen);
+
+
 
 	#endregion
 
@@ -81,6 +84,10 @@ public static class GameEvents
 	/// </summary>
 	public static GameDeviceListDelegate SetConnectedPlayersEvent;
 
+	/// <summary>
+	///		Called to set the character creation camera positions 
+	/// </summary>
+	public static SplitScreenParameterDelegate SetCharacterCreationCamerasEvent;
 	#endregion
 
 }

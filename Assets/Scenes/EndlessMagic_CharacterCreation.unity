@@ -601,8 +601,11 @@ MonoBehaviour:
   m_SelectableBroomPrefabs:
   - {fileID: 2569760691544840665, guid: 1322106f6e84c324bb329263e28a8287, type: 3}
   - {fileID: 4372498891498262091, guid: 9062dbbe22f4e1543918caa07cd947d1, type: 3}
-  wizardPrefabSpawnPoints: []
-  m_ActivePlayerCameras: []
+  wizardPrefabSpawnPoints:
+  - {fileID: 6543448250166350990}
+  - {fileID: 1986988046}
+  - {fileID: 1741501945}
+  - {fileID: 937925505}
   m_Debugging: 1
   m_UseWireMeshSphere: 1
   m_GizmoSphereSize: 0.48

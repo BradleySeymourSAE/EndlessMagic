@@ -211,6 +211,7 @@ public class GameManager : MonoBehaviour
 			{
 				// If the manufacturer matches the ps4 controller type, return the device as a ps4 controller 
 				case GameText.PS4ControllerDevice:
+					Debug.Log(p_ControllerInputDevice.description.manufacturer);
 					return InputController.Playstation;
 					// otherwise, if the manufactrer matches an empty string, just assume it's an xbox controller 
 				case GameText.XboxControllerDevice:
@@ -239,7 +240,6 @@ public class GameManager : MonoBehaviour
 			case InputDeviceChange.Added: // when an input device is added 
 				{ 
 				Debug.Log("[GameManager.HandleOnControllerInputDeviceChanged]: " + "Trying to add Input Device " + p_InputDevice.displayName + " State " + p_InputDeviceState);
-
 			
 				GameInputDevice s_newDevice = new GameInputDevice
 				{
