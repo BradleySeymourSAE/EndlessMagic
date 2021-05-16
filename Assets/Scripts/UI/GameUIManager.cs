@@ -43,7 +43,7 @@ public class GameUIManager : MonoBehaviour
 	/// <summary>
 	///		Reference to the Player Count Menu UI 
 	/// </summary>
-	public PlayerCountMenu PlayerCountMenuUI;
+	public PlayerJoinMenu PlayerCountMenuUI;
 
 	#endregion
 

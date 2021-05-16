@@ -19,9 +19,8 @@ public static class GameText
 
 	public const string MainMenuUI_Title = "Endless Magic";
 	public const string MainMenuUI_Subtitle = "Fight against your friends";
-	public const string MainMenuUI_Version = "Version 1.0.0 Development";
-	public const string MainMenuUI_SinglePlayerButton = "Single Player";
-	public const string MainMenuUI_CoopButton = "Co-op";
+	public const string MainMenuUI_Version = "Version 1.0.4 Development";
+	public const string MainMenuUI_StartButton = "Start Game";
 	public const string MainMenuUI_CreditsButton = "Credits";
 	public const string MainMenuUI_SettingsButton = "Settings";
 	public const string MainMenuUI_QuitButton = "Quit";

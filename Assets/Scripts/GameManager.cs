@@ -47,6 +47,8 @@ public class GameManager : MonoBehaviour
 	/// </summary>
 	[SerializeField] private List<PlayerInputDevice> m_ConnectedPlayers = new List<PlayerInputDevice>();
 
+	[SerializeField] private List<Wizard> m_Wizards = new List<Wizard>();
+
 	/// <summary>
 	///		Whether we are currently debugging 
 	/// </summary>
@@ -211,7 +213,6 @@ public class GameManager : MonoBehaviour
 			{
 				// If the manufacturer matches the ps4 controller type, return the device as a ps4 controller 
 				case GameText.PS4ControllerDevice:
-					Debug.Log(p_ControllerInputDevice.description.manufacturer);
 					return InputController.Playstation;
 					// otherwise, if the manufactrer matches an empty string, just assume it's an xbox controller 
 				case GameText.XboxControllerDevice:

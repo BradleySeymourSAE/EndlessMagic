@@ -14,4 +14,5 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/EndlessMagic_GameLevel_01.unity
     guid: 87138fd890c91bb45be32b9670d573bf
-  m_configObjects: {}
+  m_configObjects:
+    com.unity.input.settings: {fileID: 11400000, guid: 68bf8ca848ec6d14d8ccbbe3746bf51e, type: 2}

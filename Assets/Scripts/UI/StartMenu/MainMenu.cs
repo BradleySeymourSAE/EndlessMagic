@@ -40,14 +40,9 @@ public class MainMenu
 	public TMP_Text version;
 
 	/// <summary>
-	///		Single player button reference 
-	/// </summary>
-	public Button SinglePlayerButton;
-	
-	/// <summary>
 	///		Coop player button reference 
 	/// </summary>
-	public Button CoopButton;
+	public Button StartButton;
 	
 	/// <summary>
 	///		Credits button reference 
@@ -88,15 +83,13 @@ public class MainMenu
 		title.text = GameText.MainMenuUI_Title;
 		subtitle.text = GameText.MainMenuUI_Subtitle;
 		version.text = GameText.MainMenuUI_Version;
-
-		SinglePlayerButton.GetComponentInChildren<Text>().text = GameText.MainMenuUI_SinglePlayerButton;
-		SinglePlayerButton.onClick.RemoveAllListeners();
-		SinglePlayerButton.onClick.AddListener(StartSinglePlayerGame);
 		
 
-		CoopButton.GetComponentInChildren<Text>().text = GameText.MainMenuUI_CoopButton;
-		CoopButton.onClick.RemoveAllListeners();
-		CoopButton.onClick.AddListener(StartCoopGame);
+		StartButton.GetComponentInChildren<Text>().text = GameText.MainMenuUI_StartButton;
+		StartButton.onClick.RemoveAllListeners();
+		StartButton.onClick.AddListener(OpenPlayerJoinMenu);
+
+		StartButton.Select();
 
 		CreditsButton.GetComponentInChildren<Text>().text = GameText.MainMenuUI_CreditsButton;
 		CreditsButton.onClick.RemoveAllListeners();
@@ -121,6 +114,7 @@ public class MainMenu
 		if (ShouldDisplayScreen)
 		{ 
 			GameEvents.PlayMenuTransitionEvent?.Invoke();
+			StartButton.Select();
 		}
 
 
@@ -130,25 +124,11 @@ public class MainMenu
 
 	#region Private Methods 
 
-	/// <summary>
-	///		Starts the game in singleplayer mode 
-	/// </summary>
-	private void StartSinglePlayerGame()
-	{
-		Debug.Log("[MainMenu.StartSinglePlayerGame]: " + "Starting Single Player Game... Loading " + GameScenes.EndlessMagic_StartingMenu);
-
-		DisplayScreen(false);
-
-		GameEvents.PlayGUISelectedEvent?.Invoke();
-
-		SceneManager.LoadScene(GameScenes.EndlessMagic_StartingMenu);
-	}
-
 
 	/// <summary>
 	///		Starts the game in cooperative mode 
 	/// </summary>
-	private void StartCoopGame()
+	private void OpenPlayerJoinMenu()
 	{
 		// Hide Main Menu UI 
 		DisplayScreen(false);

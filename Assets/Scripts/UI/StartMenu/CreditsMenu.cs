@@ -84,6 +84,7 @@ public class CreditsMenu
 		if (ShouldDisplayCreditsMenu)
 		{
 			GameEvents.PlayMenuTransitionEvent?.Invoke();
+			CloseButton.Select();
 		}
 
 		CreditsMenuScreen.SetActive(ShouldDisplayCreditsMenu);

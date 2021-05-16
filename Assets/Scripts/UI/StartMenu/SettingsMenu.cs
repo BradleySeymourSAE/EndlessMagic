@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
 using TMPro;
 #endregion
 
@@ -94,6 +95,7 @@ public class SettingsMenu
 		if (ShouldDisplayCreditsMenu)
 		{
 			GameEvents.PlayMenuTransitionEvent?.Invoke();
+			CloseButton.Select();
 		}
 		
 		SettingsMenuScreen.SetActive(ShouldDisplayCreditsMenu);

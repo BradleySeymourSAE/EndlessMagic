@@ -31,6 +31,21 @@ public class WizardSelection : MonoBehaviour
 
 	#region Public Methods 
 
+
+	public void Setup(int p_SpawnedWizards)
+	{
+		wizards = new GameObject[p_SpawnedWizards];
+
+		for (int i = 0; i < transform.childCount; i++)
+		{
+			wizards[i] = transform.GetChild(i).gameObject;
+			wizards[i].SetActive(false);
+		}
+
+
+		wizards[0].SetActive(true);
+	}
+
 	/// <summary>
 	///		Selects the next wizard in the array of wizard prefabs 
 	/// </summary>

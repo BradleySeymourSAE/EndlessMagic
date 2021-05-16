@@ -39,20 +39,8 @@ public class CharacterCreationManager : MonoBehaviour
 	[SerializeField] private List<GameObject> m_SelectableWizardPrefabs = new List<GameObject>();
 
 	/// <summary>
-	///		Selection index for a wizard 
+	///		List of prefab spawn points 
 	/// </summary>
-	private int m_WizardSelectionIndex = 0;
-	
-	/// <summary>
-	///		List of selectable Brooms 
-	/// </summary>
-	[SerializeField] private List<GameObject> m_SelectableBroomPrefabs = new List<GameObject>();
-
-	/// <summary>
-	///		Selection index for the broom selection 
-	/// </summary>
-	private int m_BroomSelectionIndex = 0;
-	
 	[SerializeField] private List<Transform> wizardPrefabSpawnPoints = new List<Transform>();
 
 
@@ -82,6 +70,9 @@ public class CharacterCreationManager : MonoBehaviour
 	/// </summary>
 	[SerializeField] private Color m_CameraAimPositionColor = Color.green;
 
+	/// <summary>
+	///		Camera View List of Views
+	/// </summary>
 	public Dictionary<Rect, View> cameraViewrectDictionary = new Dictionary<Rect, View>
 	{
 		{ new Rect(0, 0, 1, 1), View.Single },
@@ -93,12 +84,20 @@ public class CharacterCreationManager : MonoBehaviour
 		{ new Rect(-0.5f, -0.5f, 1, 1), View.BottomLeft }
 	};
 
+	/// <summary>
+	///		Screen View Types 
+	/// </summary>
 	public enum View { Single, Top, TopLeft, TopRight, Bottom, BottomRight, BottomLeft };
 
 
-
+	/// <summary>
+	///		List of player cameras in the scene 
+	/// </summary>
 	[SerializeField] private List<Camera> m_PlayerCameras = new List<Camera>();
 
+	/// <summary>
+	///		The amount of enabled cameras in the scene 
+	/// </summary>
 	private int m_EnabledCameras;
 	#endregion
 
@@ -156,9 +155,13 @@ public class CharacterCreationManager : MonoBehaviour
 			m_EnabledCameras = GameManager.Instance.GetConnectedPlayersIndex;
 		}
 
+		Debug.Log("[CharacterCreationManager.Awake]: " + "Total Enabled Player Cameras: " + m_EnabledCameras);
+
 		SplitScreen = GetScreenType(m_EnabledCameras);
 
 		m_PlayerCameras.Clear();
+
+	
 
 
 		int currentIndex = 0; 
@@ -167,8 +170,6 @@ public class CharacterCreationManager : MonoBehaviour
 			currentIndex++;
 
 			GameObject camera = cinemachinePlayerCameras[i].gameObject;
-
-			Debug.Log("Total Enabled Player Cameras: " + m_EnabledCameras);
 
 			// Check if the camera should be enabled 
 			bool isCameraEnabled = m_EnabledCameras >= currentIndex == true;
@@ -185,12 +186,45 @@ public class CharacterCreationManager : MonoBehaviour
 		}
 
 		SetCameras(SplitScreen);
+		SetupPlayerCharacters(m_EnabledCameras);
 	}
 
 	#endregion
 
 	#region Public Methods
 
+	/// <summary>
+	///		Sets up the player characters with the amount of players have joined 
+	/// </summary>
+	/// <param name="amount"></param>
+	public void SetupPlayerCharacters(int amount)
+	{
+		// Loop through the amount of players 
+		for (int i = 0; i < amount; i++)
+		{
+			// Get the wizard spawn point 
+			Transform s_WizardSpawnPoint = wizardPrefabSpawnPoints[i];
+
+
+			// Loop through the wizard prefabs 
+			foreach (GameObject wizard in m_SelectableWizardPrefabs)
+			{ 
+				// Instantiate a new wizard option 
+				GameObject s_WizardOption = Instantiate(wizard, s_WizardSpawnPoint.position, Quaternion.identity);
+
+				// Set the transform's parent and layer so other camera's cant see it 
+				s_WizardOption.transform.SetParent(s_WizardSpawnPoint);
+				s_WizardOption.layer = s_WizardSpawnPoint.gameObject.layer;
+			}
+
+
+
+			WizardSelection s_WizardSelection = s_WizardSpawnPoint.gameObject.AddComponent<WizardSelection>();
+
+			// Initialize the wizard selection component with the wizard spawn point's child count 
+			s_WizardSelection.Setup(s_WizardSpawnPoint.childCount);
+		}
+	}
 
 	#endregion
 
