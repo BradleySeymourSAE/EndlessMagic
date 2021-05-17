@@ -23,7 +23,7 @@ public class CharacterObjectSpawnManager : MonoBehaviour
 	///		parenting, placing etc - That can be performed after once the scene has been loaded.
 	/// </summary>
 	public static Dictionary<int, List<string>> PlayerNames = new Dictionary<int, List<string>>();
-	public static Dictionary<int, string> ControlSchemes = new Dictionary<int, string>();
+	public static Dictionary<int, string> ControlActionSchemes = new Dictionary<int, string>();
 
 	[SerializeField] public static bool m_ShouldSpawnSelectedPlayers = false;
 	[SerializeField] public static bool m_ShouldPersistCursorObjects = false;
@@ -81,7 +81,7 @@ public class CharacterObjectSpawnManager : MonoBehaviour
 			}
 
 
-			ControlSchemes.Add(playerInput.playerIndex, playerInput.currentControlScheme);
+			ControlActionSchemes.Add(playerInput.playerIndex, playerInput.currentControlScheme);
 		}
 
 

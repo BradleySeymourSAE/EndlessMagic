@@ -43,20 +43,17 @@ public static class GameScenes
 				{
 					return EndlessMagic_StartingMenu;
 				}
-				break;
 			case Scenes.EndlessMagic_CharacterCreation:
 				{
 					return EndlessMagic_CharacterCreation;
 				}
-				break;
 			case Scenes.EndlessMagic_GameLevel_01:
 				{
 					return EndlessMagic_GameLevel_01;
 				}
-				break;
 		}
 
-		return null;
+		return p_SceneType.ToString();
 	}
 
 }

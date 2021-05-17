@@ -60,29 +60,16 @@ public class GameUIManager : MonoBehaviour
 	{
 		GameEvents.PlayGUISelectedEvent += PlayUISelected;
 		GameEvents.PlayMenuTransitionEvent += PlayMenuSwitched;
-		GameEvents.HandleUpdateDevicesEvent += UpdatedDevices;
-		GameEvents.HandleAllowMultipleDeviceInputEvent += SetAllowMultipleDeviceUIInput;
+
+		GameEvents.SetPlayerJoinedEvent += SetConnectedControllers;
 	}
 
 	private void OnDisable()
 	{
 		GameEvents.PlayGUISelectedEvent -= PlayUISelected;
 		GameEvents.PlayMenuTransitionEvent -= PlayMenuSwitched;
-		GameEvents.HandleUpdateDevicesEvent -= UpdatedDevices;
-		GameEvents.HandleAllowMultipleDeviceInputEvent -= SetAllowMultipleDeviceUIInput;
-	}
 
-	private void Awake()
-	{
-		if (Instance != null)
-		{
-			Destroy(gameObject);
-		}
-		else
-		{
-			Instance = this;
-			DontDestroyOnLoad(gameObject);
-		}
+		GameEvents.SetPlayerJoinedEvent -= SetConnectedControllers;
 	}
 
 	private void Start()
@@ -97,7 +84,6 @@ public class GameUIManager : MonoBehaviour
 		AudioManager.PlaySound(SoundCategory.UI_StartMenuBackgroundMusic);
 
 		GameEvents.PlayMenuTransitionEvent?.Invoke();
-		m_AllowMultipleDeviceInput = false;
 
 
 		DisplayMainMenu(true); // Displays the Main Menu UI 
@@ -139,28 +125,10 @@ public class GameUIManager : MonoBehaviour
 	/// <param name="show"></param>
 	public void DisplayPlayerCountMenu(bool show) => PlayerJoinMenuUI.DisplayScreen(show);
 
-	/// <summary>
-	///		Toggles allowing multiple device input while on the player join menu screen 
-	/// </summary>
-	/// <returns></returns>
-	public bool AllowPlayerJoinUIInput() => PlayerJoinMenuUI.IsVisible() == true;
-
-	/// <summary>
-	///		Toggles allowing multiple controller device inputs for UI 
-	/// </summary>
-	/// <param name="AllowMultipleControllerInputs"></param>
-	/// <returns></returns>
-	public bool AllowingControllerUIInput() => m_AllowMultipleDeviceInput == true;
-
+	
 	#endregion
 
 	#region Private Methods
-
-	/// <summary>
-	///		Sets whether multiple devices are able to use UI at the same time 
-	/// </summary>
-	/// <param name="ShouldAllowMultipleDevices"></param>
-	private void SetAllowMultipleDeviceUIInput(bool ShouldAllowMultipleDevices) => m_AllowMultipleDeviceInput = ShouldAllowMultipleDevices;
 
 	/// <summary>
 	///		 Play the UI sound when you click on any of the UI elements 
@@ -172,11 +140,8 @@ public class GameUIManager : MonoBehaviour
 	/// </summary>
 	private void PlayMenuSwitched() => AudioManager.PlaySound(SoundCategory.GUI_MenuSwitched);
 
-	/// <summary>
-	///		Handles updating the currently connected devices for the player count menu UI 
-	/// </summary>
-	private void UpdatedDevices() => PlayerJoinMenuUI.UpdateConnectedDevices();
 
+	private void SetConnectedControllers(int ConnectedControllers) => PlayerJoinMenuUI.UpdateConnectedDevices(ConnectedControllers);
 	#endregion
 
 }

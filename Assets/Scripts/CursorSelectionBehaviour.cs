@@ -11,8 +11,6 @@ using UnityEngine.InputSystem;
 public class CursorSelectionBehaviour : MonoBehaviour
 {
 
-	private float m_ScreenViewEdgeThreshold = 0.02f;
-
 	public bool objectSelected = false;
 	public GameObject playerSelection;
 

@@ -44,22 +44,6 @@
                     "expectedControlType": "Button",
                     "processors": "",
                     "interactions": ""
-                },
-                {
-                    "name": "Left",
-                    "type": "Button",
-                    "id": "40be46e1-6d25-4c80-b65f-feca6ca43a84",
-                    "expectedControlType": "Button",
-                    "processors": "",
-                    "interactions": ""
-                },
-                {
-                    "name": "Right",
-                    "type": "Button",
-                    "id": "e53f5141-f229-475b-87eb-707434a3fc5d",
-                    "expectedControlType": "Button",
-                    "processors": "",
-                    "interactions": ""
                 }
             ],
             "bindings": [
@@ -340,45 +324,23 @@
                 },
                 {
                     "name": "",
-                    "id": "c02513fd-e1a6-43ae-8c13-304106325cf3",
-                    "path": "<Gamepad>/leftStick/left",
+                    "id": "a0e8fa11-b235-416f-970a-d69fc0fda4f5",
+                    "path": "<HID::USB Gamepad >/button10",
                     "interactions": "",
                     "processors": "",
                     "groups": "Gamepad;Joystick",
-                    "action": "Left",
+                    "action": "Start",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
                 {
                     "name": "",
-                    "id": "e11a6991-6b53-4c91-b5b3-f781a28f0c50",
-                    "path": "<Gamepad>/dpad/left",
+                    "id": "4fdc128e-76d9-498d-ba2d-3b23a8780335",
+                    "path": "<HID::Generic   USB  Joystick  >/button10",
                     "interactions": "",
                     "processors": "",
                     "groups": "Gamepad;Joystick",
-                    "action": "Left",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "b23361c9-ff03-406b-bf6b-9e15dea685de",
-                    "path": "<Gamepad>/leftStick/right",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "Gamepad;Joystick",
-                    "action": "Right",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "5311cfd7-599c-47ea-8516-e07bb50f7bd8",
-                    "path": "<Gamepad>/dpad/right",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "Gamepad;Joystick",
-                    "action": "Right",
+                    "action": "Start",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 using TMPro;
 #endregion
@@ -59,13 +60,6 @@ public class PlayerJoinMenu
 	private GameUIManager m_GameUIManager;
 
 	/// <summary>
-	///		The total amount of currently connected devices 
-	/// </summary>
-	private int m_ConnectedDevices;
-
-	private int m_ConnectedPlayers;
-
-	/// <summary>
 	///		The player input container background color 
 	/// </summary>
 	[SerializeField] private Color m_PlayerInputContainerBackgroundColor = Color.black;
@@ -81,6 +75,9 @@ public class PlayerJoinMenu
 	/// </summary>
 	public void Setup(GameUIManager p_GameUIManager)
 	{
+
+		playerJoinStatusTextFields.Clear();
+
 		m_GameUIManager = p_GameUIManager;
 
 		title.text = GameText.PlayerCountUI_Title;
@@ -99,9 +96,17 @@ public class PlayerJoinMenu
 		{
 			Image image = container.GetComponent<Image>();
 			image.color = m_PlayerInputContainerBackgroundColor;
+
+			for (int i = 1; i < container.transform.childCount; i++)
+			{
+				TMP_Text statusText = container.transform.GetChild(i).GetComponent<TMP_Text>();
+				
+				statusText.text = GameText.PlayerCountUI_PlayerStatus_PressStart;
+
+				playerJoinStatusTextFields.Add(statusText);
+			}
 		}
 
-		UpdateConnectedDevices();
 	}
 
 	/// <summary>
@@ -121,36 +126,20 @@ public class PlayerJoinMenu
 	}
 
 	/// <summary>
-	///		Returns whether the player count menu screen is currently visible  
-	/// </summary>
-	/// <returns></returns>
-	public bool IsVisible() => PlayerJoinMenuScreen.activeInHierarchy == true;
-
-	/// <summary>
 	///		Updates the UI to display the currently connected devices and set the continue button to interactable if the 
 	///		amount of players is greater than 1 but less than or equal to 4 
 	/// </summary>
-	public void UpdateConnectedDevices()
+	public void UpdateConnectedDevices(int ConnectedPlayers)
 	{
-		// Check the game manager instance exists 
-		if (GameManager.Instance)
-		{ 
-			m_ConnectedDevices = GameManager.Instance.GetConnectedDeviceIndex;
-			m_ConnectedPlayers = GameManager.Instance.GetConnectedPlayersIndex;
-		}
-		else
-		{
-			Debug.LogWarning("[PlayerJoinMenu.UpdateConnectedDevices]: " + "There is no GameManager Instance!");
-			m_ConnectedDevices = 0;
-			m_ConnectedPlayers = 0;
-		}
-
-		Debug.Log("[PlayerJoinMenu.UpdateConnectedDevices]: " + "Connected Devices: " + m_ConnectedDevices);
-		Debug.Log("[PlayerJoinMenu.UpdateConnectedDevices]: " + "Connected Players: " + m_ConnectedPlayers);
+	
+		int s_ConnectedPlayers = ConnectedPlayers;
+		
+		
+		Debug.Log("[PlayerJoinMenu.UpdateConnectedDevices]: " + "Connected Players: " + s_ConnectedPlayers);
 
 
 		// If the amount of connected players is greater than 1 and less than or equal to 4 then the continue button can be pressed 
-		ContinueButton.interactable = m_ConnectedPlayers > 0 && m_ConnectedPlayers <= 4;
+		ContinueButton.interactable = s_ConnectedPlayers > 0 && s_ConnectedPlayers <= 4;
 
 		
 		int currentIndex = 0; // The current Index => 1, 2, 3, 4 
@@ -162,19 +151,15 @@ public class PlayerJoinMenu
 
 			TMP_Text textField = playerJoinStatusTextFields[i]; 
 
-			if (m_ConnectedPlayers >= currentIndex) // if the connected players index is greater than or equal to the current index value
+			if (s_ConnectedPlayers >= currentIndex) // if the connected players index is greater than or equal to the current index value
 			{
-				textField.text = GameText.PlayerCountUI_PlayerStatus_Locked; // then the player has joined 
+				textField.text = GameText.PlayerCountUI_PlayerStatus_Ready; // then the player has joined 
 			}
-			// Otherwise, if the connected players index is less than the current index and the total connected devices is greater than the current index 
-			else if (m_ConnectedPlayers < currentIndex && m_ConnectedDevices > currentIndex)
-			{
-				textField.text = GameText.PlayerCountUI_PlayerStatus_PressStart; // then the player can join by pressing start on their controller 
-			}
+			// Otherwise just display the press b to ready up 
 			else
 			{
-				// Otherwise, there is no controller connected 
-				textField.text = GameText.PlayerCountUI_PlayerStatus_ConnectController;
+				
+				textField.text = GameText.PlayerCountUI_PlayerStatus_PressStart; // then the player can join by pressing start on their controller 
 			}
 		}
 	}

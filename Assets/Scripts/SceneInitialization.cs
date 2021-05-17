@@ -50,11 +50,15 @@ public class SceneInitialization : MonoBehaviour
 		foreach (var player in CharacterObjectSpawnManager.Controllers)
 		{
 
-			var controller = CharacterObjectSpawnManager.Controllers[player.Key];
+			var playerController = CharacterObjectSpawnManager.Controllers[player.Key];
 			var currentPlayerName = CharacterObjectSpawnManager.PlayerNames[player.Key];
-			var currentPlayerControlScheme = CharacterObjectSpawnManager.ControlSchemes[player.Key];
+			var currentPlayerControlScheme = CharacterObjectSpawnManager.ControlActionSchemes[player.Key];
 
-			GameObject s_ParentGameObject = new GameObject();
+
+			Debug.Log("Current Player Name: " + currentPlayerName);
+
+
+			GameObject parentGameObject = new GameObject();
 
 			for (int i = 0; i < currentPlayerName.Count; i++)
 			{
@@ -63,8 +67,8 @@ public class SceneInitialization : MonoBehaviour
 
 				if (i == 0)
 				{
-					s_ParentGameObject = currentSelectionPrefab;
-					PlayerInput playerInput = PlayerInput.Instantiate(currentSelectionPrefab, player.Key, currentPlayerControlScheme, -1, controller);
+					parentGameObject = currentSelectionPrefab;
+					PlayerInput playerInput = PlayerInput.Instantiate(currentSelectionPrefab, player.Key, currentPlayerControlScheme, -1, playerController);
 
 					// Activates the player input component on the prefab that was instantiated 
 
@@ -77,15 +81,17 @@ public class SceneInitialization : MonoBehaviour
 
 					var inputUser = playerInput.user;
 
+					Debug.Log("Input User: " + inputUser.id);
+
 					playerInput.SwitchCurrentControlScheme(currentPlayerControlScheme);
 
-					InputUser.PerformPairingWithDevice(controller, inputUser, InputUserPairingOptions.UnpairCurrentDevicesFromUser);
+					InputUser.PerformPairingWithDevice(playerController, inputUser, InputUserPairingOptions.UnpairCurrentDevicesFromUser);
 				}
 
 				// Otherwise, If not the first object is unrelated, just instantiate and dont associate it with a PlayerInput type. 
 				else
 				{
-					Instantiate(currentSelectionPrefab, s_ParentGameObject.transform);
+					Instantiate(currentSelectionPrefab, parentGameObject.transform);
 				}
 			}
 		}

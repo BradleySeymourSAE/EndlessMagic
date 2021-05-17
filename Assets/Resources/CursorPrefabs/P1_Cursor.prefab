@@ -37,7 +37,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 25, y: 25}
+  m_SizeDelta: {x: 35, y: 35}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &128291716150572212
 CanvasRenderer:
@@ -103,7 +103,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 62899f850307741f2a39c98a8b639597, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Actions: {fileID: -944628639613478452, guid: f9845bca47d463940a3bdba4c752fd39, type: 3}
+  m_Actions: {fileID: -944628639613478452, guid: 08b27385760c0994ea00a0b5c9327334, type: 3}
   m_NotificationBehavior: 2
   m_UIInputModule: {fileID: 0}
   m_DeviceLostEvent:
@@ -200,38 +200,6 @@ MonoBehaviour:
         m_CallState: 2
     m_ActionId: d2f6764d-9e0d-4246-a0fc-6dcf94b4bbc6
     m_ActionName: Player/Start[/USB Gamepad /button10]
-  - m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 7824803196987812671}
-        m_TargetAssemblyTypeName: CursorSelectionBehaviour, Assembly-CSharp
-        m_MethodName: OnPreviousButton
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-    m_ActionId: 40be46e1-6d25-4c80-b65f-feca6ca43a84
-    m_ActionName: Player/Start1[/DualShock4GamepadHID/start]
-  - m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 7824803196987812671}
-        m_TargetAssemblyTypeName: CursorSelectionBehaviour, Assembly-CSharp
-        m_MethodName: OnNextButton
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-    m_ActionId: e53f5141-f229-475b-87eb-707434a3fc5d
-    m_ActionName: Player/Start2[/DualShock4GamepadHID/start]
   m_NeverAutoSwitchControlSchemes: 1
   m_DefaultControlScheme: Gamepad
   m_DefaultActionMap: Player

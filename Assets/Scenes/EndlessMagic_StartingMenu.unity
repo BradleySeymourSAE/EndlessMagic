@@ -387,6 +387,17 @@ MonoBehaviour:
   m_Spacing: {x: 50, y: 0}
   m_Constraint: 2
   m_ConstraintCount: 1
+--- !u!114 &167788861 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 5034781013005607343, guid: a78b02fa6573dfe49a677bf4ccd15d0d, type: 3}
+  m_PrefabInstance: {fileID: 1310490490}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 810ad52d087a5864c8609ec72d4b949b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &294920115
 GameObject:
   m_ObjectHideFlags: 0
@@ -3343,14 +3354,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6f96500509a448d4ebd21c4f88dad8e3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_TotalConnectedDevices: 0
-  m_TotalConnectedPlayers: 0
-  m_ConnectedDevices: []
-  m_ConnectedPlayers: []
-  m_Wizards: []
-  m_Debugging: 1
-  m_AllowPlayerJoining: 0
-  m_AllowControllerUIInput: 0
+  m_ConnectedPlayerIndex: 0
+  maximumAllowedPlayers: 4
 --- !u!1 &1295581830
 GameObject:
   m_ObjectHideFlags: 0
@@ -3493,6 +3498,10 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 5034781013005607343, guid: a78b02fa6573dfe49a677bf4ccd15d0d, type: 3}
+      propertyPath: inputAction.m_Id
+      value: 634e51d3-f87d-4959-82a3-c833b12b0fe7
+      objectReference: {fileID: 0}
+    - target: {fileID: 5034781013005607343, guid: a78b02fa6573dfe49a677bf4ccd15d0d, type: 3}
       propertyPath: m_SelectionPanel
       value: 
       objectReference: {fileID: 2023001615}
@@ -3500,6 +3509,30 @@ PrefabInstance:
       propertyPath: m_SelectionCanvas
       value: 
       objectReference: {fileID: 1849104750}
+    - target: {fileID: 5034781013005607343, guid: a78b02fa6573dfe49a677bf4ccd15d0d, type: 3}
+      propertyPath: inputAction.m_Name
+      value: Input
+      objectReference: {fileID: 0}
+    - target: {fileID: 5034781013005607343, guid: a78b02fa6573dfe49a677bf4ccd15d0d, type: 3}
+      propertyPath: m_PlayerJoinContainers.Array.size
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 5034781013005607343, guid: a78b02fa6573dfe49a677bf4ccd15d0d, type: 3}
+      propertyPath: m_PlayerJoinContainers.Array.data[0]
+      value: 
+      objectReference: {fileID: 294920116}
+    - target: {fileID: 5034781013005607343, guid: a78b02fa6573dfe49a677bf4ccd15d0d, type: 3}
+      propertyPath: m_PlayerJoinContainers.Array.data[1]
+      value: 
+      objectReference: {fileID: 913425212}
+    - target: {fileID: 5034781013005607343, guid: a78b02fa6573dfe49a677bf4ccd15d0d, type: 3}
+      propertyPath: m_PlayerJoinContainers.Array.data[2]
+      value: 
+      objectReference: {fileID: 363618289}
+    - target: {fileID: 5034781013005607343, guid: a78b02fa6573dfe49a677bf4ccd15d0d, type: 3}
+      propertyPath: m_PlayerJoinContainers.Array.data[3]
+      value: 
+      objectReference: {fileID: 1362395005}
     - target: {fileID: 5246707984231163806, guid: a78b02fa6573dfe49a677bf4ccd15d0d, type: 3}
       propertyPath: m_RootOrder
       value: 6
@@ -3543,6 +3576,46 @@ PrefabInstance:
     - target: {fileID: 5246707984231163806, guid: a78b02fa6573dfe49a677bf4ccd15d0d, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5702242760522827996, guid: a78b02fa6573dfe49a677bf4ccd15d0d, type: 3}
+      propertyPath: m_PlayerLeftEvent.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5702242760522827996, guid: a78b02fa6573dfe49a677bf4ccd15d0d, type: 3}
+      propertyPath: m_PlayerJoinedEvent.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5702242760522827996, guid: a78b02fa6573dfe49a677bf4ccd15d0d, type: 3}
+      propertyPath: m_PlayerLeftEvent.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 167788861}
+    - target: {fileID: 5702242760522827996, guid: a78b02fa6573dfe49a677bf4ccd15d0d, type: 3}
+      propertyPath: m_PlayerJoinedEvent.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 167788861}
+    - target: {fileID: 5702242760522827996, guid: a78b02fa6573dfe49a677bf4ccd15d0d, type: 3}
+      propertyPath: m_PlayerLeftEvent.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: OnPlayerLeft
+      objectReference: {fileID: 0}
+    - target: {fileID: 5702242760522827996, guid: a78b02fa6573dfe49a677bf4ccd15d0d, type: 3}
+      propertyPath: m_PlayerJoinedEvent.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: OnPlayerJoin
+      objectReference: {fileID: 0}
+    - target: {fileID: 5702242760522827996, guid: a78b02fa6573dfe49a677bf4ccd15d0d, type: 3}
+      propertyPath: m_PlayerLeftEvent.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: GamepadJoinGameBehaviour, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 5702242760522827996, guid: a78b02fa6573dfe49a677bf4ccd15d0d, type: 3}
+      propertyPath: m_PlayerJoinedEvent.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: GamepadJoinGameBehaviour, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 5702242760522827996, guid: a78b02fa6573dfe49a677bf4ccd15d0d, type: 3}
+      propertyPath: m_PlayerLeftEvent.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
+    - target: {fileID: 5702242760522827996, guid: a78b02fa6573dfe49a677bf4ccd15d0d, type: 3}
+      propertyPath: m_PlayerJoinedEvent.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
       objectReference: {fileID: 0}
     - target: {fileID: 7684743649466803738, guid: a78b02fa6573dfe49a677bf4ccd15d0d, type: 3}
       propertyPath: m_Name
@@ -6095,6 +6168,7 @@ MonoBehaviour:
     MaximumLength: 0
     clip: {fileID: 8300000, guid: ca41a90092e0ccc4e97a2307e96eef88, type: 3}
     source: {fileID: 0}
+  PlayerCursors: []
 --- !u!1 &2057502985
 GameObject:
   m_ObjectHideFlags: 0
