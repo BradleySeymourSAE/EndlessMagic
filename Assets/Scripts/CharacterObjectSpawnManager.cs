@@ -33,18 +33,18 @@ public class CharacterObjectSpawnManager : MonoBehaviour
 
 	private void OnEnable()
 	{
-		CursorSelectionBehaviour.HandleOnCharacterSelectedEvent += PlayerReady;
+		CursorSelectionBehaviour.HandleOnCharacterSelectedEvent += PlayerSelectedCharacter;
 	}
 
 	private void OnDisable()
 	{
-		CursorSelectionBehaviour.HandleOnCharacterSelectedEvent -= PlayerReady;
+		CursorSelectionBehaviour.HandleOnCharacterSelectedEvent -= PlayerSelectedCharacter;
 	}
 
 
 	#endregion
 
-	private void PlayerReady(object sender, EventArgs e)
+	private void PlayerSelectedCharacter(object sender, EventArgs e)
 	{
 
 		GameObject[] currentPlayerCursors = GameObject.FindGameObjectsWithTag("PlayerCursor");

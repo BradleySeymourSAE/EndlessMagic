@@ -132,7 +132,7 @@ public class PlayerJoinMenu
 	public void UpdateConnectedDevices(int ConnectedPlayers)
 	{
 	
-		int s_ConnectedPlayers = ConnectedPlayers;
+		int s_ConnectedPlayers = GameManager.Instance.ConnectedPlayers;
 		
 		
 		Debug.Log("[PlayerJoinMenu.UpdateConnectedDevices]: " + "Connected Players: " + s_ConnectedPlayers);

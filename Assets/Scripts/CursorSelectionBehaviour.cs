@@ -16,10 +16,7 @@ public class CursorSelectionBehaviour : MonoBehaviour
 
 	public static EventHandler HandleOnCharacterSelectedEvent;
 
-	private void Update()
-	{
-		
-	}
+
 
 	public void OnNextButton(InputAction.CallbackContext context)
 	{
@@ -33,14 +30,17 @@ public class CursorSelectionBehaviour : MonoBehaviour
 
 	public void OnSelect(InputAction.CallbackContext context)
 	{
-		Debug.Log("[CursorSelectionManager.OnSelect]: " + context);
+		if (context.phase == InputActionPhase.Started)
+		{
+			Debug.Log("[CursorSelectionManager.OnSelect]: " + "Ready to join the game -" + context.action.name);
+		}
 	}
 
 	public void OnStartButton(InputAction.CallbackContext context)
 	{
 		if (context.phase == InputActionPhase.Started)
 		{
-			HandleOnCharacterSelectedEvent?.Invoke(this, EventArgs.Empty);
+			Debug.Log("Start button has been pressed: " + context.action.name);
 		}
 	}
 }

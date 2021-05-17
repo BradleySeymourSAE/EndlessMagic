@@ -16,12 +16,9 @@ public class GameManager : MonoBehaviour
 
 	[SerializeField] public int ConnectedDevices { get; private set; } = 0;
 	
-	[SerializeField] public int ConnectedPlayers { 
-		get { return m_ConnectedPlayerIndex; } 
-		private set {	m_ConnectedPlayerIndex = value; } }
+	[SerializeField] public int ConnectedPlayers { get; private set; } = 0;
 
-	[Header("Debugging")]
-	[SerializeField] private int m_ConnectedPlayerIndex;
+
 	[HideInInspector] public int maximumAllowedPlayers = 4;
 
 	private void Awake()
@@ -50,5 +47,5 @@ public class GameManager : MonoBehaviour
 
 
 
-	private void SetConnectedPlayers(int Players) => ConnectedPlayers = Players;
+	private void SetConnectedPlayers(int Players) => ConnectedPlayers += Players;
 }

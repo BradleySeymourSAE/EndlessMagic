@@ -139,7 +139,7 @@ public class GamepadJoinGameBehaviour : MonoBehaviour
 	public void OnPlayerLeft(PlayerInput input)
 	{
 		numberOfActivePlayers = PlayerInput.all.Count;
-		Debug.Log("[GamepadJoinGameBehaviour.HandleOnPlayerLeft]: " + "There are currently " + numberOfActivePlayers + " players.");
+		Debug.Log("[GamepadJoinGameBehaviour.HandleOnPlayerLeft]: " + "Player left the game. There are " + numberOfActivePlayers + " remaining players.");
 
 		GameEvents.SetPlayerJoinedEvent?.Invoke(-1);
 	}

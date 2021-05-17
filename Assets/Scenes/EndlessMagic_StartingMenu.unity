@@ -3354,7 +3354,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6f96500509a448d4ebd21c4f88dad8e3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_ConnectedPlayerIndex: 0
   maximumAllowedPlayers: 4
 --- !u!1 &1295581830
 GameObject:
@@ -6146,7 +6145,7 @@ MonoBehaviour:
     pitch: 0.45
     length: 0
     MaximumLength: 0
-    clip: {fileID: 8300000, guid: 53dd5ac9e7f40194aa61ff82a66a04b1, type: 3}
+    clip: {fileID: 8300000, guid: f728e4e4b4fda9c46baf06581058bf19, type: 3}
     source: {fileID: 0}
   - name: UI Select
     Category: 2
@@ -6156,7 +6155,7 @@ MonoBehaviour:
     pitch: 1
     length: 0
     MaximumLength: 0
-    clip: {fileID: 8300000, guid: 83d31cf658b472f48a4c576ad6d41343, type: 3}
+    clip: {fileID: 8300000, guid: dd08890c899f4d8458d343d64fc12ea7, type: 3}
     source: {fileID: 0}
   - name: UI Menu Transition
     Category: 3
@@ -6166,7 +6165,7 @@ MonoBehaviour:
     pitch: 1
     length: 0
     MaximumLength: 0
-    clip: {fileID: 8300000, guid: ca41a90092e0ccc4e97a2307e96eef88, type: 3}
+    clip: {fileID: 8300000, guid: 9ea348b7cf7b8194183afb00eccef090, type: 3}
     source: {fileID: 0}
   PlayerCursors: []
 --- !u!1 &2057502985
