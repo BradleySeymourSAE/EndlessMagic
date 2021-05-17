@@ -68,6 +68,8 @@ public class MainMenu
 	/// </summary>
 	private GameUIManager m_GameUIManager;
 
+	private bool m_StartButtonIsSelected = false;
+
 	#endregion
 
 	#region Public Methods 
@@ -89,8 +91,6 @@ public class MainMenu
 		StartButton.onClick.RemoveAllListeners();
 		StartButton.onClick.AddListener(OpenPlayerJoinMenu);
 
-		StartButton.Select();
-
 		CreditsButton.GetComponentInChildren<Text>().text = GameText.MainMenuUI_CreditsButton;
 		CreditsButton.onClick.RemoveAllListeners();
 		CreditsButton.onClick.AddListener(OpenCreditsMenu);
@@ -111,14 +111,23 @@ public class MainMenu
 	/// <param name="ShouldDisplayScreen"></param>
 	public void DisplayScreen(bool ShouldDisplayScreen)
 	{
+		MainMenuScreen.SetActive(ShouldDisplayScreen);
+
 		if (ShouldDisplayScreen)
 		{ 
 			GameEvents.PlayMenuTransitionEvent?.Invoke();
-			StartButton.Select();
+			m_StartButtonIsSelected = true;
+		}
+		else
+		{
+			m_StartButtonIsSelected = false;
 		}
 
 
-		MainMenuScreen.SetActive(ShouldDisplayScreen);
+		if (m_StartButtonIsSelected)
+		{
+			StartButton.Select();
+		}
 	}
 	#endregion
 

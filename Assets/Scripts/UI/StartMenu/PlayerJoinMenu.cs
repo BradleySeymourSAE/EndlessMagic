@@ -10,7 +10,7 @@ using TMPro;
 
 [System.Serializable]
 /// <summary>
-///		Data class for the Settings Menu UI 
+///		Data class for the Player Join Menu UI 
 /// </summary>
 public class PlayerJoinMenu
 {
@@ -124,7 +124,7 @@ public class PlayerJoinMenu
 	///		Returns whether the player count menu screen is currently visible  
 	/// </summary>
 	/// <returns></returns>
-	public bool IsVisible() => PlayerJoinMenuScreen.active == true;
+	public bool IsVisible() => PlayerJoinMenuScreen.activeInHierarchy == true;
 
 	/// <summary>
 	///		Updates the UI to display the currently connected devices and set the continue button to interactable if the 
@@ -140,13 +140,13 @@ public class PlayerJoinMenu
 		}
 		else
 		{
-			Debug.LogWarning("[PlayerCountMenu.UpdateConnectedDevices]: " + "There is no GameManager Instance!");
+			Debug.LogWarning("[PlayerJoinMenu.UpdateConnectedDevices]: " + "There is no GameManager Instance!");
 			m_ConnectedDevices = 0;
 			m_ConnectedPlayers = 0;
 		}
 
-		Debug.Log("[PlayerCountMenu.UpdateConnectedDevices]: " + "Connected Devices: " + m_ConnectedDevices);
-		Debug.Log("[PlayerCountMenu.UpdateConnectedDevices]: " + "Connected Players: " + m_ConnectedPlayers);
+		Debug.Log("[PlayerJoinMenu.UpdateConnectedDevices]: " + "Connected Devices: " + m_ConnectedDevices);
+		Debug.Log("[PlayerJoinMenu.UpdateConnectedDevices]: " + "Connected Players: " + m_ConnectedPlayers);
 
 
 		// If the amount of connected players is greater than 1 and less than or equal to 4 then the continue button can be pressed 
@@ -207,7 +207,7 @@ public class PlayerJoinMenu
 
 
 		// Load the character creation scene 
-		Debug.Log("[PlayerCountMenu.HandleCooperativeCharacterCreation]: " + "Loading Co-op Character Creation Scene... " + GameScenes.EndlessMagic_CharacterCreation);
+		Debug.Log("[PlayerJoinMenu.HandleCooperativeCharacterCreation]: " + "Loading Co-op Character Creation Scene... " + GameScenes.EndlessMagic_CharacterCreation);
 		
 		// Load the Character Creation Scene Asyncronously
 		SceneManager.LoadSceneAsync(GameScenes.SelectGameSceneBySceneType(Scenes.EndlessMagic_CharacterCreation));

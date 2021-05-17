@@ -114,7 +114,7 @@ public class PlayerCountMenu
 	///		Returns whether the player count menu screen is currently visible  
 	/// </summary>
 	/// <returns></returns>
-	public bool IsVisible() => PlayerCountMenuScreen.active == true;
+	public bool IsVisible() => PlayerCountMenuScreen.activeInHierarchy == true;
 
 	/// <summary>
 	///		Updates the UI to display the currently connected devices and set the continue button to interactable if the 

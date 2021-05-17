@@ -47,7 +47,7 @@ public class GameManager : MonoBehaviour
 	/// </summary>
 	[SerializeField] private List<PlayerInputDevice> m_ConnectedPlayers = new List<PlayerInputDevice>();
 
-	[SerializeField] private List<Wizard> m_Wizards = new List<Wizard>();
+	[SerializeField] private List<WizardInputControls> m_Wizards = new List<WizardInputControls>();
 
 	/// <summary>
 	///		Whether we are currently debugging 
@@ -62,7 +62,9 @@ public class GameManager : MonoBehaviour
 	/// <summary>
 	///		Whether to allow multiple device input 
 	/// </summary>
-	[SerializeField] private bool m_AllowMultipleDeviceInput = false;
+	[SerializeField] private bool m_AllowPlayerJoining = false;
+
+	[SerializeField] private bool m_AllowControllerUIInput = false;
 
 	#endregion
 
@@ -131,24 +133,43 @@ public class GameManager : MonoBehaviour
 		yield return null;
 	}
 
-	private void Update()
+	private void FixedUpdate()
 	{
-		
-		m_AllowMultipleDeviceInput = GameUIManager.Instance.AllowMultipleDeviceInput() == true;
-		
+		m_AllowPlayerJoining = GameUIManager.Instance.AllowPlayerJoinUIInput();
+		m_AllowControllerUIInput = GameUIManager.Instance.AllowingControllerUIInput();
 
-		if (m_AllowMultipleDeviceInput)
-		{ 
-			if (Gamepad.current.startButton.wasPressedThisFrame)
-			{
-				Debug.Log("[GameManager.Update]: " + "Gamepad Input Device ID: " + Gamepad.current.deviceId + " pressed " + Gamepad.current.startButton);
-
-				GameEvents.AddPlayerInputDeviceEvent?.Invoke(Gamepad.current.deviceId);
-			}
+		if (m_AllowPlayerJoining)
+		{
+			CheckPlayerJoinInput();
 		}
-	
+
+		if (m_AllowControllerUIInput)
+		{
+			CheckControllerUIInput();
+		}
 	}
 
+	/// <summary>
+	///		Checks for input from a device 
+	/// </summary>
+	private void CheckPlayerJoinInput()
+	{
+		if (Gamepad.current.startButton.wasPressedThisFrame)
+		{
+			Debug.Log("[GameManager.CheckPlayerJoinInput]: " + "Gamepad Input Device ID: " + Gamepad.current.deviceId + " pressed " + Gamepad.current.startButton);
+
+				GameEvents.AddPlayerInputDeviceEvent?.Invoke(Gamepad.current.deviceId);
+		}
+	}
+
+
+	private void CheckControllerUIInput()
+	{
+		if (Gamepad.current.buttonSouth.isPressed)
+		{
+			Debug.Log(Gamepad.current.displayName + " pressed " + Gamepad.current.buttonSouth);
+		}
+	}
 	#endregion
 
 	#region Public Methods
@@ -375,7 +396,7 @@ public class GameManager : MonoBehaviour
 			m_ConnectedPlayers.Add(
 					new PlayerInputDevice
 					{
-						name = "Player 1",
+						name = "P1",
 						devices = temporary,
 						identity = PlayerIdentity.P1,
 					}
@@ -429,7 +450,6 @@ public class GameManager : MonoBehaviour
 				// Get the current input device 
 				GameInputDevice currentDevice = m_ConnectedDevices[i];
 
-
 				if (m_ConnectedPlayers.Any(player => player.devices.Any(device => device.identity == currentDevice.identity)))
 				{
 					Debug.LogWarning("[GameManager.AddPlayerInputDevice]: " + "Device already exists... returning.");
@@ -446,12 +466,13 @@ public class GameManager : MonoBehaviour
 
 				PlayerInputDevice s_PlayerDevice = new PlayerInputDevice
 				{
-					name = "Player " + nextPlayerIndex.ToString(),
+					name = "P" + nextPlayerIndex.ToString(),
 					devices = new List<GameInputDevice>
 					{
 						currentDevice,
 					},
 					identity = ReturnPlayerIdentity(nextPlayerIndex),
+
 				};
 
 
@@ -544,6 +565,7 @@ public class PlayerInputDevice
 	///		The player's identity 
 	/// </summary>
 	public PlayerIdentity identity;
+
 
 	#endregion
 

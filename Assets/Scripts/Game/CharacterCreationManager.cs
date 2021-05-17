@@ -2,7 +2,10 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using Cinemachine;
+using UnityEngine.InputSystem.UI;
+using UnityEngine.InputSystem;
 #endregion
 
 
@@ -27,6 +30,11 @@ public class CharacterCreationManager : MonoBehaviour
 
 
 	public SplitScreenType SplitScreen = SplitScreenType.SinglePlayer;
+
+	/// <summary>
+	///		Player prefab game object 
+	/// </summary>
+	public GameObject playerPrefab;
 
 	#endregion
 
@@ -161,9 +169,6 @@ public class CharacterCreationManager : MonoBehaviour
 
 		m_PlayerCameras.Clear();
 
-	
-
-
 		int currentIndex = 0; 
 		for (int i = 0; i < cinemachinePlayerCameras.Count; i++)
 		{
@@ -177,15 +182,21 @@ public class CharacterCreationManager : MonoBehaviour
 			// Set the camera's active state 
 			SetCameraActiveState(camera, isCameraEnabled);
 
+			// Get the camer component 
+			if (camera.GetComponent<Camera>())
+			{ 	
+				// Get the camera component 
+				Camera s_Camera = camera.GetComponent<Camera>();
 
-			Camera s_Camera = camera.GetComponent<Camera>();
-
-
-		
-			m_PlayerCameras.Add(s_Camera);
+				// Add the camera to the list of player cameras 
+				m_PlayerCameras.Add(s_Camera);
+			}
 		}
 
+		// Set the camera's up for split screen 
 		SetCameras(SplitScreen);
+
+		// Spawn in the character prefabs for the amount of enabled characters 
 		SetupPlayerCharacters(m_EnabledCameras);
 	}
 
@@ -228,13 +239,16 @@ public class CharacterCreationManager : MonoBehaviour
 
 	#endregion
 
+	/// <summary>
+	///		Sets the camera's positions based of the split screen type required 
+	/// </summary>
+	/// <param name="SplitScreen"></param>
 	private void SetCameras(SplitScreenType SplitScreen)
 	{
 			switch (SplitScreen)
 			{
 				case SplitScreenType.SinglePlayer:
 					{
-
 						foreach (KeyValuePair<Rect, View> element in cameraViewrectDictionary)
 						{
 							if (element.Value == View.Single)
@@ -311,23 +325,23 @@ public class CharacterCreationManager : MonoBehaviour
 	/// <param name="ShouldCameraBeEnabled"></param>
 	private void SetCameraActiveState(GameObject p_Camera, bool ShouldCameraBeEnabled) => p_Camera.SetActive(ShouldCameraBeEnabled);
 
+	/// <summary>
+	///		Returns the current screen type 
+	/// </summary>
+	/// <param name="p_TotalPlayers"></param>
+	/// <returns></returns>
 	private SplitScreenType GetScreenType(int p_TotalPlayers)
 	{
-		switch (p_TotalPlayers)
+		if (p_TotalPlayers > 0 && p_TotalPlayers <= 4)
 		{
-			case 1:
-				return SplitScreenType.SinglePlayer;
-			case 2:
-				return SplitScreenType.TwoPlayer;
-			case 3:
-				return SplitScreenType.ThreePlayer;
-			case 4:
-				return SplitScreenType.FourPlayer;
-			default:
-				Debug.LogWarning("[CharacterCreationManager.GetScreenType]: " + "Could not determine the split screen type.");
-				return SplitScreenType.SinglePlayer;
+			return (SplitScreenType)p_TotalPlayers;
+		}
+		else
+		{
+			return SplitScreenType.SinglePlayer;
 		}
 
+		return (SplitScreenType)p_TotalPlayers;
 	}
 
 }

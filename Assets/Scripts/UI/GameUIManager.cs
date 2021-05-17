@@ -5,6 +5,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using UnityEngine.InputSystem;
+using UnityEngine.EventSystems;
 using TMPro;
 #endregion
 
@@ -43,7 +44,13 @@ public class GameUIManager : MonoBehaviour
 	/// <summary>
 	///		Reference to the Player Count Menu UI 
 	/// </summary>
-	public PlayerJoinMenu PlayerCountMenuUI;
+	public PlayerJoinMenu PlayerJoinMenuUI;
+
+	#endregion
+
+	#region Private Variables
+
+	private bool m_AllowMultipleDeviceInput;
 
 	#endregion
 
@@ -54,6 +61,7 @@ public class GameUIManager : MonoBehaviour
 		GameEvents.PlayGUISelectedEvent += PlayUISelected;
 		GameEvents.PlayMenuTransitionEvent += PlayMenuSwitched;
 		GameEvents.HandleUpdateDevicesEvent += UpdatedDevices;
+		GameEvents.HandleAllowMultipleDeviceInputEvent += SetAllowMultipleDeviceUIInput;
 	}
 
 	private void OnDisable()
@@ -61,6 +69,7 @@ public class GameUIManager : MonoBehaviour
 		GameEvents.PlayGUISelectedEvent -= PlayUISelected;
 		GameEvents.PlayMenuTransitionEvent -= PlayMenuSwitched;
 		GameEvents.HandleUpdateDevicesEvent -= UpdatedDevices;
+		GameEvents.HandleAllowMultipleDeviceInputEvent -= SetAllowMultipleDeviceUIInput;
 	}
 
 	private void Awake()
@@ -82,18 +91,24 @@ public class GameUIManager : MonoBehaviour
 		MainMenuUI.Setup(this);
 		CreditsMenuUI.Setup(this);
 		SettingsMenuUI.Setup(this);
-		PlayerCountMenuUI.Setup(this);
+		PlayerJoinMenuUI.Setup(this);
 
 
 		AudioManager.PlaySound(SoundCategory.UI_StartMenuBackgroundMusic);
 
 		GameEvents.PlayMenuTransitionEvent?.Invoke();
+		m_AllowMultipleDeviceInput = false;
 
 
 		DisplayMainMenu(true); // Displays the Main Menu UI 
 		DisplayCreditsMenu(false); // Hides the Settings Menu UI  
 		DisplaySettingsMenu(false); // Hides the Settings Menu UI 
 		DisplayPlayerCountMenu(false); // Hides the Player Count UI 
+	
+		if (GameObject.Find("StartButton"))
+		{
+			EventSystem.current.SetSelectedGameObject(GameObject.Find("StartButton"));
+		}
 	}
 
 	#endregion
@@ -122,17 +137,30 @@ public class GameUIManager : MonoBehaviour
 	///		Displays the player count menu 
 	/// </summary>
 	/// <param name="show"></param>
-	public void DisplayPlayerCountMenu(bool show) => PlayerCountMenuUI.DisplayScreen(show);
+	public void DisplayPlayerCountMenu(bool show) => PlayerJoinMenuUI.DisplayScreen(show);
 
 	/// <summary>
-	///		Toggles allowing multiple device input 
+	///		Toggles allowing multiple device input while on the player join menu screen 
 	/// </summary>
 	/// <returns></returns>
-	public bool AllowMultipleDeviceInput() => PlayerCountMenuUI.IsVisible() == true;
+	public bool AllowPlayerJoinUIInput() => PlayerJoinMenuUI.IsVisible() == true;
+
+	/// <summary>
+	///		Toggles allowing multiple controller device inputs for UI 
+	/// </summary>
+	/// <param name="AllowMultipleControllerInputs"></param>
+	/// <returns></returns>
+	public bool AllowingControllerUIInput() => m_AllowMultipleDeviceInput == true;
 
 	#endregion
 
 	#region Private Methods
+
+	/// <summary>
+	///		Sets whether multiple devices are able to use UI at the same time 
+	/// </summary>
+	/// <param name="ShouldAllowMultipleDevices"></param>
+	private void SetAllowMultipleDeviceUIInput(bool ShouldAllowMultipleDevices) => m_AllowMultipleDeviceInput = ShouldAllowMultipleDevices;
 
 	/// <summary>
 	///		 Play the UI sound when you click on any of the UI elements 
@@ -147,7 +175,7 @@ public class GameUIManager : MonoBehaviour
 	/// <summary>
 	///		Handles updating the currently connected devices for the player count menu UI 
 	/// </summary>
-	private void UpdatedDevices() => PlayerCountMenuUI.UpdateConnectedDevices();
+	private void UpdatedDevices() => PlayerJoinMenuUI.UpdateConnectedDevices();
 
 	#endregion
 

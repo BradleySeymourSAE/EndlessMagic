@@ -39,8 +39,7 @@ public static class GameEvents
 
 	public delegate void AsyncOperationFloatParameterDelegate(AsyncOperation p_AsyncOperation, float p_FloatParameter);
 
-	// public delegate void SplitScreenParameterDelegate(SplitScreenType p_SplitScreen);
-
+	public delegate void BoolParameterDelegate(bool p_BooleanParameter);
 
 
 	#endregion
@@ -65,6 +64,11 @@ public static class GameEvents
 	public static VoidDelegate HandleUpdateDevicesEvent;
 
 	/// <summary>
+	///		Called to allow multiple device input 
+	/// </summary>
+	public static BoolParameterDelegate HandleAllowMultipleDeviceInputEvent;
+
+	/// <summary>
 	///		Called on start to load the currently connected devices
 	/// </summary>
 	public static VoidDelegate LoadConnectedDevicesEvent;
@@ -84,10 +88,6 @@ public static class GameEvents
 	/// </summary>
 	public static GameDeviceListDelegate SetConnectedPlayersEvent;
 
-	/// <summary>
-	///		Called to set the character creation camera positions 
-	/// </summary>
-	// public static SplitScreenParameterDelegate SetCharacterCreationCamerasEvent;
 	#endregion
 
 }
