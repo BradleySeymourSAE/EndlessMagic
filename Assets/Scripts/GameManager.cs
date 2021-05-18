@@ -44,7 +44,12 @@ public class GameManager : MonoBehaviour
 	/// <summary>
 	///		Should players be allowed to join in? 
 	/// </summary>
-	[SerializeField] public bool AllowPlayerJoining;
+	public bool AllowPlayerJoining;
+
+	/// <summary>
+	///		Allow Character Selecting 
+	/// </summary>
+	public bool AllowCharacterSelecting = false;
 
 	/// <summary>
 	///		The amount of time to wait after all players have ready'd up 
@@ -54,6 +59,8 @@ public class GameManager : MonoBehaviour
 	#endregion
 
 	#region Private Variables 
+
+	[SerializeField] private List<CursorSelectionBehaviour> m_SelectionCursors = new List<CursorSelectionBehaviour>();
 
 	/// <summary>
 	///		Reference to the Game UI Manager Instance 
@@ -69,6 +76,9 @@ public class GameManager : MonoBehaviour
 	/// </summary>
 	private void Awake()
 	{
+		m_SelectionCursors.Clear();
+
+
 		if (Instance != null)
 		{
 			Destroy(gameObject);
@@ -80,6 +90,7 @@ public class GameManager : MonoBehaviour
 		}
 
 		AllowPlayerJoining = false;
+		AllowCharacterSelecting = false;
 
 		if (GameUIManager.Instance)
 		{
@@ -93,6 +104,8 @@ public class GameManager : MonoBehaviour
 	private void OnEnable()
 	{
 		GameEvents.SetPlayerJoinedEvent += SetConnectedPlayers;
+
+		GameEvents.SetCharacterCreationCursorEvent += SetCharacterCreationCursors;
 	}
 
 	/// <summary>
@@ -101,11 +114,15 @@ public class GameManager : MonoBehaviour
 	private void OnDisable()
 	{
 		GameEvents.SetPlayerJoinedEvent -= SetConnectedPlayers;
+
+		GameEvents.SetCharacterCreationCursorEvent -= SetCharacterCreationCursors;
 	}
 
 	private void Update()
 	{
 		CheckPlayerJoiningIsAllowed();
+
+		CheckAllowCharacterCreation();
 	}
 
 	#endregion
@@ -116,12 +133,38 @@ public class GameManager : MonoBehaviour
 	///		Sets the amount of connected players 
 	/// </summary>
 	/// <param name="Players"></param>
-	private void SetConnectedPlayers(int Players) => ConnectedPlayers += Players;
+	private void SetConnectedPlayers(int Players) => ConnectedPlayers = Players;
 
 	/// <summary>
 	///		Are player's allowed to join into the game? 
 	/// </summary>
 	private void CheckPlayerJoiningIsAllowed() => AllowPlayerJoining = GameUIManager.Instance.IsDisplayingPlayerJoinMenu();
+
+	private void CheckAllowCharacterCreation() => AllowCharacterSelecting = Instance.m_SelectionCursors.Count > 0 == true;
+
+
+	private void SetCharacterCreationCursors(List<GameObject> cursors)
+	{
+		m_SelectionCursors.Clear();
+
+		for (int i = 0; i < cursors.Count; i++)
+		{
+			if (!cursors[i].GetComponent<CursorSelectionBehaviour>())
+			{
+				return;
+			}
+			
+				Transform s_CursorTransform = cursors[i].transform;
+
+				s_CursorTransform.SetParent(transform);
+
+				m_SelectionCursors.Add(cursors[i].GetComponent<CursorSelectionBehaviour>());
+
+		}
+
+
+
+	}
 
 	#endregion
 

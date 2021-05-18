@@ -47,7 +47,7 @@ public class CharacterObjectSpawnManager : MonoBehaviour
 	private void PlayerSelectedCharacter(object sender, EventArgs e)
 	{
 
-		GameObject[] currentPlayerCursors = GameObject.FindGameObjectsWithTag("PlayerCursor");
+		GameObject[] currentPlayerCursors = GameObject.FindGameObjectsWithTag("Cursor");
 
 
 		foreach (var cursor in currentPlayerCursors)
@@ -85,24 +85,12 @@ public class CharacterObjectSpawnManager : MonoBehaviour
 		}
 
 
+		m_ShouldPersistCursorObjects = true;
+
+		m_ShouldSpawnSelectedPlayers = true;
 	
 
 		// Load the scene 
 		SceneManager.LoadSceneAsync(GameScenes.EndlessMagic_GameLevel_01);
-
-		Debug.Log("Enable player spawning in 3 seconds!");
-		Invoke(nameof(EnablePlayerSpawning), 3f);
-	}
-
-
-	private void EnablePlayerSpawning()
-	{
-		Debug.Log("Enabling player spawning!");
-		// Set this if done selecting players, then run the next scene - Where they will be spawned in 
-		m_ShouldSpawnSelectedPlayers = true;
-
-		// Set this if going through multiple selection screens - in this case we dont want to spawn the cursors 
-		m_ShouldPersistCursorObjects = false;
-
 	}
 }

@@ -75,7 +75,7 @@ public class PlayerJoinMenu
 	/// <summary>
 	///		List of players that have ready'd up 
 	/// </summary>
-	[SerializeField] private List<GameObject> readyPlayers = new List<GameObject>();
+	[SerializeField] private List<GameObject> readyPlayerCursors = new List<GameObject>();
 
 	/// <summary>
 	///		Reference to start the countdown timer 
@@ -92,7 +92,7 @@ public class PlayerJoinMenu
 	public void Setup(GameUIManager p_GameUIManager)
 	{
 		playerJoinStatusTextFields.Clear();
-		readyPlayers.Clear();
+		readyPlayerCursors.Clear();
 		m_GameUIManager = p_GameUIManager;
 
 		title.text = GameText.PlayerJoinUI_Title;
@@ -142,8 +142,17 @@ public class PlayerJoinMenu
 	public void HandleCooperativeCharacterCreation()
 	{
 
+		GameEvents.SetCharacterCreationCursorEvent?.Invoke(readyPlayerCursors);
+
+
+
+
 		DisplayScreen(false); // Hide the player count menu UI
 
+
+		// Setup the camera references 
+
+		// 
 
 		// Load the character creation scene 
 		Debug.Log("[PlayerJoinMenu.HandleCooperativeCharacterCreation]: " + "Loading Co-op Character Creation Scene... " + GameScenes.EndlessMagic_CharacterCreation);
@@ -163,7 +172,7 @@ public class PlayerJoinMenu
 		int s_ConnectedPlayers = GameManager.Instance.ConnectedPlayers;
 
 		// If the readyPlayers count is equal to the amount of connected players then the button is interactable 
-		shouldStartCountdown = readyPlayers.Count >= s_ConnectedPlayers && s_ConnectedPlayers > 1 ? true : false;
+		shouldStartCountdown = readyPlayerCursors.Count >= s_ConnectedPlayers && s_ConnectedPlayers > 1 ? true : false;
 
 
 		if (shouldStartCountdown)
@@ -195,7 +204,7 @@ public class PlayerJoinMenu
 		if (isPlayerReady)
 		{
 			// If the player already exists in the list 
-			if (readyPlayers.Contains(PlayerGameObject))
+			if (readyPlayerCursors.Contains(PlayerGameObject))
 			{
 				// Return 
 				return;
@@ -215,14 +224,14 @@ public class PlayerJoinMenu
 		
 
 				// Add the player to the ready players list 
-				readyPlayers.Add(PlayerGameObject);
+				readyPlayerCursors.Add(PlayerGameObject);
 			}
 		}
 		// Otherwise, if the player is not ready or has un-ready'd up 
 		else
 		{
 			// If the list does not contain the playerCurso Game Object then we want to return 
-			if (!readyPlayers.Contains(PlayerGameObject))
+			if (!readyPlayerCursors.Contains(PlayerGameObject))
 			{
 				return;
 			}
@@ -241,7 +250,7 @@ public class PlayerJoinMenu
 
 				
 				// Remove the player from the readyPlayers list 
-				readyPlayers.Remove(PlayerGameObject);
+				readyPlayerCursors.Remove(PlayerGameObject);
 			}
 		}
 
@@ -275,7 +284,7 @@ public class PlayerJoinMenu
 			}
 		}
 
-		readyPlayers.Clear();
+		readyPlayerCursors.Clear();
 
 		// Hides the Credits Menu UI 
 		DisplayScreen(false);

@@ -190,7 +190,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f4044717213e31446939f7bd49c896ea, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_TrackedObjectOffset: {x: -1.1, y: 0.79, z: -0.37}
+  m_TrackedObjectOffset: {x: -1.1, y: 0.79, z: -0.85}
   m_LookaheadTime: 0
   m_LookaheadSmoothing: 10
   m_LookaheadIgnoreY: 0
@@ -249,7 +249,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Navigation:
-    m_Mode: 4
+    m_Mode: 0
     m_WrapAround: 0
     m_SelectOnUp: {fileID: 0}
     m_SelectOnDown: {fileID: 1506171853}
@@ -388,7 +388,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Navigation:
-    m_Mode: 4
+    m_Mode: 0
     m_WrapAround: 0
     m_SelectOnUp: {fileID: 0}
     m_SelectOnDown: {fileID: 1999245717}
@@ -508,7 +508,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Navigation:
-    m_Mode: 4
+    m_Mode: 0
     m_WrapAround: 0
     m_SelectOnUp: {fileID: 0}
     m_SelectOnDown: {fileID: 774154939}
@@ -587,7 +587,7 @@ GameObject:
   m_Component:
   - component: {fileID: 228623112}
   m_Layer: 14
-  m_Name: WizardSpawn_P4
+  m_Name: P4_WizardSelectionSpawn
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -658,7 +658,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Navigation:
-    m_Mode: 4
+    m_Mode: 0
     m_WrapAround: 0
     m_SelectOnUp: {fileID: 0}
     m_SelectOnDown: {fileID: 412870294}
@@ -923,7 +923,7 @@ MonoBehaviour:
   m_BlockingObjects: 0
   m_BlockingMask:
     serializedVersion: 2
-    m_Bits: 4294967295
+    m_Bits: 2103
 --- !u!114 &285640141
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1039,7 +1039,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Navigation:
-    m_Mode: 4
+    m_Mode: 0
     m_WrapAround: 0
     m_SelectOnUp: {fileID: 0}
     m_SelectOnDown: {fileID: 1999245717}
@@ -1241,7 +1241,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Navigation:
-    m_Mode: 4
+    m_Mode: 0
     m_WrapAround: 0
     m_SelectOnUp: {fileID: 1602984857}
     m_SelectOnDown: {fileID: 0}
@@ -1513,32 +1513,37 @@ MonoBehaviour:
   m_GameObject: {fileID: 488278870}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 37957bd3c022a0f4eb515357fc276dbf, type: 3}
+  m_Script: {fileID: 11500000, guid: e512243c339402240b44a5b2cf2320e6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cinemachinePlayerCameras:
+  playerSelectPlatformSpawnPoints:
+  - {fileID: 737409180}
+  - {fileID: 615741158}
+  - {fileID: 1322841450}
+  - {fileID: 1323052410}
+  playerSelectPlatformPrefabs:
+  - {fileID: 6783862404822948604, guid: 84ad5f4ca908cad409584d40ce37f8fa, type: 3}
+  - {fileID: 6742109234543508266, guid: df646d6b3da32cc44a561be17752a0d9, type: 3}
+  - {fileID: 979574336415075627, guid: e6e5262de686bb541924d419070591fb, type: 3}
+  - {fileID: 3644328824218854091, guid: 10935db54ec7b294e9ee44c51bc1897d, type: 3}
+  wizardPrefabs:
+  - {fileID: 97228928702384017, guid: 66c0dc7aecd5078458d36c9b8c7f608e, type: 3}
+  - {fileID: 2826883997193008140, guid: 16ca736d57c54c048b380625b2295125, type: 3}
+  - {fileID: 2129288597756358962, guid: 0fd839bda3892d34384272e86864e3a8, type: 3}
+  - {fileID: 7180007383265253465, guid: d983c26fea1d1524e90fb7a818a4e1d0, type: 3}
+  - {fileID: 5214663469627187342, guid: ff9ecb8dc6cc4794ea0d68b69c455cc8, type: 3}
+  m_WizardSpawnPoints: []
+  m_SpawnedWizards: []
+  m_PlayerSelectionCameras:
   - {fileID: 1088186389}
   - {fileID: 1006244101}
   - {fileID: 671972973}
   - {fileID: 1446326351}
-  SplitScreen: 1
-  m_SelectableWizardPrefabs:
-  - {fileID: 1450514350943513865, guid: 4be13af4edc7fd842951fb68bf5e6e76, type: 3}
-  - {fileID: 573210992517192542, guid: 3d89a03ee26302c44a5f3a2a7a06dde2, type: 3}
-  - {fileID: 5792909416322948974, guid: dd8eaee0e19b4034383319b788757008, type: 3}
-  - {fileID: 3088549459956780044, guid: 1cefe925c6804a2438258c7ff271252f, type: 3}
-  - {fileID: 7948023535483965052, guid: 972c9e58b3572b34082eb2a357d718ab, type: 3}
-  wizardPrefabSpawnPoints:
-  - {fileID: 513051663}
-  - {fileID: 1803816180}
-  - {fileID: 1097909437}
-  - {fileID: 228623112}
+  m_Players: 0
+  m_PlatformSpawnPoint: {r: 1, g: 0, b: 0, a: 1}
+  m_GizmoSize: 0.5
   m_Debugging: 1
-  m_UseWireMeshSphere: 1
-  m_GizmoSphereSize: 0.25
-  m_CameraGizmoColor: {r: 1, g: 0, b: 0, a: 1}
-  m_CameraAimPositionColor: {r: 0, g: 1, b: 0, a: 1}
-  m_PlayerCameras: []
+  m_UseWireSphere: 1
 --- !u!1 &513051662
 GameObject:
   m_ObjectHideFlags: 0
@@ -1549,7 +1554,7 @@ GameObject:
   m_Component:
   - component: {fileID: 513051663}
   m_Layer: 11
-  m_Name: WizardSpawn_P1
+  m_Name: P1_WizardSelectionSpawn
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1628,7 +1633,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 530162313}
-  m_LocalRotation: {x: -0.01490008, y: -0.028601553, z: -0.0004263872, w: 0.9994798}
+  m_LocalRotation: {x: -0.0153718805, y: -0.06869359, z: -0.0010585763, w: 0.99751884}
   m_LocalPosition: {x: 33.663197, y: 22.01, z: -72.26513}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
@@ -1776,7 +1781,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 602000246}
-  m_LocalRotation: {x: -0.014900092, y: -0.028601673, z: -0.0004263894, w: 0.9994798}
+  m_LocalRotation: {x: -0.015371854, y: -0.06869369, z: -0.0010585758, w: 0.99751884}
   m_LocalPosition: {x: 3.6631966, y: 22.01, z: -72.26513}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
@@ -1866,6 +1871,36 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 604404659}
   m_Mesh: {fileID: 1134962270381272332, guid: 0a30b9c59b9cd85449ab991c3607456b, type: 3}
+--- !u!1 &615741157
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 615741158}
+  m_Layer: 0
+  m_Name: PlatformSpawnPoint_2
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &615741158
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 615741157}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 10, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 1430784265}
+  m_RootOrder: 5
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &671972969
 GameObject:
   m_ObjectHideFlags: 0
@@ -2001,7 +2036,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 671972969}
-  m_LocalRotation: {x: -0.014900087, y: -0.028601553, z: -0.0004263874, w: 0.9994798}
+  m_LocalRotation: {x: -0.015371858, y: -0.06869356, z: -0.0010585741, w: 0.99751884}
   m_LocalPosition: {x: 23.663197, y: 22.01, z: -72.26513}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
@@ -2119,7 +2154,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Navigation:
-    m_Mode: 4
+    m_Mode: 0
     m_WrapAround: 0
     m_SelectOnUp: {fileID: 0}
     m_SelectOnDown: {fileID: 1506171853}
@@ -2262,7 +2297,7 @@ MonoBehaviour:
   m_BlockingObjects: 0
   m_BlockingMask:
     serializedVersion: 2
-    m_Bits: 4294967295
+    m_Bits: 4151
 --- !u!114 &695536005
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2362,7 +2397,7 @@ MonoBehaviour:
   m_BlockingObjects: 0
   m_BlockingMask:
     serializedVersion: 2
-    m_Bits: 4294967295
+    m_Bits: 8247
 --- !u!114 &702532786
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2407,6 +2442,36 @@ Canvas:
   m_SortingLayerID: 0
   m_SortingOrder: 0
   m_TargetDisplay: 0
+--- !u!1 &737409179
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 737409180}
+  m_Layer: 0
+  m_Name: PlatformSpawnPoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &737409180
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 737409179}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 1430784265}
+  m_RootOrder: 4
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &745393698
 GameObject:
   m_ObjectHideFlags: 0
@@ -2542,7 +2607,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Navigation:
-    m_Mode: 4
+    m_Mode: 0
     m_WrapAround: 0
     m_SelectOnUp: {fileID: 1316848716}
     m_SelectOnDown: {fileID: 0}
@@ -2980,7 +3045,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1005676183}
-  m_LocalRotation: {x: -0.014900087, y: -0.028601553, z: -0.0004263874, w: 0.9994798}
+  m_LocalRotation: {x: -0.015371858, y: -0.06869356, z: -0.0010585741, w: 0.99751884}
   m_LocalPosition: {x: 23.663197, y: 22.01, z: -72.26513}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
@@ -3123,7 +3188,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1006244097}
-  m_LocalRotation: {x: -0.0149000725, y: -0.028601667, z: -0.00042638872, w: 0.9994798}
+  m_LocalRotation: {x: -0.0153718535, y: -0.068693675, z: -0.0010585755, w: 0.99751884}
   m_LocalPosition: {x: 13.663197, y: 22.01, z: -72.26513}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
@@ -3549,7 +3614,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1088186384}
-  m_LocalRotation: {x: -0.014900092, y: -0.028601673, z: -0.0004263894, w: 0.9994798}
+  m_LocalRotation: {x: -0.015371854, y: -0.06869369, z: -0.0010585758, w: 0.99751884}
   m_LocalPosition: {x: 3.6631966, y: 22.01, z: -72.26513}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
@@ -3647,7 +3712,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1097909437}
   m_Layer: 13
-  m_Name: WizardSpawn_P3
+  m_Name: P3_WizardSelectionSpawn
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3677,7 +3742,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1108788919}
   m_Layer: 14
-  m_Name: PlayerSelectionPlatform_Player4
+  m_Name: P4_PlayerSelectPlatform
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3982,7 +4047,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f4044717213e31446939f7bd49c896ea, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_TrackedObjectOffset: {x: -1.1, y: 0.79, z: -0.37}
+  m_TrackedObjectOffset: {x: -1.1, y: 0.79, z: -0.85}
   m_LookaheadTime: 0
   m_LookaheadSmoothing: 10
   m_LookaheadIgnoreY: 0
@@ -4232,7 +4297,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Navigation:
-    m_Mode: 4
+    m_Mode: 0
     m_WrapAround: 0
     m_SelectOnUp: {fileID: 0}
     m_SelectOnDown: {fileID: 774154939}
@@ -4301,6 +4366,66 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1316848714}
   m_CullTransparentMesh: 1
+--- !u!1 &1322841449
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1322841450}
+  m_Layer: 0
+  m_Name: PlatformSpawnPoint_3
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1322841450
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1322841449}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 20, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 1430784265}
+  m_RootOrder: 6
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1323052409
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1323052410}
+  m_Layer: 0
+  m_Name: PlatformSpawnPoint_4
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1323052410
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1323052409}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 30, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 1430784265}
+  m_RootOrder: 7
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1338155915
 GameObject:
   m_ObjectHideFlags: 3
@@ -4368,7 +4493,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f4044717213e31446939f7bd49c896ea, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_TrackedObjectOffset: {x: -1.1, y: 0.79, z: -0.37}
+  m_TrackedObjectOffset: {x: -1.1, y: 0.79, z: -0.85}
   m_LookaheadTime: 0
   m_LookaheadSmoothing: 10
   m_LookaheadIgnoreY: 0
@@ -4509,6 +4634,10 @@ Transform:
   - {fileID: 1675094200}
   - {fileID: 1803991899}
   - {fileID: 1108788919}
+  - {fileID: 737409180}
+  - {fileID: 615741158}
+  - {fileID: 1322841450}
+  - {fileID: 1323052410}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -4647,7 +4776,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1446326347}
-  m_LocalRotation: {x: -0.01490008, y: -0.028601553, z: -0.0004263872, w: 0.9994798}
+  m_LocalRotation: {x: -0.0153718805, y: -0.06869359, z: -0.0010585763, w: 0.99751884}
   m_LocalPosition: {x: 33.663197, y: 22.01, z: -72.26513}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
@@ -4874,7 +5003,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Navigation:
-    m_Mode: 4
+    m_Mode: 0
     m_WrapAround: 0
     m_SelectOnUp: {fileID: 57695713}
     m_SelectOnDown: {fileID: 57695713}
@@ -5010,7 +5139,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f4044717213e31446939f7bd49c896ea, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_TrackedObjectOffset: {x: -1.1, y: 0.79, z: -0.37}
+  m_TrackedObjectOffset: {x: -1.1, y: 0.79, z: -0.85}
   m_LookaheadTime: 0
   m_LookaheadSmoothing: 10
   m_LookaheadIgnoreY: 0
@@ -5119,7 +5248,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Navigation:
-    m_Mode: 4
+    m_Mode: 0
     m_WrapAround: 0
     m_SelectOnUp: {fileID: 0}
     m_SelectOnDown: {fileID: 412870294}
@@ -5243,7 +5372,7 @@ MonoBehaviour:
   m_BlockingObjects: 0
   m_BlockingMask:
     serializedVersion: 2
-    m_Bits: 4294967295
+    m_Bits: 16439
 --- !u!114 &1620273706
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5380,7 +5509,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1675094200}
   m_Layer: 12
-  m_Name: PlayerSelectionPlatform_Player2
+  m_Name: P2_PlayerSelectPlatform
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5461,7 +5590,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1711831840}
-  m_LocalRotation: {x: -0.0149000725, y: -0.028601667, z: -0.00042638872, w: 0.9994798}
+  m_LocalRotation: {x: -0.0153718535, y: -0.068693675, z: -0.0010585755, w: 0.99751884}
   m_LocalPosition: {x: 13.663197, y: 22.01, z: -72.26513}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
@@ -5822,7 +5951,7 @@ Light:
   serializedVersion: 10
   m_Type: 1
   m_Shape: 0
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 1, g: 0.9391079, b: 0.8443396, a: 1}
   m_Intensity: 1
   m_Range: 10
   m_SpotAngle: 30
@@ -5897,7 +6026,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1803816180}
   m_Layer: 12
-  m_Name: WizardSpawn_P2
+  m_Name: P2_WizardSelectionSpawn
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5927,7 +6056,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1803991899}
   m_Layer: 13
-  m_Name: PlayerSelectionPlatform_Player3
+  m_Name: P3_PlayerSelectPlatform
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -6374,7 +6503,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Navigation:
-    m_Mode: 4
+    m_Mode: 0
     m_WrapAround: 0
     m_SelectOnUp: {fileID: 343684535}
     m_SelectOnDown: {fileID: 0}
@@ -7120,7 +7249,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6054650591371276159}
   m_Layer: 11
-  m_Name: PlayerSelectionPlatform
+  m_Name: P1_PlayerSelectPlatform
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

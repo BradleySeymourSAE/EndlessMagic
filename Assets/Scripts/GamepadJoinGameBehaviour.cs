@@ -33,12 +33,21 @@ public class GamepadJoinGameBehaviour : MonoBehaviour
 	/// </summary>
 	[SerializeField] List<Transform> m_PlayerJoinContainers = new List<Transform>();
 
+	/// <summary>
+	///		The Wizard Selection Panel Transform's
+	/// </summary>
+	[SerializeField] List<Transform> m_WizardSelectionContainers = new List<Transform>();
+
+	[SerializeField] List<CursorSelectionBehaviour> m_CurrentPlayers = new List<CursorSelectionBehaviour>();
+
 	#endregion
 
 	#region Unity References 
 
 	private void Start()
 	{
+
+		m_CurrentPlayers.Clear();
 
 		var myAction = new InputAction(binding: "/*/<button>");
 
@@ -107,6 +116,7 @@ public class GamepadJoinGameBehaviour : MonoBehaviour
 		
 			PlayerInput playerInputCursor = PlayerInput.Instantiate(playerCursor, -1, s_ActionControlScheme, -1, device);
 
+		
 			playerInputCursor.gameObject.tag = "Cursor";
 
 		
@@ -143,38 +153,78 @@ public class GamepadJoinGameBehaviour : MonoBehaviour
 		}
 	}
 
-
-
+	/// <summary>
+	///		Handles when a player joins on the Player Join Screen  
+	/// </summary>
+	/// <param name="input"></param>
 	public void OnPlayerJoin(PlayerInput input)
 	{
+		numberOfActivePlayers = PlayerInput.all.Count;
+		Debug.Log("[GamepadJoinGameBehaviour.HandleOnPlayerJoin]: " + "There are currently " + numberOfActivePlayers + " players.");
+
 
 		if (GameManager.Instance.AllowPlayerJoining == true)
 		{ 
-			numberOfActivePlayers = PlayerInput.all.Count;
-			Debug.Log("[GamepadJoinGameBehaviour.HandleOnPlayerJoin]: " + "There are currently " + numberOfActivePlayers + " players.");
-			GameEvents.SetPlayerJoinedEvent?.Invoke(1);
+			CursorSelectionBehaviour cursor = input.GetComponent<CursorSelectionBehaviour>();
+
+			m_CurrentPlayers.Add(cursor);
+			GameEvents.SetPlayerJoinedEvent?.Invoke(numberOfActivePlayers);
 		}
-		else
+		else if (GameManager.Instance.AllowCharacterSelecting == true)
 		{
-			Debug.LogWarning("Not allowed to join!");
+
 		}
 	}
 
+	/// <summary>
+	///		Handles when a player leaves on the Player Join Screen 
+	/// </summary>
+	/// <param name="input"></param>
 	public void OnPlayerLeft(PlayerInput input)
 	{
-		
-			numberOfActivePlayers = PlayerInput.all.Count;
-			Debug.Log("[GamepadJoinGameBehaviour.HandleOnPlayerLeft]: " + "Player left the game. There are " + numberOfActivePlayers + " remaining players.");
 
-			GameEvents.SetPlayerJoinedEvent?.Invoke(-1);
+		numberOfActivePlayers = PlayerInput.all.Count;
+		Debug.Log("[GamepadJoinGameBehaviour.HandleOnPlayerLeft]: " + "Player left the game. There are " + numberOfActivePlayers + " remaining players.");
 
+
+		if (GameManager.Instance.AllowPlayerJoining == true)
+		{ 
+			CursorSelectionBehaviour cursor = input.GetComponent<CursorSelectionBehaviour>();
+
+			m_CurrentPlayers.Remove(cursor);
+			
+	
+			GameEvents.SetPlayerJoinedEvent?.Invoke(numberOfActivePlayers);
 			input.DeactivateInput();
+		}
 	}
+	
+
+	public void SetWizardSelectionContainers(List<Transform> p_WizardSelectionTransforms)
+	{
+		m_WizardSelectionContainers.Clear();
+
+		for (int i = 0; i < p_WizardSelectionTransforms.Count; i++)
+		{
+			RectTransform s_WizardSelectionRectTransform = p_WizardSelectionTransforms[i].GetComponent<RectTransform>();
+
+			m_WizardSelectionContainers.Add(s_WizardSelectionRectTransform);
+		}
+
+		Debug.Log("Wizard Selection Transforms added!");
+	}
+
+
 	#endregion
 
 	#region Private Methods
 
 
+	/// <summary>
+	///		Returns the current control scheme using the input device display name 
+	/// </summary>
+	/// <param name="device"></param>
+	/// <returns></returns>
 	private string ReturnControlScheme(InputDevice device)
 	{
 		if (

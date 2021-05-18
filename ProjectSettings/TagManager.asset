@@ -9,6 +9,8 @@ TagManager:
   - CM_Camera3
   - CM_Camera4
   - Cursor
+  - PlayerJoinStatus
+  - PlayerCursor
   layers:
   - Default
   - TransparentFX

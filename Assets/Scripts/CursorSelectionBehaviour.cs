@@ -7,7 +7,9 @@ using UnityEngine.InputSystem;
 #endregion
 
 
-
+/// <summary>
+///		Handles selection of characters 
+/// </summary>
 public class CursorSelectionBehaviour : MonoBehaviour
 {
 
@@ -16,14 +18,18 @@ public class CursorSelectionBehaviour : MonoBehaviour
 
 	public GameObject playerSelection;
 
+	public GameObject[] wizardSelectionChoices;
+
 	public static EventHandler HandleOnCharacterSelectedEvent;
 
 	private bool allowPlayerJoinBehaviour = false;
 
+	private bool m_ViewingCharacterSelectionScreen = false;
+
+	private int m_SelectedWizardIndex = 0;
+
 	private void Update()
 	{
-			
-
 		allowPlayerJoinBehaviour = GameManager.Instance.AllowPlayerJoining;
 
 	}
@@ -104,4 +110,10 @@ public class CursorSelectionBehaviour : MonoBehaviour
 				}
 			}
 	}
+
+
+
+	public GameObject ReturnSelectedWizardCharacter() => wizardSelectionChoices[m_SelectedWizardIndex];
+
+
 }

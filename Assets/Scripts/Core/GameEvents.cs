@@ -69,6 +69,12 @@ public static class GameEvents
 	/// </summary>
 	public static GameObjectIntegerParameterDelegate SetPlayerReadyEvent;
 
+
+	/// <summary>
+	///		Once called - Sets the character creation cursor's to persist into the next scene 
+	/// </summary>
+	public static GameObjectListParameterDelegate SetCharacterCreationCursorEvent;
+
 	#endregion
 
 }
