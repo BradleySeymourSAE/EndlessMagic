@@ -163,7 +163,8 @@ public class PlayerJoinMenu
 		int s_ConnectedPlayers = GameManager.Instance.ConnectedPlayers;
 
 		// If the readyPlayers count is equal to the amount of connected players then the button is interactable 
-		shouldStartCountdown = readyPlayers.Count == s_ConnectedPlayers ? true : false;
+		shouldStartCountdown = readyPlayers.Count >= s_ConnectedPlayers && s_ConnectedPlayers > 1 ? true : false;
+
 
 		if (shouldStartCountdown)
 		{
@@ -258,9 +259,26 @@ public class PlayerJoinMenu
 	/// </summary>
 	private void ReturnToMainMenu()
 	{
+	
+		if (GameObject.FindGameObjectsWithTag("Cursor").Length > 0)
+		{ 
+			foreach (GameObject cursor in GameObject.FindGameObjectsWithTag(GameText.CursorTag))
+			{
+				Object.Destroy(cursor);
+			}
+
+			foreach (GameObject status in GameObject.FindGameObjectsWithTag(GameText.PlayerJoinStatusTag))
+			{
+				TMP_Text statusText = status.GetComponentInChildren<TMP_Text>();
+				
+				statusText.text = GameText.PlayerJoinUI_PlayerStatus_EmptySlot;
+			}
+		}
+
+		readyPlayers.Clear();
+
 		// Hides the Credits Menu UI 
 		DisplayScreen(false);
-
 
 		// Displays the Main Menu 
 		m_GameUIManager.DisplayMainMenu(true);

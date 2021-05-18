@@ -154,6 +154,13 @@ public class GameUIManager : MonoBehaviour
 			// Updates the player join timer UI 
 			PlayerJoinMenuUI.SetJoinTimer(m_PlayerJoinTimer);
 		}
+		else
+		{
+			if (m_Routine != null)
+			{
+				StopCoroutine(m_Routine);
+			}
+		}
 	}
 
 	#endregion
@@ -223,7 +230,6 @@ public class GameUIManager : MonoBehaviour
 	/// <param name="ShouldBeginCountdown"></param>
 	private void BeginPlayerJoinCountdownTimer(bool ShouldBeginCountdown = false)
 	{
-		m_StartCountdown = ShouldBeginCountdown;
 		if (ShouldBeginCountdown)
 		{
 			if (m_Routine != null)
@@ -235,7 +241,10 @@ public class GameUIManager : MonoBehaviour
 		}
 		else
 		{
-			StopCoroutine(m_Routine);
+			if (m_Routine != null)
+			{ 
+				StopCoroutine(m_Routine);
+			}
 		}
 	}
 

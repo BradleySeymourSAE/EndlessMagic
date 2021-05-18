@@ -94,4 +94,18 @@ public static class GameText
 
 	#endregion
 
+	#region Game Object Tag Keys 
+	
+	public const string MainCameraTag = "MainCamera";
+	public const string GameControllerTag = "GameController";
+	public const string CM_Camera1Tag = "CM_Camera1";
+	public const string CM_Camera2Tag = "CM_Camera2";
+	public const string CM_Camera3Tag = "CM_Camera3";
+	public const string CM_Camera4Tag = "CM_Camera4";
+	public const string CursorTag = "Cursor";
+	public const string PlayerJoinStatusTag = "PlayerJoinStatus";
+
+
+	#endregion
+
 }

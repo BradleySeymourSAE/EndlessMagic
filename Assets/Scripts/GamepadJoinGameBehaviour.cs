@@ -26,7 +26,6 @@ public class GamepadJoinGameBehaviour : MonoBehaviour
 
 	#endregion
 
-
 	#region Private Variables
 	
 	/// <summary>
@@ -48,9 +47,14 @@ public class GamepadJoinGameBehaviour : MonoBehaviour
 			AddGamepad(action.control.device);
 		};
 
+		myAction.performed -= action =>
+		{
+			AddGamepad(action.control.device);
+		};
 
 		myAction.Enable();
 	}
+
 
 	#endregion
 
@@ -102,6 +106,9 @@ public class GamepadJoinGameBehaviour : MonoBehaviour
 		{
 		
 			PlayerInput playerInputCursor = PlayerInput.Instantiate(playerCursor, -1, s_ActionControlScheme, -1, device);
+
+			playerInputCursor.gameObject.tag = "Cursor";
+
 		
 			RectTransform s_ParentTransform = m_PlayerJoinContainers[s_CurrentPlayerIndex - 1].GetComponent<RectTransform>();
 
@@ -155,17 +162,13 @@ public class GamepadJoinGameBehaviour : MonoBehaviour
 
 	public void OnPlayerLeft(PlayerInput input)
 	{
-		if (GameManager.Instance.AllowPlayerJoining == true)
-		{ 
+		
 			numberOfActivePlayers = PlayerInput.all.Count;
 			Debug.Log("[GamepadJoinGameBehaviour.HandleOnPlayerLeft]: " + "Player left the game. There are " + numberOfActivePlayers + " remaining players.");
 
 			GameEvents.SetPlayerJoinedEvent?.Invoke(-1);
-		}
-		else
-		{
-			Debug.LogWarning("Not allowing player to leave!");
-		}
+
+			input.DeactivateInput();
 	}
 	#endregion
 
