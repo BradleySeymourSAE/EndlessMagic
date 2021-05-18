@@ -24,26 +24,29 @@ public class PlayerJoinMenu
 	public GameObject PlayerJoinMenuScreen;
 
 	/// <summary>
-	///		Player Count Menu Title
+	///		Player Join Menu - Title Text 
 	/// </summary>
 	public TMP_Text title;
 
 	/// <summary>
-	///		Player Count Menu Subtitle
+	///		Player Join Menu - Subtitle Text 
 	/// </summary>
 	public TMP_Text subtitle;
+
+	/// <summary>
+	///		Player Join - Countdown timer text 
+	/// </summary>
+	public TMP_Text timer;
 
 	/// <summary>
 	///		Reference to the player join container
 	/// </summary>
 	public List<GameObject> playerJoinContainers;
 
-	public List<TMP_Text> playerJoinStatusTextFields;
-
 	/// <summary>
-	///		Plays the game in cooperative mode 
+	///		Reference to the status text fields text 
 	/// </summary>
-	public Button ContinueButton;
+	public List<TMP_Text> playerJoinStatusTextFields;
 
 	/// <summary>
 	///		Close Settings Menu Button
@@ -58,18 +61,27 @@ public class PlayerJoinMenu
 	///		Reference to the Game UI Manager Instance 
 	/// </summary>
 	private GameUIManager m_GameUIManager;
-
+	
 	/// <summary>
 	///		The player input container background color 
 	/// </summary>
 	[SerializeField] private Color m_PlayerInputContainerBackgroundColor = Color.black;
 
+	/// <summary>
+	///		Reference to the player join sprite background image 
+	/// </summary>
 	[SerializeField] private Sprite m_PlayerInputBackgroundImage;
 
-	[SerializeField] private int m_TotalReadyPlayers = 0;
+	/// <summary>
+	///		List of players that have ready'd up 
+	/// </summary>
+	[SerializeField] private List<GameObject> readyPlayers = new List<GameObject>();
 
-	private List<GameObject> readyPlayers = new List<GameObject>();
-
+	/// <summary>
+	///		Reference to start the countdown timer 
+	/// </summary>
+	[SerializeField] private bool shouldStartCountdown = false;
+	
 	#endregion
 
 	#region Public Methods 
@@ -79,20 +91,13 @@ public class PlayerJoinMenu
 	/// </summary>
 	public void Setup(GameUIManager p_GameUIManager)
 	{
-
 		playerJoinStatusTextFields.Clear();
 		readyPlayers.Clear();
-
 		m_GameUIManager = p_GameUIManager;
-		m_TotalReadyPlayers = 0;
 
 		title.text = GameText.PlayerJoinUI_Title;
 		subtitle.text = GameText.PlayerJoinUI_Subtitle;
-		
-		ContinueButton.GetComponentInChildren<Text>().text = GameText.PlayerJoinUI_ContinueButton;
-		ContinueButton.onClick.RemoveAllListeners();
-		ContinueButton.onClick.AddListener(HandleCooperativeCharacterCreation);
-		ContinueButton.interactable = false;
+		timer.text = GameText.PlayerJoinUI_TimerText;
 
 		CloseButton.GetComponentInChildren<Text>().text = GameText.PlayerJoinUI_ReturnButton;
 		CloseButton.onClick.RemoveAllListeners();
@@ -105,7 +110,7 @@ public class PlayerJoinMenu
 
 			for (int i = 1; i < container.transform.childCount; i++)
 			{
-				TMP_Text statusText = container.transform.GetChild(i).GetComponent<TMP_Text>();
+				TMP_Text statusText = container.transform.GetChild(i).GetComponentInChildren<TMP_Text>();
 				
 				statusText.text = GameText.PlayerJoinUI_PlayerStatus_EmptySlot;
 
@@ -127,48 +132,121 @@ public class PlayerJoinMenu
 		
 		if (ShouldDisplayJoinMenu)
 		{
-			ContinueButton.Select();
+			CloseButton.Select();
 		}
+	}
+
+	/// <summary>
+	///		Begins the game in cooperative mode 
+	/// </summary>
+	public void HandleCooperativeCharacterCreation()
+	{
+
+		DisplayScreen(false); // Hide the player count menu UI
+
+
+		// Load the character creation scene 
+		Debug.Log("[PlayerJoinMenu.HandleCooperativeCharacterCreation]: " + "Loading Co-op Character Creation Scene... " + GameScenes.EndlessMagic_CharacterCreation);
+
+		// Load the Character Creation Scene Asyncronously
+		SceneManager.LoadSceneAsync(GameScenes.SelectGameSceneBySceneType(Scenes.EndlessMagic_CharacterCreation));
+
 	}
 
 	/// <summary>
 	///		Updates the UI to display the currently connected devices and set the continue button to interactable if the 
 	///		amount of players is greater than 1 but less than or equal to 4 
 	/// </summary>
-	public void UpdateConnectedDevices(int p_ConnectedPlayers)
+	public void UpdateConnectedDevices()
 	{
-
+		// The current amount of connected players 
 		int s_ConnectedPlayers = GameManager.Instance.ConnectedPlayers;
 
-		Debug.Log("Connected Players: " + s_ConnectedPlayers);
-		
-		int currentIndex = 0; // The current Index => 1, 2, 3, 4 
+		// If the readyPlayers count is equal to the amount of connected players then the button is interactable 
+		shouldStartCountdown = readyPlayers.Count == s_ConnectedPlayers ? true : false;
 
-	
-		ContinueButton.interactable = m_TotalReadyPlayers == s_ConnectedPlayers && s_ConnectedPlayers > 0;
-
-		foreach (TMP_Text textStatus in playerJoinStatusTextFields)
+		if (shouldStartCountdown)
 		{
-			currentIndex++;
-
-			
-
-			// If the amount of connected players is greater than the current index 
-			if (p_ConnectedPlayers >= currentIndex)
-			{
-				textStatus.text = GameText.PlayerJoinUI_PlayerStatus_SlotTaken_ReadyUp;
-			}
-			else
-			{
-				textStatus.text = GameText.PlayerJoinUI_PlayerStatus_EmptySlot;
-			}
-
+			GameEvents.UpdatePlayerJoinReadyTimer?.Invoke(shouldStartCountdown);
 		}
 	}
 
-	public void SetPlayerReady(int PlayerReadyValue)
+	/// <summary>
+	///		Sets the timer UI 
+	/// </summary>
+	/// <param name="p_Seconds"></param>
+	public void SetJoinTimer(float p_Seconds) => timer.GetComponentInChildren<TMP_Text>().text = "Starting in " + p_Seconds.ToString("0");
+	
+	/// <summary>
+	///		Handles Setting the player's ready status / un-ready status 
+	/// </summary>
+	/// <param name="PlayerGameObject"></param>
+	/// <param name="PlayerReadyValue"></param>
+	public void SetPlayerReady(GameObject PlayerGameObject, int PlayerReadyValue)
 	{
-		m_TotalReadyPlayers += PlayerReadyValue;
+		bool isPlayerReady = PlayerReadyValue > 0 == true;
+
+		int playerIndex = ReturnPlayerIndex(PlayerGameObject.name.ToString());
+		string s_StatusString = $"P{playerIndex}_Status";
+
+
+		// If the player is ready
+		if (isPlayerReady)
+		{
+			// If the player already exists in the list 
+			if (readyPlayers.Contains(PlayerGameObject))
+			{
+				// Return 
+				return;
+			}
+			else
+			{
+				// Otherwise, try to find the game object by the status string 
+
+				TMP_Text statusText = GameObject.Find(s_StatusString).GetComponentInChildren<TMP_Text>();
+
+				// Check that the status text is not null 
+				if (statusText != null)
+				{
+					// If it isnt, set the status text to Ready!  
+					statusText.text = GameText.PlayerJoinUI_PlayerStatus_SlotTaken_Ready;
+				}
+		
+
+				// Add the player to the ready players list 
+				readyPlayers.Add(PlayerGameObject);
+			}
+		}
+		// Otherwise, if the player is not ready or has un-ready'd up 
+		else
+		{
+			// If the list does not contain the playerCurso Game Object then we want to return 
+			if (!readyPlayers.Contains(PlayerGameObject))
+			{
+				return;
+			}
+			else
+			{
+
+				// Otherwise, Try to find Status GameObject TMP_Text using the status string 
+				TMP_Text statusText = GameObject.Find(s_StatusString).GetComponentInChildren<TMP_Text>();
+
+				// Check the status text is not null 
+				if (statusText != null)
+				{
+					// If it isnt, set the status text to `Ready up`
+					statusText.text = GameText.PlayerJoinUI_PlayerStatus_SlotTaken_ReadyUp;
+				}
+
+				
+				// Remove the player from the readyPlayers list 
+				readyPlayers.Remove(PlayerGameObject);
+			}
+		}
+
+
+		// Update the currently connected devices  
+		UpdateConnectedDevices();
 	}
 
 	#endregion
@@ -188,23 +266,26 @@ public class PlayerJoinMenu
 		m_GameUIManager.DisplayMainMenu(true);
 	}
 
-	/// <summary>
-	///		Begins the game in cooperative mode 
-	/// </summary>
-	private void HandleCooperativeCharacterCreation()
+	private int ReturnPlayerIndex(string name)
 	{
-		
-		m_TotalReadyPlayers = 0; // Reset the total ready players value 
+		const string P1_Cursor = "P1_Cursor(Clone)";
+		const string P2_Cursor = "P2_Cursor(Clone)";
+		const string P3_Cursor = "P3_Cursor(Clone)";
+		const string P4_Cursor = "P4_Cursor(Clone)";
 
-		DisplayScreen(false); // Hide the player count menu UI
-
-
-		// Load the character creation scene 
-		Debug.Log("[PlayerJoinMenu.HandleCooperativeCharacterCreation]: " + "Loading Co-op Character Creation Scene... " + GameScenes.EndlessMagic_CharacterCreation);
-		
-		// Load the Character Creation Scene Asyncronously
-		SceneManager.LoadSceneAsync(GameScenes.SelectGameSceneBySceneType(Scenes.EndlessMagic_CharacterCreation));
-
+		switch (name)
+		{
+			case P1_Cursor:
+				return 1;
+			case P2_Cursor:
+				return 2;
+			case P3_Cursor:
+				return 3;
+			case P4_Cursor:
+				return 4;
+			default:
+				return 0;
+		}
 	}
 
 	#endregion

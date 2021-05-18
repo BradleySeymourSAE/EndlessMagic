@@ -42,7 +42,7 @@ public class GameAssets : MonoBehaviour
 
 	private void Awake()
 	{
-		int maximumAllowedPlayers = GameManager.Instance.maximumAllowedPlayers;
+		int maximumAllowedPlayers = GameManager.Instance.MaxPlayers;
 
 		if (Assets != null)
 		{

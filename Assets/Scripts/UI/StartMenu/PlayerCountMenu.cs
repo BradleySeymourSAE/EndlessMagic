@@ -82,7 +82,7 @@ public class PlayerCountMenu
 		title.text = GameText.PlayerJoinUI_Title;
 		subtitle.text = GameText.PlayerJoinUI_Subtitle;
 		
-		ContinueButton.GetComponentInChildren<Text>().text = GameText.PlayerJoinUI_ContinueButton;
+		ContinueButton.GetComponentInChildren<Text>().text = GameText.PlayerJoinUI_TimerText;
 		ContinueButton.onClick.RemoveAllListeners();
 		ContinueButton.onClick.AddListener(HandleCooperativeCharacterCreation);
 		ContinueButton.interactable = false;

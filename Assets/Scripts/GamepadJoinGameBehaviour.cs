@@ -5,6 +5,8 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.Layouts;
 using UnityEngine.UI;
+using System.Linq;
+using TMPro;
 #endregion
 
 
@@ -92,6 +94,7 @@ public class GamepadJoinGameBehaviour : MonoBehaviour
 
 	
 		GameObject playerCursor = Resources.Load<GameObject>($"CursorPrefabs/P{s_CurrentPlayerIndex}_Cursor");  // Load up the cursor prefabs 
+		string s_StatusTextSearchString = $"P{s_CurrentPlayerIndex}_Status";
 
 
 		// check if the player is active in the Hierarchy 
@@ -102,6 +105,14 @@ public class GamepadJoinGameBehaviour : MonoBehaviour
 		
 			RectTransform s_ParentTransform = m_PlayerJoinContainers[s_CurrentPlayerIndex - 1].GetComponent<RectTransform>();
 
+			
+			TMP_Text s_StatusText = GameObject.Find(s_StatusTextSearchString).GetComponentInChildren<TMP_Text>();
+
+			if (s_StatusText != null)
+			{
+				s_StatusText.text = GameText.PlayerJoinUI_PlayerStatus_SlotTaken_ReadyUp;
+			}
+			
 
 			Debug.LogWarning(
 				" Parent Transform Name: " + s_ParentTransform.name + 

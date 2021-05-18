@@ -74,14 +74,14 @@ public class CursorSelectionBehaviour : MonoBehaviour
 				if (!isReady)
 				{
 					Debug.Log("[CursorSelectionManager.OnSelect]: " + "Ready to join the game -" + context.action.name);
-					GameEvents.SetPlayerReadyEvent?.Invoke(1);
+					GameEvents.SetPlayerReadyEvent?.Invoke(gameObject, 1);
 					
 					isReady = true;
 				}
 				else
 				{
 					Debug.Log("[CursorSelectionManager.OnSelect]: " + "Cancelled ready up - " + context.action.name);
-					GameEvents.SetPlayerReadyEvent?.Invoke(-1);
+					GameEvents.SetPlayerReadyEvent?.Invoke(gameObject, -1);
 					isReady = false;
 					// DO nothing
 				}

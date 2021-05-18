@@ -53,7 +53,7 @@ public static class GameText
 
 	public const string PlayerJoinUI_Title = "Co-op";
 	public const string PlayerJoinUI_Subtitle = "Press the start button to join";
-	public const string PlayerJoinUI_ContinueButton = "Continue";
+	public const string PlayerJoinUI_TimerText = "";
 	public const string PlayerJoinUI_ReturnButton = "Return";
 
 	public const string PlayerJoinUI_PlayerStatus_SlotTaken_Ready = "Ready!";

@@ -145,7 +145,7 @@ public class MainMenu
 		GameEvents.PlayGUISelectedEvent?.Invoke();
 
 		//	Displays the player count menu ui 
-		m_GameUIManager.DisplayPlayerCountMenu(true);
+		m_GameUIManager.DisplayPlayerJoinMenu(true);
 	}
 
 

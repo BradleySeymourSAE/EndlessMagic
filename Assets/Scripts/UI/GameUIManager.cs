@@ -48,14 +48,30 @@ public class GameUIManager : MonoBehaviour
 
 	#endregion
 
-	#region Private Variables
+	#region Private Variables 
 
-	private bool m_AllowMultipleDeviceInput;
+	/// <summary>
+	///	 Reference to the player join start timer value 
+	/// </summary>
+	private float m_PlayerJoinTimer;
+
+	/// <summary>
+	///		Should begin the player join start timer begin? 
+	/// </summary>
+	private bool m_StartCountdown = false;
+
+	/// <summary>
+	///		Reference to the coroutine 
+	/// </summary>
+	private Coroutine m_Routine;
 
 	#endregion
 
 	#region Unity References 
 
+	/// <summary>
+	///		Subscribes to events 
+	/// </summary>
 	private void OnEnable()
 	{
 		GameEvents.PlayGUISelectedEvent += PlayUISelected;
@@ -63,8 +79,13 @@ public class GameUIManager : MonoBehaviour
 
 		GameEvents.SetPlayerJoinedEvent += SetConnectedControllers;
 		GameEvents.SetPlayerReadyEvent += SetPlayerReady;
+
+		GameEvents.UpdatePlayerJoinReadyTimer += BeginPlayerJoinCountdownTimer;
 	}
 
+	/// <summary>
+	///		Unsubscribe from events 
+	/// </summary>
 	private void OnDisable()
 	{
 		GameEvents.PlayGUISelectedEvent -= PlayUISelected;
@@ -72,8 +93,13 @@ public class GameUIManager : MonoBehaviour
 
 		GameEvents.SetPlayerJoinedEvent -= SetConnectedControllers;
 		GameEvents.SetPlayerReadyEvent -= SetPlayerReady;
+
+		GameEvents.UpdatePlayerJoinReadyTimer -= BeginPlayerJoinCountdownTimer;
 	}
 
+	/// <summary>
+	///		Sets up the child class references 
+	/// </summary>
 	private void Start()
 	{
 		// Sets up the UI References 
@@ -91,7 +117,7 @@ public class GameUIManager : MonoBehaviour
 		DisplayMainMenu(true); // Displays the Main Menu UI 
 		DisplayCreditsMenu(false); // Hides the Settings Menu UI  
 		DisplaySettingsMenu(false); // Hides the Settings Menu UI 
-		DisplayPlayerCountMenu(false); // Hides the Player Count UI 
+		DisplayPlayerJoinMenu(false); // Hides the Player Count UI 
 	
 		if (GameObject.Find("StartButton"))
 		{
@@ -99,7 +125,9 @@ public class GameUIManager : MonoBehaviour
 		}
 	}
 
-
+	/// <summary>
+	///		Instantiates the GameUIManager Instance 
+	/// </summary>
 	private void Awake()
 	{
 		if (Instance != null)
@@ -110,6 +138,21 @@ public class GameUIManager : MonoBehaviour
 		{
 			Instance = this;
 			DontDestroyOnLoad(gameObject);
+		}
+	}
+
+	/// <summary>
+	///		Update - Handles Updating the UI Countdown Timers 
+	/// </summary>
+	private void Update()
+	{
+		if (m_StartCountdown)
+		{
+			// Sets the float to deduct from the initial start timer 
+			m_PlayerJoinTimer -= 1 * Time.deltaTime;
+
+			// Updates the player join timer UI 
+			PlayerJoinMenuUI.SetJoinTimer(m_PlayerJoinTimer);
 		}
 	}
 
@@ -139,13 +182,14 @@ public class GameUIManager : MonoBehaviour
 	///		Displays the player count menu 
 	/// </summary>
 	/// <param name="show"></param>
-	public void DisplayPlayerCountMenu(bool show) => PlayerJoinMenuUI.DisplayScreen(show);
+	public void DisplayPlayerJoinMenu(bool show) => PlayerJoinMenuUI.DisplayScreen(show);
 
 	/// <summary>
 	///		Checks if the player join menu is currently displaying 
 	/// </summary>
 	/// <returns></returns>
 	public bool IsDisplayingPlayerJoinMenu() => PlayerJoinMenuUI.PlayerJoinMenuScreen.activeInHierarchy == true;
+
 	#endregion
 
 	#region Private Methods
@@ -164,9 +208,67 @@ public class GameUIManager : MonoBehaviour
 	///		Sets the currently connected controllers 
 	/// </summary>
 	/// <param name="ConnectedControllers"></param>
-	private void SetConnectedControllers(int ConnectedControllers) => PlayerJoinMenuUI.UpdateConnectedDevices(ConnectedControllers);
+	private void SetConnectedControllers(int p_ConnectedControllers) => PlayerJoinMenuUI.UpdateConnectedDevices();
 
-	private void SetPlayerReady(int PlayerReady) => PlayerJoinMenuUI.SetPlayerReady(PlayerReady);
+	/// <summary>
+	///		Sets the player's cursor game object & ready events 
+	/// </summary>
+	/// <param name="p_CursorGameObject"></param>
+	/// <param name="p_IsPlayerReady"></param>
+	private void SetPlayerReady(GameObject p_CursorGameObject, int p_IsPlayerReady) => PlayerJoinMenuUI.SetPlayerReady(p_CursorGameObject, p_IsPlayerReady);
+
+	/// <summary>
+	///		 Begins the player join countdown timer event 
+	/// </summary>
+	/// <param name="ShouldBeginCountdown"></param>
+	private void BeginPlayerJoinCountdownTimer(bool ShouldBeginCountdown = false)
+	{
+		m_StartCountdown = ShouldBeginCountdown;
+		if (ShouldBeginCountdown)
+		{
+			if (m_Routine != null)
+			{
+				StopCoroutine(m_Routine);
+			}
+
+			m_Routine = StartCoroutine(DisplayCountdownTimer());
+		}
+		else
+		{
+			StopCoroutine(m_Routine);
+		}
+	}
+
+	/// <summary>
+	///		Begins displaying the player join countdown timer 
+	/// </summary>
+	/// <returns></returns>
+	IEnumerator DisplayCountdownTimer()
+	{
+		// Set the join timer to 10 seconds 
+		m_PlayerJoinTimer = GameManager.Instance.JoinStartTimer;
+
+		// Begin the countdown 
+		m_StartCountdown = true;
+
+		// Wait x amount of seconds 
+		yield return new WaitForSeconds(GameManager.Instance.JoinStartTimer);
+
+		// Continue to the next scene 
+		PlayerJoinMenuUI.HandleCooperativeCharacterCreation();
+
+		// Stop displaying the player join menu
+		DisplayPlayerJoinMenu(false);
+	
+		// Stop counting down 
+		m_StartCountdown = false;
+
+		// Reset the timer 
+		m_PlayerJoinTimer = GameManager.Instance.JoinStartTimer;
+
+
+		yield return null;
+	}
 
 	#endregion
 

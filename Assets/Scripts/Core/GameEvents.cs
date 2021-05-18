@@ -22,6 +22,7 @@ public static class GameEvents
 	public delegate void DoubleFloatParameterDelegate(float p_Float, float p_SecondFloat);
 
 	public delegate void TransformIntegerParameterDelegate(Transform p_Transform, int p_Integer);
+	public delegate void GameObjectIntegerParameterDelegate(GameObject p_GameObject, int p_Integer);
 
 	public delegate void GameObjectParameterDelegate(GameObject p_GameObject);
 	public delegate void TransformParameterDelegate(Transform p_Transform);
@@ -56,13 +57,17 @@ public static class GameEvents
 	/// </summary>
 	public static IntParameterDelegate SetPlayerJoinedEvent;
 
+	/// <summary>
+	///		Once called - Begins the player join ready up countdown timer
+	/// </summary>
+	public static BoolParameterDelegate UpdatePlayerJoinReadyTimer;
 
 	/// <summary>
 	///		Once called - ready's the player up on the co-op player join screen, 
 	///		Transform - The parent transform for the player's cursor
 	///		Integer - Whether the player is ready or not 
 	/// </summary>
-	public static IntParameterDelegate SetPlayerReadyEvent;
+	public static GameObjectIntegerParameterDelegate SetPlayerReadyEvent;
 
 	#endregion
 
