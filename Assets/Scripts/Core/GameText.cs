@@ -28,7 +28,6 @@ public static class GameText
 
 	#endregion
 
-
 	#region Credits Menu 
 
 	public const string CreditsMenuUI_Title = "Endless Magic - Credits";
@@ -38,7 +37,6 @@ public static class GameText
 	public const string CreditsMenuUI_CloseButton = "Back";
 
 	#endregion
-
 
 	#region Settings Menu
 
@@ -51,44 +49,49 @@ public static class GameText
 
 	#endregion
 
+	#region Player Join Menu 
 
-	#region Player Count Menu 
+	public const string PlayerJoinUI_Title = "Co-op";
+	public const string PlayerJoinUI_Subtitle = "Press the start button to join";
+	public const string PlayerJoinUI_ContinueButton = "Continue";
+	public const string PlayerJoinUI_ReturnButton = "Return";
 
-	public const string PlayerCountUI_Title = "Co-op";
-	public const string PlayerCountUI_Subtitle = "Press start to ready up";
-	public const string PlayerCountUI_ContinueButton = "Continue";
-	public const string PlayerCountUI_BackButton = "Return";
-
-	public const string PlayerCountUI_PlayerStatus_Ready = "--- Locked ---";
-	public const string PlayerCountUI_PlayerStatus_PressStart = "Press start to join!";
-	public const string PlayerCountUI_PlayerStatus_ConnectController = "Connect a controller";
-
+	public const string PlayerJoinUI_PlayerStatus_SlotTaken_Ready = "Ready!";
+	public const string PlayerJoinUI_PlayerStatus_SlotTaken_ReadyUp = "Press B to ready up";
+	public const string PlayerJoinUI_PlayerStatus_EmptySlot = "Slot is empty";
 
 	#endregion
 
-
-	#region Loading Screen UI 
+	#region Loading Screen Menu ( WIP ) 
 
 	public const string LoadingScreenUI_Title = "Loading";
 	public const string LoadingScreenUI_Progress = "0";
 
-
 	#endregion
 
 	#endregion
 
-	#region Input Keys 
+	#region Input System 
 
-	public const string XboxControllerDevice = "";
+	#region Device Display Name Keys 
 
+	public const string XboxControllerDevice = "Controller";
+	public const string GamepadDevice = "Gamepad";
 	public const string PS4ControllerDevice = "Sony Computer Entertainment";
-
 	public const string MouseDevice = "Mouse";
-
 	public const string KeyboardDevice = "Keyboard";
-
+	public const string JoystickDevice = "Joystick";
 
 	#endregion
 
+	#region Action Control Scheme Keys
+
+	public const string ActionControlScheme_Gamepad = "Gamepad";
+	public const string ActionControlScheme_Joystick = "Joystick";
+	public const string ActionControlScheme_KeyboardMouse = "Keyboard&Mouse";
+
+	#endregion
+
+	#endregion
 
 }

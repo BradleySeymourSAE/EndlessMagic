@@ -79,15 +79,15 @@ public class PlayerCountMenu
 	{
 		m_GameUIManager = p_GameUIManager;
 
-		title.text = GameText.PlayerCountUI_Title;
-		subtitle.text = GameText.PlayerCountUI_Subtitle;
+		title.text = GameText.PlayerJoinUI_Title;
+		subtitle.text = GameText.PlayerJoinUI_Subtitle;
 		
-		ContinueButton.GetComponentInChildren<Text>().text = GameText.PlayerCountUI_ContinueButton;
+		ContinueButton.GetComponentInChildren<Text>().text = GameText.PlayerJoinUI_ContinueButton;
 		ContinueButton.onClick.RemoveAllListeners();
 		ContinueButton.onClick.AddListener(HandleCooperativeCharacterCreation);
 		ContinueButton.interactable = false;
 
-		CloseButton.GetComponentInChildren<Text>().text = GameText.PlayerCountUI_BackButton;
+		CloseButton.GetComponentInChildren<Text>().text = GameText.PlayerJoinUI_ReturnButton;
 		CloseButton.onClick.RemoveAllListeners();
 		CloseButton.onClick.AddListener(ReturnToMainMenu);
 

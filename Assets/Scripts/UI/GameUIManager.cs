@@ -62,6 +62,7 @@ public class GameUIManager : MonoBehaviour
 		GameEvents.PlayMenuTransitionEvent += PlayMenuSwitched;
 
 		GameEvents.SetPlayerJoinedEvent += SetConnectedControllers;
+		GameEvents.SetPlayerReadyEvent += SetPlayerReady;
 	}
 
 	private void OnDisable()
@@ -70,6 +71,7 @@ public class GameUIManager : MonoBehaviour
 		GameEvents.PlayMenuTransitionEvent -= PlayMenuSwitched;
 
 		GameEvents.SetPlayerJoinedEvent -= SetConnectedControllers;
+		GameEvents.SetPlayerReadyEvent -= SetPlayerReady;
 	}
 
 	private void Start()
@@ -94,6 +96,20 @@ public class GameUIManager : MonoBehaviour
 		if (GameObject.Find("StartButton"))
 		{
 			EventSystem.current.SetSelectedGameObject(GameObject.Find("StartButton"));
+		}
+	}
+
+
+	private void Awake()
+	{
+		if (Instance != null)
+		{
+			Destroy(gameObject);
+		}
+		else
+		{
+			Instance = this;
+			DontDestroyOnLoad(gameObject);
 		}
 	}
 
@@ -125,23 +141,33 @@ public class GameUIManager : MonoBehaviour
 	/// <param name="show"></param>
 	public void DisplayPlayerCountMenu(bool show) => PlayerJoinMenuUI.DisplayScreen(show);
 
-	
+	/// <summary>
+	///		Checks if the player join menu is currently displaying 
+	/// </summary>
+	/// <returns></returns>
+	public bool IsDisplayingPlayerJoinMenu() => PlayerJoinMenuUI.PlayerJoinMenuScreen.activeInHierarchy == true;
 	#endregion
 
 	#region Private Methods
 
 	/// <summary>
-	///		 Play the UI sound when you click on any of the UI elements 
+	///		 Once Called - Plays the UI sound for selecting
 	/// </summary>
 	private void PlayUISelected() => AudioManager.PlaySound(SoundCategory.GUI_Selected);
 
 	/// <summary>
-	/// 	Play the UI sound when you transition between menu's 
+	/// 	Once Called - Plays the UI sound for menu transitions
 	/// </summary>
 	private void PlayMenuSwitched() => AudioManager.PlaySound(SoundCategory.GUI_MenuSwitched);
 
-
+	/// <summary>
+	///		Sets the currently connected controllers 
+	/// </summary>
+	/// <param name="ConnectedControllers"></param>
 	private void SetConnectedControllers(int ConnectedControllers) => PlayerJoinMenuUI.UpdateConnectedDevices(ConnectedControllers);
+
+	private void SetPlayerReady(int PlayerReady) => PlayerJoinMenuUI.SetPlayerReady(PlayerReady);
+
 	#endregion
 
 }

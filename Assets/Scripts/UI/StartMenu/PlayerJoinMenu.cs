@@ -66,6 +66,10 @@ public class PlayerJoinMenu
 
 	[SerializeField] private Sprite m_PlayerInputBackgroundImage;
 
+	[SerializeField] private int m_TotalReadyPlayers = 0;
+
+	private List<GameObject> readyPlayers = new List<GameObject>();
+
 	#endregion
 
 	#region Public Methods 
@@ -77,18 +81,20 @@ public class PlayerJoinMenu
 	{
 
 		playerJoinStatusTextFields.Clear();
+		readyPlayers.Clear();
 
 		m_GameUIManager = p_GameUIManager;
+		m_TotalReadyPlayers = 0;
 
-		title.text = GameText.PlayerCountUI_Title;
-		subtitle.text = GameText.PlayerCountUI_Subtitle;
+		title.text = GameText.PlayerJoinUI_Title;
+		subtitle.text = GameText.PlayerJoinUI_Subtitle;
 		
-		ContinueButton.GetComponentInChildren<Text>().text = GameText.PlayerCountUI_ContinueButton;
+		ContinueButton.GetComponentInChildren<Text>().text = GameText.PlayerJoinUI_ContinueButton;
 		ContinueButton.onClick.RemoveAllListeners();
 		ContinueButton.onClick.AddListener(HandleCooperativeCharacterCreation);
 		ContinueButton.interactable = false;
 
-		CloseButton.GetComponentInChildren<Text>().text = GameText.PlayerCountUI_BackButton;
+		CloseButton.GetComponentInChildren<Text>().text = GameText.PlayerJoinUI_ReturnButton;
 		CloseButton.onClick.RemoveAllListeners();
 		CloseButton.onClick.AddListener(ReturnToMainMenu);
 
@@ -101,7 +107,7 @@ public class PlayerJoinMenu
 			{
 				TMP_Text statusText = container.transform.GetChild(i).GetComponent<TMP_Text>();
 				
-				statusText.text = GameText.PlayerCountUI_PlayerStatus_PressStart;
+				statusText.text = GameText.PlayerJoinUI_PlayerStatus_EmptySlot;
 
 				playerJoinStatusTextFields.Add(statusText);
 			}
@@ -129,39 +135,40 @@ public class PlayerJoinMenu
 	///		Updates the UI to display the currently connected devices and set the continue button to interactable if the 
 	///		amount of players is greater than 1 but less than or equal to 4 
 	/// </summary>
-	public void UpdateConnectedDevices(int ConnectedPlayers)
+	public void UpdateConnectedDevices(int p_ConnectedPlayers)
 	{
-	
+
 		int s_ConnectedPlayers = GameManager.Instance.ConnectedPlayers;
-		
-		
-		Debug.Log("[PlayerJoinMenu.UpdateConnectedDevices]: " + "Connected Players: " + s_ConnectedPlayers);
 
-
-		// If the amount of connected players is greater than 1 and less than or equal to 4 then the continue button can be pressed 
-		ContinueButton.interactable = s_ConnectedPlayers > 0 && s_ConnectedPlayers <= 4;
-
+		Debug.Log("Connected Players: " + s_ConnectedPlayers);
 		
 		int currentIndex = 0; // The current Index => 1, 2, 3, 4 
 
-		for (int i = 0; i < playerJoinStatusTextFields.Count; i++)  // i = 0, 1, 2, 3
+	
+		ContinueButton.interactable = m_TotalReadyPlayers == s_ConnectedPlayers && s_ConnectedPlayers > 0;
+
+		foreach (TMP_Text textStatus in playerJoinStatusTextFields)
 		{
+			currentIndex++;
+
 			
-			currentIndex++; // Increase the current index 
 
-			TMP_Text textField = playerJoinStatusTextFields[i]; 
-
-			if (s_ConnectedPlayers >= currentIndex) // if the connected players index is greater than or equal to the current index value
+			// If the amount of connected players is greater than the current index 
+			if (p_ConnectedPlayers >= currentIndex)
 			{
-				textField.text = GameText.PlayerCountUI_PlayerStatus_Ready; // then the player has joined 
+				textStatus.text = GameText.PlayerJoinUI_PlayerStatus_SlotTaken_ReadyUp;
 			}
-			// Otherwise just display the press b to ready up 
 			else
 			{
-				
-				textField.text = GameText.PlayerCountUI_PlayerStatus_PressStart; // then the player can join by pressing start on their controller 
+				textStatus.text = GameText.PlayerJoinUI_PlayerStatus_EmptySlot;
 			}
+
 		}
+	}
+
+	public void SetPlayerReady(int PlayerReadyValue)
+	{
+		m_TotalReadyPlayers += PlayerReadyValue;
 	}
 
 	#endregion
@@ -186,9 +193,10 @@ public class PlayerJoinMenu
 	/// </summary>
 	private void HandleCooperativeCharacterCreation()
 	{
+		
+		m_TotalReadyPlayers = 0; // Reset the total ready players value 
 
-		// Hide the player count menu UI
-		DisplayScreen(false);
+		DisplayScreen(false); // Hide the player count menu UI
 
 
 		// Load the character creation scene 

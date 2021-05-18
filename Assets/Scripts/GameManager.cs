@@ -6,20 +6,25 @@ using UnityEngine;
 
 
 
-
-
+/// <summary>
+/// Game Manager
+/// </summary>
+[System.Serializable]
 public class GameManager : MonoBehaviour
 { 
 
 
 	public static GameManager Instance;
 
-	[SerializeField] public int ConnectedDevices { get; private set; } = 0;
-	
-	[SerializeField] public int ConnectedPlayers { get; private set; } = 0;
+	public int ConnectedDevices { get; private set; } = 0;
+	public int ConnectedPlayers { get; private set; } = 0;
 
 
 	[HideInInspector] public int maximumAllowedPlayers = 4;
+
+	[SerializeField] public bool AllowPlayerJoining;
+
+	GameUIManager m_GameUIManager;
 
 	private void Awake()
 	{
@@ -31,6 +36,13 @@ public class GameManager : MonoBehaviour
 		{
 			Instance = this;
 			DontDestroyOnLoad(gameObject);
+		}
+
+		AllowPlayerJoining = false;
+
+		if (GameUIManager.Instance)
+		{
+			m_GameUIManager = GameUIManager.Instance;
 		}
 	}
 
@@ -45,7 +57,19 @@ public class GameManager : MonoBehaviour
 		GameEvents.SetPlayerJoinedEvent -= SetConnectedPlayers;
 	}
 
+	private void Update()
+	{
+		CheckPlayerJoiningIsAllowed();
+	}
 
-
+	/// <summary>
+	///		Sets the amount of connected players 
+	/// </summary>
+	/// <param name="Players"></param>
 	private void SetConnectedPlayers(int Players) => ConnectedPlayers += Players;
+
+	/// <summary>
+	///		Are player's allowed to join into the game? 
+	/// </summary>
+	private void CheckPlayerJoiningIsAllowed() => AllowPlayerJoining = GameUIManager.Instance.IsDisplayingPlayerJoinMenu();
 }

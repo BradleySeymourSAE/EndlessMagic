@@ -8,6 +8,10 @@ using UnityEngine.UI;
 #endregion
 
 
+
+/// <summary>
+/// /	Handles Gamepad Joining Behaviour 
+/// </summary>
 public class GamepadJoinGameBehaviour : MonoBehaviour
 {
 
@@ -22,6 +26,7 @@ public class GamepadJoinGameBehaviour : MonoBehaviour
 
 
 	#region Private Variables
+	
 	/// <summary>
 	///		The selection panel of the canvas 
 	/// </summary>
@@ -29,6 +34,7 @@ public class GamepadJoinGameBehaviour : MonoBehaviour
 
 	#endregion
 
+	#region Unity References 
 
 	private void Start()
 	{
@@ -44,12 +50,19 @@ public class GamepadJoinGameBehaviour : MonoBehaviour
 		myAction.Enable();
 	}
 
+	#endregion
+
 
 	#region Private Methods
 
 	private void AddGamepad(InputDevice device)
 	{
 		
+		if (!GameManager.Instance.AllowPlayerJoining)
+		{
+			return;
+		}
+
 		// Loop through all the player inputs 
 		foreach (var currentPlayer in PlayerInput.all)
 		{
@@ -73,42 +86,27 @@ public class GamepadJoinGameBehaviour : MonoBehaviour
 			return;
 		}
 
-		var s_CurrentPlayerIndex = PlayerInput.all.Count + 1;
+		var s_CurrentPlayerIndex = PlayerInput.all.Count + 1; // Find the current players index
 
-		string s_ActionControlScheme = "";
+		string s_ActionControlScheme = ReturnControlScheme(device); // Get the Action Control Scheme
 
-		if (device.displayName.Contains("Controller") || device.displayName.Contains("Gamepad"))
-		{
-			s_ActionControlScheme = "Gamepad";
-		}
-		else if (device.displayName.Contains("Joystick"))
-		{
-			s_ActionControlScheme = "Joystick";
-		}
-		else if (device.displayName.Contains("Keyboard") || device.displayName.Contains("Mouse"))
-		{
-			s_ActionControlScheme = "Keyboard&Mouse";
-		}
+	
+		GameObject playerCursor = Resources.Load<GameObject>($"CursorPrefabs/P{s_CurrentPlayerIndex}_Cursor");  // Load up the cursor prefabs 
 
-
-		Debug.Log("Action Control Scheme: " + s_ActionControlScheme);
-
-
-		// Load up the cursor prefabs 
-		GameObject playerCursor = Resources.Load<GameObject>($"CursorPrefabs/P{s_CurrentPlayerIndex}_Cursor");
 
 		// check if the player is active in the Hierarchy 
 		if (!playerCursor.activeInHierarchy)
 		{
+		
 			PlayerInput playerInputCursor = PlayerInput.Instantiate(playerCursor, -1, s_ActionControlScheme, -1, device);
 		
 			RectTransform s_ParentTransform = m_PlayerJoinContainers[s_CurrentPlayerIndex - 1].GetComponent<RectTransform>();
 
 
 			Debug.LogWarning(
-				"Parent Transform Name: " + s_ParentTransform.name + 
-				"Player Cursor: " + playerInputCursor.name + 
-				"Action Control Scheme: " + s_ActionControlScheme
+				" Parent Transform Name: " + s_ParentTransform.name + 
+				" Player Cursor: " + playerInputCursor.name + 
+				" Action Control Scheme: " + s_ActionControlScheme
 			);
 
 
@@ -131,18 +129,60 @@ public class GamepadJoinGameBehaviour : MonoBehaviour
 
 	public void OnPlayerJoin(PlayerInput input)
 	{
-		numberOfActivePlayers = PlayerInput.all.Count;
-		Debug.Log("[GamepadJoinGameBehaviour.HandleOnPlayerJoin]: " + "There are currently " + numberOfActivePlayers + " players.");
-		GameEvents.SetPlayerJoinedEvent?.Invoke(1);
+
+		if (GameManager.Instance.AllowPlayerJoining == true)
+		{ 
+			numberOfActivePlayers = PlayerInput.all.Count;
+			Debug.Log("[GamepadJoinGameBehaviour.HandleOnPlayerJoin]: " + "There are currently " + numberOfActivePlayers + " players.");
+			GameEvents.SetPlayerJoinedEvent?.Invoke(1);
+		}
+		else
+		{
+			Debug.LogWarning("Not allowed to join!");
+		}
 	}
 
 	public void OnPlayerLeft(PlayerInput input)
 	{
-		numberOfActivePlayers = PlayerInput.all.Count;
-		Debug.Log("[GamepadJoinGameBehaviour.HandleOnPlayerLeft]: " + "Player left the game. There are " + numberOfActivePlayers + " remaining players.");
+		if (GameManager.Instance.AllowPlayerJoining == true)
+		{ 
+			numberOfActivePlayers = PlayerInput.all.Count;
+			Debug.Log("[GamepadJoinGameBehaviour.HandleOnPlayerLeft]: " + "Player left the game. There are " + numberOfActivePlayers + " remaining players.");
 
-		GameEvents.SetPlayerJoinedEvent?.Invoke(-1);
+			GameEvents.SetPlayerJoinedEvent?.Invoke(-1);
+		}
+		else
+		{
+			Debug.LogWarning("Not allowing player to leave!");
+		}
 	}
+	#endregion
+
+	#region Private Methods
+
+
+	private string ReturnControlScheme(InputDevice device)
+	{
+		if (
+			device.displayName.Contains(GameText.XboxControllerDevice) || 
+			device.displayName.Contains(GameText.GamepadDevice))
+		{
+			return GameText.ActionControlScheme_Gamepad;
+		}
+		else if (device.displayName.Contains(GameText.JoystickDevice))
+		{
+			return GameText.ActionControlScheme_Joystick;
+		}
+		else if (device.displayName.Contains(GameText.KeyboardDevice) || device.displayName.Contains(GameText.MouseDevice))
+		{
+			return GameText.ActionControlScheme_KeyboardMouse;
+		}
+		else
+		{
+			return device.displayName;
+		}
+	}
+
 	#endregion
 
 }
