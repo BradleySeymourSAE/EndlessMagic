@@ -4,6 +4,11 @@ using System.Collections.Generic;
 using UnityEngine;
 #endregion
 
+
+public enum SplitScreenMode { NoConnectedPlayers = 0, SinglePlayer = 1, TwoPlayer = 2, ThreePlayer = 3, FourPlayer = 4 };
+
+
+
 /// <summary>
 /// Game Manager - Handles Game Logic 
 /// </summary>
@@ -31,6 +36,17 @@ public class GameManager : MonoBehaviour
 	///		The total amount of Connected Players 
 	/// </summary>
 	public int ConnectedPlayers { get; private set; } = 0;
+
+	/// <summary>
+	///		Returns the current split screen mode 
+	/// </summary>
+	public SplitScreenMode ScreenMode
+	{
+		get
+		{
+			return (SplitScreenMode)ConnectedPlayers;
+		}
+	}
 
 	#endregion
 

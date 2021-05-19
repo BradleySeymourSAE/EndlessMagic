@@ -11,6 +11,10 @@ TagManager:
   - Cursor
   - PlayerJoinStatus
   - PlayerCursor
+  - CinemachineCamera
+  - Environment
+  - CinemachineCameraHolder
+  - PlayerSelectionUI
   layers:
   - Default
   - TransparentFX

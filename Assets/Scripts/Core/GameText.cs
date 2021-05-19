@@ -7,12 +7,15 @@ using TMPro;
 #endregion
 
 
-public enum GameAssetResource {
+public enum ResourceAssetFolder {
+	None = -1,
 	BroomSelectionPrefabs = 0,
 	WizardSelectionPlatformPrefabs = 1,
 	CursorPrefabs = 2,
 	WizardSelectionPrefabs = 3,
-	None = -1,
+	CameraPrefabs_Cinemachine_CMPlayerCameraPrefabs = 4,
+	CameraPrefabs_Cinemachine_PlayerCameraPrefabs = 5,
+	SelectionUIPrefabs = 6
 };
 
 /// <summary>
@@ -92,7 +95,7 @@ public static class GameText
 
 	#endregion
 
-	#region Action Control Scheme Keys
+	#region Action Control Scheme Types - Keys 
 
 	public const string ActionControlScheme_Gamepad = "Gamepad";
 	public const string ActionControlScheme_Joystick = "Joystick";
@@ -102,7 +105,7 @@ public static class GameText
 
 	#endregion
 
-	#region Game Object Tag Keys 
+	#region GameObject Tags - Keys  
 	
 	public const string MainCameraTag = "MainCamera";
 	public const string GameControllerTag = "GameController";
@@ -112,91 +115,171 @@ public static class GameText
 	public const string CM_Camera4Tag = "CM_Camera4";
 	public const string CursorTag = "Cursor";
 	public const string PlayerJoinStatusTag = "PlayerJoinStatus";
+	public const string SelectionUIManagerTag = "PlayerSelectionUI";
 
+	public const string CinemachineCameraHolderTag = "CinemachineCameraHolder";
+	public const string CinemachineCameraTag = "CinemachineCamera";
+	public const string EnvironmentTag = "Environment";
+
+	public static string GetPlayerCameraTag(int PlayerIndex = 1) => $"CM_Camera{PlayerIndex}";
 
 	#endregion
+
+	public static GameObject GetGameObject(string GameObjectTag) => GameObject.FindGameObjectWithTag(GameObjectTag);
+
+	public static GameObject[] GetCinemachineCameras(string CinemachineCameraTag) => GameObject.FindGameObjectsWithTag(CinemachineCameraTag);
 
 
 	#region Layer Keys 
 
-	public const string P1CameraLayer = "Camera_P1";
-	public const string P2CameraLayer = "Camera_P2";
-	public const string P3CameraLayer = "Camera_P3";
-	public const string P4CameraLayer = "Camera_P4";
+	public const string PlayerCamera_Layer = "Camera_";
+
+	public enum PlayerCameraLayer { None = 0, Camera1 = 11, Camera2 = 12, Camera3 = 13, Camera4 = 14 };
+
+	public static int GetPlayerCameraLayer(int PlayerIndex) => ReturnCameraLayer(PlayerIndex);
+
+	private static int ReturnCameraLayer(int PlayerIndex)
+	{
+		switch (PlayerIndex)
+		{
+			case 1:
+				return (int)PlayerCameraLayer.Camera1;
+			case 2:
+				return (int)PlayerCameraLayer.Camera2;
+			case 3:
+				return (int)PlayerCameraLayer.Camera3;
+			case 4:
+				return (int)PlayerCameraLayer.Camera4;
+			default:
+				return (int)PlayerCameraLayer.None;
+		}
+	}
 
 	#endregion
 
 
 	#region Asset Resource Keys 
 
-	public const string GameObjectResource_PlayerSelectionPlatform = "PlayerSelectPlatform";
-	public const string GameObjectResource_WizardSelectionSpawn = "WizardSelectionSpawn";
-	public const string GameObjectResource_Cursor = "Cursor";
+	public const string ResourceAsset_PlayerSelectPlatform = "PlayerSelectPlatform";
+	public const string ResourceAsset_Cursor = "Cursor";
+	public const string ResourceAsset_Camera = "Camera";
+	public const string ResourceAsset_CinemachineCamera = "CinemachineCamera";
 
-	public const string AssetResourceCategory_BroomSelectionPrefabs = "BroomSelectionPrefabs";
-	public const string AssetResourceCategory_CursorPrefabs = "CursorPrefabs";
-	public const string AssetResourceCategory_WizardSelectionPlatformPrefabs = "PlayerSelectionPlatformPrefabs";
-	public const string AssetResourceCategory_WizardSelectionPrefabs = "WizardSelectionPrefabs";
 
-	#region @TODO 
-	
-	/* 
-		public const string AssetResource_WizardDraco = "";
-		public const string AssetResource_WizardHermione = "";
-		public const string AssetResource_WizardSirius = "";
-		public const string AssetResource_WizardSnape = "";
-		public const string AssetResource_WizardYennefer = "";
-	*/
+	public const string SelectableResourceAsset_WizardPrefab = "SelectableWizard";
+	public const string SelectableResourceAsset_BroomstickPrefab = "SelectableBroom";
+
+
+	public const string SceneObject_WizardSelectionSpawn = "WizardSelectionSpawn";
+	public const string SceneObject_SelectionUI = "SelectionUI";
 
 	#endregion
 
-	
+
+	#region Resource Asset Folders  
+
+	public const string ResourceAssetFolder_CameraPrefabs_CMPlayerCameraPrefabs = "Cinemachine_PlayerCameraPrefabs";
+	public const string ResourceAssetFolder_CameraPrefabs_CinemachineCamera = "Cinemachine_CinemachineCameraPrefabs";
+	public const string ResourceAssetFolder_BroomSelectionPrefabs = "BroomSelectionPrefabs";
+	public const string ResourceAssetFolder_CursorPrefabs = "CursorPrefabs";
+	public const string ResourceAssetFolder_PlayerSelectionPlatformPrefabs = "PlayerSelectionPlatformPrefabs";
+	public const string ResourceAssetFolder_WizardSelectionPrefabs = "WizardSelectionPrefabs";
+	public const string ResourceAssetFolder_SelectionUIPrefabs = "SelectionUIPrefabs";
+	public const string ResourceAssetFolder_None = "";
+
+	#endregion
+
+	#region TESTING 
+
+	public static class ResourceAssets
+	{
+		public static string Cursor => nameof(ResourceAsset_Cursor);
+
+		public static string Camera => nameof(ResourceAsset_Camera);
+
+		public static string CinemachineCamera => nameof(ResourceAsset_CinemachineCamera);
+
+		public static string WizardCharacter => nameof(SelectableResourceAsset_WizardPrefab);
+
+		public static string Broomstick => nameof(SelectableResourceAsset_BroomstickPrefab);
+	}
+
+
+	#endregion
+
+	#region Public Static Methods 
 
 	/// <summary>
-	///		Returns an asset resource key string
+	///		Finds a prefab asset in the resources folder 
 	/// </summary>
-	/// <param name="PlayerIndex">Player Device Index (1, 2, 3 or 4)</param>
-	/// <param name="AssetResource">The Prefab that is retrieved from `Resources/FolderName` </param>
+	/// <param name="folder">The Resources folder type to search</param>
+	/// <param name="Querystring">The asset you are trying to locate inside the folder</param>
 	/// <returns></returns>
-	public static string ReturnAssetResourceKey(int PlayerIndex = 1, GameAssetResource AssetResource = GameAssetResource.None, string p_Query = "", bool LoadResourcesFromFolder = false)
+	public static string FindAsset(ResourceAssetFolder folder = ResourceAssetFolder.None, string Querystring = "") => ReturnResourceAssetFolderName(folder).ToString() + $"/{Querystring}";
+
+	/// <summary>
+	///		Finds an asset that has an indexed value
+	///		Example - SelectableWizard1, SelectableWizard2, SelectableWizard3
+	/// </summary>
+	/// <param name="folder">The resource folder to search </param>
+	/// <param name="Index">The index of the asset</param>
+	/// <param name="Querystring">The asset name string</param>
+	/// <returns>
+	///		String | null - {ResourceAssetFolder}/{QueryString}{Index}
+	///		Example - `WizardSelectionPrefabs/SelectableWizard1` 
+	/// </returns>
+	public static string FindAssetWithIndex(ResourceAssetFolder folder = ResourceAssetFolder.None, string Querystring = "", int Index = 1) => ReturnResourceAssetFolderName(folder).ToString() + $"/{Querystring}{Index}";
+
+	/// <summary>
+	///		Formats the search string for locating the player asset in the current scene 
+	/// </summary>
+	/// <param name="PlayerIndex">The current player's index</param>
+	/// <param name="QueryString">The search string</param>
+	/// <returns>
+	///		String | null - "P{PlayerIndex}_{QueryString}
+	/// </returns>
+	public static string FindPlayerGameObjectSceneAsset(int PlayerIndex = 1, string QueryString = "") => $"P{PlayerIndex}_{QueryString}";
+
+	/// <summary>
+	///		Formats the search string for locating a prefab specific asset in the resources folder using the players index 
+	/// </summary>
+	/// <param name="AssetFolder">The ResourceAssetFolder type to search</param>
+	/// <param name="PlayerIndex">The current players index (1, 2, 3, 4)</param>
+	/// <param name="Querystring">The player asset item you are searching for, Example - CursorPrefabs/P1_Cursor</param>
+	/// <returns></returns>
+	public static string FindPlayerAssetInResourceFolder(ResourceAssetFolder AssetFolder = ResourceAssetFolder.None, int PlayerIndex = 1, string Querystring = "") => ReturnResourceAssetFolderName(AssetFolder).ToString() + $"/P{PlayerIndex}_{Querystring}";
+
+	#endregion
+
+	#region Private Static Methods 
+
+	/// <summary>
+	///		Returns the name of the resource asset folder 
+	/// </summary>
+	/// <param name="Folder"></param>
+	/// <returns></returns>
+	private static string ReturnResourceAssetFolderName(ResourceAssetFolder Folder)
 	{
-		if (LoadResourcesFromFolder)
+		switch (Folder)
 		{
-			string AssetResourceFolder = FindAssetResource(AssetResource);
-
-			return $"{AssetResourceFolder}/P{PlayerIndex}_{p_Query}";
-		}
-		else
-		{
-			return $"P{PlayerIndex}_{p_Query}";
-		}
-	}
-
-
-	private static string FindAssetResource(GameAssetResource Resource)
-	{
-		switch (Resource)
-		{
-			case GameAssetResource.BroomSelectionPrefabs:
-					return AssetResourceCategory_BroomSelectionPrefabs;
-			case GameAssetResource.WizardSelectionPlatformPrefabs:
-				{
-					return AssetResourceCategory_WizardSelectionPlatformPrefabs;
-				}
-			case GameAssetResource.CursorPrefabs:
-				{
-					return AssetResourceCategory_CursorPrefabs;
-				}
-			case GameAssetResource.WizardSelectionPrefabs:
-				{
-					return AssetResourceCategory_WizardSelectionPrefabs;
-				}
-				break;
+			case ResourceAssetFolder.BroomSelectionPrefabs:
+					return ResourceAssetFolder_BroomSelectionPrefabs;
+			case ResourceAssetFolder.WizardSelectionPlatformPrefabs:
+					return ResourceAssetFolder_PlayerSelectionPlatformPrefabs;
+			case ResourceAssetFolder.CursorPrefabs:
+					return ResourceAssetFolder_CursorPrefabs;
+			case ResourceAssetFolder.WizardSelectionPrefabs:
+					return ResourceAssetFolder_WizardSelectionPrefabs;
+			case ResourceAssetFolder.CameraPrefabs_Cinemachine_CMPlayerCameraPrefabs:
+					return ResourceAssetFolder_CameraPrefabs_CMPlayerCameraPrefabs;
+			case ResourceAssetFolder.CameraPrefabs_Cinemachine_PlayerCameraPrefabs:
+					return ResourceAssetFolder_CameraPrefabs_CinemachineCamera;
+			case ResourceAssetFolder.SelectionUIPrefabs:
+					return ResourceAssetFolder_SelectionUIPrefabs;
 			default:
-				return null;
+				return ResourceAssetFolder_None;
 		}
 	}
-
 
 	#endregion
 

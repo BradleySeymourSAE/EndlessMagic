@@ -3290,7 +3290,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   MaxPlayers: 4
   AllowPlayerJoining: 0
-  JoinStartTimer: 10
+  AllowCharacterSelecting: 0
+  JoinStartTimer: 3
+  m_SelectionCursors: []
 --- !u!1 &1295581830
 GameObject:
   m_ObjectHideFlags: 0
@@ -5764,7 +5766,7 @@ MonoBehaviour:
     CloseButton: {fileID: 325288455}
     m_PlayerInputContainerBackgroundColor: {r: 1, g: 1, b: 1, a: 1}
     m_PlayerInputBackgroundImage: {fileID: 10907, guid: 0000000000000000f000000000000000, type: 0}
-    readyPlayers: []
+    readyPlayerCursors: []
     shouldStartCountdown: 0
 --- !u!1 &1903167903
 GameObject:
