@@ -28,23 +28,38 @@ public class CursorSelectionBehaviour : MonoBehaviour
 
 	private int m_SelectedWizardIndex = 0;
 
+	private void OnEnable()
+	{
+		GameEvents.SetAllowCharacterSelectionEvent += InitializeSelection;
+	}
+
+	private void OnDisable()
+	{
+		GameEvents.SetAllowCharacterSelectionEvent -= InitializeSelection;
+	}
+
+
+
+
 	private void Update()
 	{
 		allowPlayerJoinBehaviour = GameManager.Instance.AllowPlayerJoining;
+		allowCharacterSelecting = GameManager.Instance.AllowCharacterSelection;
+	}
 
-		if (GameManager.Instance)
-		{
-			allowPlayerJoinBehaviour = GameManager.Instance.AllowPlayerJoining;
-			allowCharacterSelecting = GameManager.Instance.AllowCharacterSelecting;
-		}
+	private void InitializeSelection(bool Allow)
+	{
+		allowCharacterSelecting = Allow;
 
+
+		playerSelection = wizardSelectionChoices[m_SelectedWizardIndex];
+		playerSelection.SetActive(Allow);
 	}
 
 	public void OnNextButton(InputAction.CallbackContext context)
 	{
-		if (!allowPlayerJoinBehaviour)
+		if (allowCharacterSelecting == false)
 		{
-			Debug.Log("On Next Button Called - Allow Player join behaviour is false!");
 			return;
 		}
 		else
@@ -58,9 +73,8 @@ public class CursorSelectionBehaviour : MonoBehaviour
 
 	public void OnPreviousButton(InputAction.CallbackContext context)
 	{
-		if (!allowPlayerJoinBehaviour)
+		if (allowCharacterSelecting == false)
 		{
-			Debug.Log("On Previous Button Called - Allow Player join behaviour is false!");
 			return;
 		}
 		else
@@ -76,27 +90,34 @@ public class CursorSelectionBehaviour : MonoBehaviour
 	{
 		if (!allowPlayerJoinBehaviour)
 		{
-			Debug.Log("On Next Button Called - Allow Player join behaviour is false!");
+			Debug.Log("On Next Button Called - Allow Player join behaviour is false, or allow character selectng is false!");
 			return;
 		}
 		else
 		{ 
-			if (context.phase == InputActionPhase.Started)
-			{
-				if (!isReady)
+			if (allowPlayerJoinBehaviour)
+			{ 
+				if (context.phase == InputActionPhase.Started)
 				{
-					Debug.Log("[CursorSelectionManager.OnSelect]: " + "Ready to join the game -" + context.action.name);
-					GameEvents.SetPlayerReadyEvent?.Invoke(gameObject, 1);
+					if (!isReady)
+					{
+						Debug.Log("[CursorSelectionManager.OnSelect]: " + "Ready to join the game -" + context.action.name);
+						GameEvents.SetPlayerReadyEvent?.Invoke(gameObject, 1);
 					
-					isReady = true;
+						isReady = true;
+					}
+					else
+					{
+						Debug.Log("[CursorSelectionManager.OnSelect]: " + "Cancelled ready up - " + context.action.name);
+						GameEvents.SetPlayerReadyEvent?.Invoke(gameObject, -1);
+						isReady = false;
+						// DO nothing
+					}
 				}
-				else
-				{
-					Debug.Log("[CursorSelectionManager.OnSelect]: " + "Cancelled ready up - " + context.action.name);
-					GameEvents.SetPlayerReadyEvent?.Invoke(gameObject, -1);
-					isReady = false;
-					// DO nothing
-				}
+			}
+			else if (allowCharacterSelecting == true && !allowPlayerJoinBehaviour)
+			{
+
 			}
 		}
 	}

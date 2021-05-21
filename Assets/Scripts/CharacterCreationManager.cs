@@ -14,30 +14,49 @@ public class CharacterCreationManager : MonoBehaviour
 
 	#region Public Variables 
 
-
 	/// <summary>
-	///		Reference to all the cinemachine cameras in the scene 
+	///		List of starting platform spawn positions 
 	/// </summary>
-	private List<GameObject> m_CinemachineCameras = new List<GameObject>();
-
 	public List<Transform> platformSpawnPositions = new List<Transform>();
 
 	#endregion
 
-	#region Private Variables 
+	#region Private Variables
+	/// <summary>
+	///		List of active player cameras 
+	/// </summary>
+	[Header("Debugging")]
+	[SerializeField] private List<Camera> m_ActivePlayerCameras = new List<Camera>();
 
-	private List<Camera> m_ActivePlayerCameras = new List<Camera>();
-
+	/// <summary>
+	///		List of spawned player selection platforms 
+	/// </summary>
 	[SerializeField] private List<GameObject> m_SpawnedPlayerSelectionPlatforms = new List<GameObject>();
 
+	/// <summary>
+	///		List of selection UI 
+	/// </summary>
 	[SerializeField] private List<Canvas> m_SelectionUI = new List<Canvas>();
 
+	/// <summary>
+	///		List of the Wizard Prefab Spawn Positions 
+	/// </summary>
 	[SerializeField] private List<Transform> m_WizardPrefabSpawnPoints = new List<Transform>();
 
-	private List<Transform> m_PlatformPrefabSpawnPoints = new List<Transform>();
+	/// <summary>
+	///		List of all the platform prefab spawn points after they are set 
+	/// </summary>
+	[SerializeField] private List<Transform> m_PlatformPrefabSpawnPoints = new List<Transform>();
 
-	[SerializeField] private List<string> m_AssetResourceQueries = new List<string>();
+	/// <summary>
+	///		Reference to all the cinemachine cameras in the scene 
+	/// </summary>
+	[SerializeField] private List<GameObject> m_CinemachineCameras = new List<GameObject>();
 
+	[SerializeField] private List<GameObject> m_SpawnedWizardPrefabs = new List<GameObject>();
+	/// <summary>
+	///		Do we gave the wizard selection spawn points? 
+	/// </summary>
 	private bool hasWizardSelectionSpawnPoints = false;
 
 	#endregion
@@ -111,7 +130,7 @@ public class CharacterCreationManager : MonoBehaviour
 		m_PlatformPrefabSpawnPoints.Clear();
 		m_ActivePlayerCameras.Clear();
 		m_CinemachineCameras.Clear();
-		m_AssetResourceQueries.Clear();
+		m_SpawnedWizardPrefabs.Clear();
 		m_Players = GameManager.Instance.ConnectedPlayers;
 
 		// Loop through potential platform spawn positions 
@@ -128,15 +147,6 @@ public class CharacterCreationManager : MonoBehaviour
 		Setup(m_Players);
 	}
 
-	private void OnEnable()
-	{
-		GameEvents.SpawnSelectableCharacters += SpawnWizardSelections;
-	}
-
-	private void OnDisable()
-	{
-		GameEvents.SpawnSelectableCharacters -= SpawnWizardSelections;
-	}
 
 	#endregion
 
@@ -165,8 +175,7 @@ public class CharacterCreationManager : MonoBehaviour
 			GameObject s_PlayerCameraAssetPrefab = GameEntity.FindAsset(ResourceFolder.PlayerCameraPrefabs, s_CurrentPlayerIndex, Asset.Camera);
 			GameObject s_CinemachineCameraAssetPrefab = GameEntity.FindAsset(ResourceFolder.CinemachineCameraPrefabs, s_CurrentPlayerIndex, Asset.CinemachineCamera);
 			GameObject s_SelectionUIAssetPrefab = GameEntity.FindAsset(ResourceFolder.PlayerSelectionUIPrefabs, s_CurrentPlayerIndex, Asset.None, SceneAsset.SelectionUI, true);
-
-
+			
 
 			GameObject platform = Instantiate(s_PlatformAssetPrefab, m_PlatformPrefabSpawnPoints[s_CurrentPlayerIndex - 1].position, s_PlatformAssetPrefab.transform.rotation);
 
@@ -181,17 +190,43 @@ public class CharacterCreationManager : MonoBehaviour
 				m_WizardPrefabSpawnPoints.Add(s_WizardSpawnPoint);
 			}
 
+			List<GameObject> playerWizardSelectionsSpawnedIn = new List<GameObject>();
+			playerWizardSelectionsSpawnedIn.Clear();
+
+			GameObject[] s_AvailableWizardSelections = GameEntity.FindAllIndexedAssets(ResourceFolder.WizardPrefabs);
+
+			for (int j = 0; j < s_AvailableWizardSelections.Length; j++)
+			{
+				GameObject wizardPrefabAsset = Instantiate(s_AvailableWizardSelections[j], s_WizardSpawnPoint.position, s_AvailableWizardSelections[j].transform.rotation);
 
 
-			GameObject playerCamera = Instantiate(s_PlayerCameraAssetPrefab, s_CameraHolder.position, Quaternion.identity);
-			GameObject cinemachineCamera = Instantiate(s_CinemachineCameraAssetPrefab, s_CameraHolder.position, Quaternion.identity);
+				wizardPrefabAsset.transform.SetParent(s_WizardSpawnPoint);
+				wizardPrefabAsset.layer = s_WizardSpawnPoint.gameObject.layer;
+				wizardPrefabAsset.tag = s_WizardSpawnPoint.tag;
 
-			playerCamera.transform.SetParent(s_CameraHolder);
-			cinemachineCamera.transform.SetParent(s_CameraHolder);
+				if (j == 0)
+				{
+					wizardPrefabAsset.SetActive(true);
+				}
+				else
+				{
+					wizardPrefabAsset.SetActive(false);
+				}	
+			}
+			
+			// Obviously set the first wizard selection game object to true 
+			s_AvailableWizardSelections[0].SetActive(true);
 
-			CinemachineVirtualCamera camera = cinemachineCamera.GetComponent<CinemachineVirtualCamera>();
-			camera.Follow = s_WizardSpawnPoint;
-			camera.LookAt = s_WizardSpawnPoint;
+
+			GameObject playerCamera = Instantiate(s_PlayerCameraAssetPrefab, s_CameraHolder.position, Quaternion.identity); // The player camera 
+			GameObject cinemachineCamera = Instantiate(s_CinemachineCameraAssetPrefab, s_CameraHolder.position, Quaternion.identity); // The cinemachine camera that controlls the player 
+
+			playerCamera.transform.SetParent(s_CameraHolder); // Set the camera holder transform 
+			cinemachineCamera.transform.SetParent(s_CameraHolder); // Set the camera holder transform 
+
+			CinemachineVirtualCamera camera = cinemachineCamera.GetComponent<CinemachineVirtualCamera>(); // Get cinemachine component 
+			camera.Follow = s_WizardSpawnPoint; // Set the follow property 
+			camera.LookAt = s_WizardSpawnPoint; // Set the lookat property 
 
 
 
@@ -200,14 +235,14 @@ public class CharacterCreationManager : MonoBehaviour
 			GameObject s_CurrentPlayerSelectionUIPrefab = Instantiate(s_SelectionUIAssetPrefab, s_SelectionUIManager.position, Quaternion.identity);
 			Transform s_CurrentPlayerCursor = GameEntity.FindSceneAssetClone(s_CurrentPlayerIndex, Asset.Cursor);
 
+			s_CurrentPlayerCursor.GetComponent<CursorSelectionBehaviour>().wizardSelectionChoices = s_AvailableWizardSelections;
+		
 			s_CurrentPlayerSelectionUIPrefab.transform.SetParent(s_SelectionUIManager);
 			s_CurrentPlayerSelectionUIPrefab.layer = GameEntity.GetPlayerCameraLayer(s_CurrentPlayerIndex);
 
-
+			// The current player's cursor 
 			s_CurrentPlayerCursor.SetParent(s_CurrentPlayerSelectionUIPrefab.transform);
-			s_CurrentPlayerCursor.gameObject.GetComponent<Image>().enabled = false;
-
-			
+			s_CurrentPlayerCursor.gameObject.GetComponent<Image>().enabled = false;	
 
 			var playerCam = playerCamera.GetComponent<Camera>();
 			
@@ -220,27 +255,10 @@ public class CharacterCreationManager : MonoBehaviour
 			m_SelectionUI.Add(playerSelectionUICanvas);
 		}
 
-		hasWizardSelectionSpawnPoints = m_WizardPrefabSpawnPoints.Count > 0 && m_WizardPrefabSpawnPoints.Count <= GameManager.Instance.MaxPlayers;
-
 		SplitScreenMode Mode = GameManager.Instance.ScreenMode;
 		GameEntity.SetSplitScreenCameras(m_ActivePlayerCameras, Mode);
-
-		if (hasWizardSelectionSpawnPoints)
-		GameEvents.SpawnSelectableCharacters?.Invoke(m_Players);
+		GameEvents.SetAllowCharacterSelectionEvent?.Invoke(true);
 	}
 
 
-	#region @TODO - README 
-
-	///		Spawns the selectable Wizards in - I can't remember whether I handle that from inside here
-	///		Or whether I should handle that from inside character object spawn manager... reeeeeee
-	///		Am going down the road to get dinner and will sort this once I get back 
-	private void SpawnWizardSelections(int p_TotalPlayers)
-	{
-			
-		Debug.Log("Spawning the wizard selections into the game!");
-
-	}
-
-	#endregion
 }

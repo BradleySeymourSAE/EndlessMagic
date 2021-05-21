@@ -7,17 +7,6 @@ using TMPro;
 #endregion
 
 
-public enum ResourceAssetFolder {
-	None = -1,
-	BroomSelectionPrefabs = 0,
-	WizardSelectionPlatformPrefabs = 1,
-	CursorPrefabs = 2,
-	WizardSelectionPrefabs = 3,
-	CameraPrefabs_Cinemachine_CMPlayerCameraPrefabs = 4,
-	CameraPrefabs_Cinemachine_PlayerCameraPrefabs = 5,
-	SelectionUIPrefabs = 6
-};
-
 /// <summary>
 ///		Static Class of UI text & button strings 
 /// </summary>

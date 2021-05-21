@@ -76,9 +76,9 @@ public static class GameEvents
 	public static GameObjectListParameterDelegate SetCharacterCreationCursorEvent;
 
 	/// <summary>
-	///		Once called - Handles spawning in of the selectable characters 
+	///		Toggles allowing character creation
 	/// </summary>
-	public static IntParameterDelegate SpawnSelectableCharacters;
+	public static BoolParameterDelegate SetAllowCharacterSelectionEvent;
 
 	#endregion
 

@@ -146,7 +146,10 @@ public static class GameEntity
 	};
 
 
-
+	/// <summary>
+	///		Whether to debug the search strings for each result 
+	/// </summary>
+	public static bool Debugging = true;
 
 
 	/// <summary>
@@ -164,6 +167,11 @@ public static class GameEntity
 	public static GameObject FindByTag(GameTag p_Tag)
 	{
 		string search = ReturnGameTag(p_Tag);
+
+		if (Debugging)
+		{
+			Debug.Log("[GameEntity.FindByTag]: " + "(Query): `" + search + "`");
+		}
 
 		return FindByTag(search);
 	}
@@ -183,6 +191,11 @@ public static class GameEntity
 	public static GameObject[] FindAllByTag(GameTag p_Tag)
 	{
 		string search = ReturnGameTag(p_Tag);
+
+		if (Debugging)
+		{
+			Debug.Log("[GameEntity.FindAllByTag]: " + "(Query): `" + search + "`");
+		}
 
 		return FindAllByTag(search);
 	}
@@ -207,53 +220,74 @@ public static class GameEntity
 			search += ReturnAsset(p_Asset);
 		}
 
+		if (Debugging)
+		{
+			Debug.Log("[GameEntity.FindAsset]: " + "Query string: " + search + " Use Scene Asset: " + UseSceneAsset);
+		}
+
 		return Resources.Load<GameObject>(search);
 	}
 
 	/// <summary>
-	///		Finds an asset by its index in the resource folder location 
+	///		Finds an indexed asset using Resources.Load - ResourceFolder/WizardSelectionPrefabs/WizardSelection1
 	/// </summary>
-	/// <param name="p_AssetResourceFolder"></param>
-	/// <param name="p_Querystring"></param>
-	/// <param name="Index"></param>
+	/// <param name="p_AssetIndex">The incrementing index</param>
+	/// <param name="p_AssetResourceFolder">The Resources Asset Folder to search</param>
+	/// <param name="p_IndexedAsset">The indexed asset prefab name</param>
 	/// <returns></returns>
-	public static GameObject FindAsset(ResourceFolder p_AssetResourceFolder = ResourceFolder.None, Asset p_Asset = Asset.None, SceneAsset p_SceneAsset = SceneAsset.None, int Index = 1, bool UseSceneAsset = false)
+	public static GameObject[] FindAllIndexedAssets(ResourceFolder p_AssetResourceFolder = ResourceFolder.WizardPrefabs)
 	{
-		string query = ReturnAssetFolder(p_AssetResourceFolder);
+		string search = ReturnAssetFolder(p_AssetResourceFolder);
 
-		if (UseSceneAsset == true)
+		GameObject[] s_Resources = Resources.LoadAll<GameObject>(search);
+
+		if (Debugging)
 		{
-			query += ReturnAsset(p_SceneAsset).ToString() + Index;
+			Debug.Log("[GameEntity.FindAllIndexedAssets]: " + "(Query): `" + search + "`");
+		}
+
+		if (s_Resources.Length > 0)
+		{
+			return s_Resources;
 		}
 		else
-		{
-			query += ReturnAsset(p_Asset).ToString() + Index;
-		}
-
-		return Resources.Load<GameObject>(query);
+			return null;
 	}
 
 	/// <summary>
 	///		Returns a Prefab Asset for a Player using their player index  
 	/// </summary>
 	/// <param name="p_AssetResourceFolder"></param>
-	/// <param name="PlayerIndex"></param>
+	/// <param name="PlayerIndex">The current player's player index</param>
 	/// <param name="p_Querystring"></param>
 	/// <returns></returns>
-	public static GameObject FindAsset(ResourceFolder p_AssetResourceFolder = ResourceFolder.None, int PlayerIndex = 1, Asset p_Asset = Asset.None, SceneAsset p_SceneAsset = SceneAsset.None, bool UseSceneAsset = false)
+	public static GameObject FindAsset(ResourceFolder p_AssetResourceFolder = ResourceFolder.None, int PlayerIndex = 1, Asset p_Asset = Asset.Cursor, SceneAsset p_SceneAsset = SceneAsset.None, bool UseSceneAsset = false)
 	{
 		string query = ReturnAssetFolder(p_AssetResourceFolder) + $"P{PlayerIndex}_";
 
 		if (UseSceneAsset == true)
 		{
 			query += ReturnAsset(p_SceneAsset);
-			return Resources.Load<GameObject>(query);
+			
+			if (Debugging)
+			{
+				Debug.Log("[GameEntity.FindAsset]: " + "Query string: " + query + " Use Scene Asset: " + UseSceneAsset + " Scene Asset: " + p_SceneAsset);
+			}
+
 		}
 		else
 		{
 			query += ReturnAsset(p_Asset);
-			return Resources.Load<GameObject>(query);
+
+			if (Debugging)
+			{
+				Debug.Log("[GameEntity.FindAsset]: " + "Query string: " + query + " Use Scene Asset: " + UseSceneAsset + " Asset: " + p_Asset);
+			}
+
 		}
+
+
+		return Resources.Load<GameObject>(query);
 	}
 
 	/// <summary>
@@ -363,11 +397,15 @@ public static class GameEntity
 	{
 		if (m_AssetTypes.TryGetValue(asset, out string s_ResourceAsset))
 		{
+			if (Debugging)
+			{
+				Debug.Log("[ReturnAsset]: " + "Asset: `" + asset + "`" + " Result: " + s_ResourceAsset);
+			}
 			return s_ResourceAsset;
 		}
 		else
 		{
-			Debug.Log("Could not find asset!");
+			Debug.LogWarning("Could not find asset!");
 			return "";
 		}
 	}
@@ -379,8 +417,14 @@ public static class GameEntity
 	/// <returns></returns>
 	public static string ReturnAsset(SceneAsset asset)
 	{
+
+
 		if (m_SceneAssets.TryGetValue(asset, out string s_SceneAsset))
 		{
+			if (Debugging)
+			{
+				Debug.Log("[ReturnAsset]: " + "Scene Asset: `" + asset + "`" + " Result: " + s_SceneAsset);
+			}
 			return s_SceneAsset;
 		}
 		else

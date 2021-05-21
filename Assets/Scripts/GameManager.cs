@@ -53,15 +53,24 @@ public class GameManager : MonoBehaviour
 	/// </summary>
 	[HideInInspector] public int MaxPlayers = 4;
 
+	#region @TODO - #future-brad Will eventually stop hardcoding this and use Resources.Load<GameObject>() to get the amount of items in the folder 
+	/// <summary>
+	///		Reference to the total amount of wizard prefabs
+	/// </summary>
+	public int TotalWizards = 5;
+
+	#endregion
+
+
 	/// <summary>
 	///		Should players be allowed to join in? 
 	/// </summary>
-	public bool AllowPlayerJoining;
+	public bool AllowPlayerJoining { get { return m_AllowPlayerJoining; } set { m_AllowPlayerJoining = value; } }
 
 	/// <summary>
 	///		Allow Character Selecting 
 	/// </summary>
-	public bool AllowCharacterSelecting = false;
+	public bool AllowCharacterSelection { get {  return m_AllowCharacterSelecting; } set { m_AllowCharacterSelecting = value; } }
 
 	/// <summary>
 	///		The amount of time to wait after all players have ready'd up 
@@ -73,6 +82,10 @@ public class GameManager : MonoBehaviour
 	#region Private Variables 
 
 	[SerializeField] private List<CursorSelectionBehaviour> m_SelectionCursors = new List<CursorSelectionBehaviour>();
+
+	[SerializeField] private bool m_AllowPlayerJoining;
+
+	[SerializeField] private bool m_AllowCharacterSelecting;
 
 	/// <summary>
 	///		Reference to the Game UI Manager Instance 
@@ -102,7 +115,7 @@ public class GameManager : MonoBehaviour
 		}
 
 		AllowPlayerJoining = false;
-		AllowCharacterSelecting = false;
+		AllowCharacterSelection = false;
 
 		if (GameUIManager.Instance)
 		{
@@ -118,6 +131,7 @@ public class GameManager : MonoBehaviour
 		GameEvents.SetPlayerJoinedEvent += SetConnectedPlayers;
 
 		GameEvents.SetCharacterCreationCursorEvent += SetCharacterCreationCursors;
+		GameEvents.SetAllowCharacterSelectionEvent += HandleAllowCharacterSelection;
 	}
 
 	/// <summary>
@@ -128,13 +142,14 @@ public class GameManager : MonoBehaviour
 		GameEvents.SetPlayerJoinedEvent -= SetConnectedPlayers;
 
 		GameEvents.SetCharacterCreationCursorEvent -= SetCharacterCreationCursors;
+		GameEvents.SetAllowCharacterSelectionEvent -= HandleAllowCharacterSelection;
 	}
 
 	private void Update()
 	{
 		CheckPlayerJoiningIsAllowed();
 
-		CheckAllowCharacterCreation();
+		CheckAllowCharacterSelecting();
 	}
 
 	#endregion
@@ -150,9 +165,18 @@ public class GameManager : MonoBehaviour
 	/// <summary>
 	///		Are player's allowed to join into the game? 
 	/// </summary>
-	private void CheckPlayerJoiningIsAllowed() => AllowPlayerJoining = GameUIManager.Instance.IsDisplayingPlayerJoinMenu();
+	private void CheckPlayerJoiningIsAllowed()
+	{
+		if (GameUIManager.Instance)
+		{
+			AllowPlayerJoining = GameUIManager.Instance.IsDisplayingPlayerJoinMenu() == true;
+		}
+	}
 
-	private void CheckAllowCharacterCreation() => AllowCharacterSelecting = Instance.m_SelectionCursors.Count > 0 == true;
+	private bool CheckAllowCharacterSelecting() => AllowCharacterSelection == true;
+
+
+	private void HandleAllowCharacterSelection(bool ShouldAllowCharacterSelection) => m_AllowCharacterSelecting = ShouldAllowCharacterSelection;
 
 	private void SetCharacterCreationCursors(List<GameObject> cursors)
 	{

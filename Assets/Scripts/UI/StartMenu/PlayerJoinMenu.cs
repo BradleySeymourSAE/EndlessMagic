@@ -172,6 +172,7 @@ public class PlayerJoinMenu
 		if (shouldStartCountdown)
 		{
 			GameEvents.UpdatePlayerJoinReadyTimer?.Invoke(shouldStartCountdown);
+			shouldStartCountdown = false;
 		}
 	}
 
@@ -287,6 +288,15 @@ public class PlayerJoinMenu
 		m_GameUIManager.DisplayMainMenu(true);
 	}
 
+
+
+	#region TODO - This is already a function in GameEntity.cs - I will remove this when i get the chance 
+		/// <summary>
+		///		@TODO - Remove 'ReturnPlayerIndex()'
+		/// </summary>
+		/// <param name="name"></param>
+		/// <returns></returns>
+	#endregion
 	private int ReturnPlayerIndex(string name)
 	{
 		const string P1_Cursor = "P1_Cursor(Clone)";
