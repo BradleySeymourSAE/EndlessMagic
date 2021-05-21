@@ -24,13 +24,19 @@ public class CursorSelectionBehaviour : MonoBehaviour
 
 	private bool allowPlayerJoinBehaviour = false;
 
-	private bool m_ViewingCharacterSelectionScreen = false;
+	private bool allowCharacterSelecting = false;
 
 	private int m_SelectedWizardIndex = 0;
 
 	private void Update()
 	{
 		allowPlayerJoinBehaviour = GameManager.Instance.AllowPlayerJoining;
+
+		if (GameManager.Instance)
+		{
+			allowPlayerJoinBehaviour = GameManager.Instance.AllowPlayerJoining;
+			allowCharacterSelecting = GameManager.Instance.AllowCharacterSelecting;
+		}
 
 	}
 

@@ -195,7 +195,7 @@ public class GameUIManager : MonoBehaviour
 	///		Checks if the player join menu is currently displaying 
 	/// </summary>
 	/// <returns></returns>
-	public bool IsDisplayingPlayerJoinMenu() => PlayerJoinMenuUI.PlayerJoinMenuScreen.activeInHierarchy == true;
+	public bool IsDisplayingPlayerJoinMenu() => PlayerJoinMenuUI.PlayerJoinMenuScreen.active == true;
 
 	#endregion
 

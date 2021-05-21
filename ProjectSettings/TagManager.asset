@@ -15,6 +15,7 @@ TagManager:
   - Environment
   - CinemachineCameraHolder
   - PlayerSelectionUI
+  - CharacterSelectionInputManager
   layers:
   - Default
   - TransparentFX

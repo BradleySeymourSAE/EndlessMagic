@@ -1,0 +1,513 @@
+﻿#region Namespaces
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using UnityEngine;
+using UnityEngine.UI;
+using TMPro;
+#endregion
+
+
+/// <summary>
+///		The Resource Asset Folder Names 
+/// </summary>
+public enum ResourceFolder
+{
+	None = -1,
+	BroomSelectionPrefabs = 0,
+	PlatformPrefabs = 1,
+	CursorPrefabs = 2,
+	WizardPrefabs = 3,
+	CinemachineCameraPrefabs = 4,
+	PlayerCameraPrefabs = 5,
+	PlayerSelectionUIPrefabs = 6
+}
+
+/// <summary>
+///		Types of Game Tag's 
+/// </summary>
+public enum GameTag
+{
+	MainCamera,
+	GameController,
+	CM_Camera,
+	Cursor,
+	PlayerJoinStatus,
+	SelectionUIManager,
+	CharacterSelectionInputManager,
+	CinemachineCameraHolder,
+	CinemachineCamera,
+	Environment
+}
+
+/// <summary>
+///		Asset Resources - These are just your standard prefabs 
+/// </summary>
+public enum Asset
+{
+	None = -1,
+	PlayerSelectPlatform,
+	Cursor,
+	Camera,
+	CinemachineCamera,
+	Wizard,
+	Broomstick
+}
+
+
+/// <summary>
+///		Scene Assets - Game Object Assets with Index's in the scene 
+/// </summary>
+public enum SceneAsset { 
+	None = -1,
+	SelectionUI, 
+	WizardSelectionSpawn,
+	Cursor
+}
+
+
+/// <summary>
+///		Split Screen Mode's 
+/// </summary>
+public enum SplitScreenMode { NoConnectedPlayers = 0, SinglePlayer = 1, TwoPlayer = 2, ThreePlayer = 3, FourPlayer = 4 };
+
+/// <summary>
+///		The different types of split screen camera view's 
+/// </summary>
+public enum CameraView { Fullscreen, TopScreen, BottomScreen, UpperLeft, UpperRight, LowerLeft, LowerRight };
+
+
+
+/// <summary>
+///		Static Utility Class for finding specific Unity Objects & UI 
+/// </summary>
+public static class GameEntity
+{
+
+	/// <summary>
+	///		Reference to the Game Object Tags
+	/// </summary>
+	private static Dictionary<GameTag, string> m_GameObjectTags = new Dictionary<GameTag, string>
+	{
+		{ GameTag.MainCamera, "MainCamera" },
+		{ GameTag.GameController, "GameController" },
+		{ GameTag.CM_Camera, "CM_Camera" },
+		{ GameTag.Cursor, "Cursor" },
+		{ GameTag.PlayerJoinStatus, "PlayerJoinStatus" },
+		{ GameTag.CharacterSelectionInputManager, "CharacterSelectionInputManager" },
+		{ GameTag.SelectionUIManager, "PlayerSelectionUI" },
+		{ GameTag.CinemachineCameraHolder, "CinemachineCameraHolder" },
+		{ GameTag.CinemachineCamera, "CinemachineCamera" },
+		{ GameTag.Environment, "Environment" }
+	};
+
+	/// <summary>
+	///		Reference to the types of asset folders to search 
+	/// </summary>
+	private static Dictionary<ResourceFolder, string> m_ResourceFolders = new Dictionary<ResourceFolder, string>
+	{
+		{ ResourceFolder.None, "" },
+		{ ResourceFolder.BroomSelectionPrefabs, "BroomSelectionPrefabs" },
+		{ ResourceFolder.PlatformPrefabs, "PlayerSelectionPlatformPrefabs" },
+		{ ResourceFolder.CursorPrefabs, "CursorPrefabs" },
+		{ ResourceFolder.WizardPrefabs, "WizardSelectionPrefabs" },
+		{ ResourceFolder.CinemachineCameraPrefabs, "Cinemachine_CinemachineCameraPrefabs" },
+		{ ResourceFolder.PlayerCameraPrefabs, "Cinemachine_PlayerCameraPrefabs" },
+		{ ResourceFolder.PlayerSelectionUIPrefabs, "SelectionUIPrefabs" }
+	};
+
+	private static Dictionary<Asset, string> m_AssetTypes = new Dictionary<Asset, string>
+	{
+		{ Asset.PlayerSelectPlatform, "PlayerSelectPlatform" },
+		{ Asset.Cursor, "Cursor" },
+		{ Asset.Camera, "Camera" },
+		{ Asset.CinemachineCamera, "CinemachineCamera" },
+		{ Asset.Wizard, "SelectableWizard" },
+		{ Asset.Broomstick, "SelectableBroom" },
+		{ Asset.None, "" }
+	};
+
+	private static Dictionary<SceneAsset, string> m_SceneAssets = new Dictionary<SceneAsset, string>
+	{
+		{ SceneAsset.None, "" },
+		{ SceneAsset.SelectionUI, "SelectionUI" },
+		{ SceneAsset.WizardSelectionSpawn, "WizardSelectionSpawn" }
+	};
+
+	private static Dictionary<CameraView, Rect> m_CameraViewDictionary = new Dictionary<CameraView, Rect>
+	{
+		{ CameraView.Fullscreen, new Rect(0, 0, 1, 1) },
+		{ CameraView.TopScreen, new Rect(0, 0.5f, 1, 1) },
+		{ CameraView.BottomScreen, new Rect(0, -0.5f, 1, 1) },
+		{ CameraView.UpperLeft, new Rect(-0.5f, 0.5f, 1, 1) },
+		{ CameraView.UpperRight, new Rect(0.5f, 0.5f, 1, 1) },
+		{ CameraView.LowerLeft, new Rect(0.5f, -0.5f, 1, 1 ) },
+		{ CameraView.LowerRight, new Rect(-0.5f, -0.5f, 1, 1) }
+	};
+
+
+
+
+
+	/// <summary>
+	///		Finds a game object by its tag - Same as GameObject.FindGameObjectWithTag(tag)
+	/// </summary>
+	/// <param name="p_Tag"></param>
+	/// <returns></returns>
+	public static GameObject FindByTag(string p_Tag) => GameObject.FindGameObjectWithTag(p_Tag);
+
+	/// <summary>
+	///		Finds a game object by its game tag - Another search method for FindByTag 
+	/// </summary>
+	/// <param name="p_Tag"></param>
+	/// <returns></returns>
+	public static GameObject FindByTag(GameTag p_Tag)
+	{
+		string search = ReturnGameTag(p_Tag);
+
+		return FindByTag(search);
+	}
+
+	/// <summary>
+	///		Finds all game objects by a tag 
+	/// </summary>
+	/// <param name="p_Tag"></param>
+	/// <returns></returns>
+	public static GameObject[] FindAllByTag(string p_Tag) => GameObject.FindGameObjectsWithTag(p_Tag);
+
+	/// <summary>
+	///		Finds all game objects with the GameTag enum 
+	/// </summary>
+	/// <param name="p_Tag"></param>
+	/// <returns></returns>
+	public static GameObject[] FindAllByTag(GameTag p_Tag)
+	{
+		string search = ReturnGameTag(p_Tag);
+
+		return FindAllByTag(search);
+	}
+
+	/// <summary>
+	///		Finds an asset in the resource folder 
+	/// </summary>
+	/// <param name="p_AssetResourceFolder"></param>
+	/// <param name="p_Querystring"></param>
+	/// <returns></returns>
+	public static GameObject FindAsset(ResourceFolder p_AssetResourceFolder = ResourceFolder.None, Asset p_Asset = Asset.None, SceneAsset p_SceneAsset = SceneAsset.None, bool UseSceneAsset = false)
+	{
+		string search = ReturnAssetFolder(p_AssetResourceFolder);
+
+
+		if (UseSceneAsset == true)
+		{
+			search += ReturnAsset(p_SceneAsset);
+		}
+		else
+		{
+			search += ReturnAsset(p_Asset);
+		}
+
+		return Resources.Load<GameObject>(search);
+	}
+
+	/// <summary>
+	///		Finds an asset by its index in the resource folder location 
+	/// </summary>
+	/// <param name="p_AssetResourceFolder"></param>
+	/// <param name="p_Querystring"></param>
+	/// <param name="Index"></param>
+	/// <returns></returns>
+	public static GameObject FindAsset(ResourceFolder p_AssetResourceFolder = ResourceFolder.None, Asset p_Asset = Asset.None, SceneAsset p_SceneAsset = SceneAsset.None, int Index = 1, bool UseSceneAsset = false)
+	{
+		string query = ReturnAssetFolder(p_AssetResourceFolder);
+
+		if (UseSceneAsset == true)
+		{
+			query += ReturnAsset(p_SceneAsset).ToString() + Index;
+		}
+		else
+		{
+			query += ReturnAsset(p_Asset).ToString() + Index;
+		}
+
+		return Resources.Load<GameObject>(query);
+	}
+
+	/// <summary>
+	///		Returns a Prefab Asset for a Player using their player index  
+	/// </summary>
+	/// <param name="p_AssetResourceFolder"></param>
+	/// <param name="PlayerIndex"></param>
+	/// <param name="p_Querystring"></param>
+	/// <returns></returns>
+	public static GameObject FindAsset(ResourceFolder p_AssetResourceFolder = ResourceFolder.None, int PlayerIndex = 1, Asset p_Asset = Asset.None, SceneAsset p_SceneAsset = SceneAsset.None, bool UseSceneAsset = false)
+	{
+		string query = ReturnAssetFolder(p_AssetResourceFolder) + $"P{PlayerIndex}_";
+
+		if (UseSceneAsset == true)
+		{
+			query += ReturnAsset(p_SceneAsset);
+			return Resources.Load<GameObject>(query);
+		}
+		else
+		{
+			query += ReturnAsset(p_Asset);
+			return Resources.Load<GameObject>(query);
+		}
+	}
+
+	/// <summary>
+	///		Finds a cloned game asset transform using the players current index and the query string 
+	/// </summary>
+	/// <param name="p_CurrentPlayerIndex"></param>
+	/// <param name="p_QueryString"></param>
+	/// <returns></returns>
+	public static Transform FindGameObjectChildTransform(GameObject p_GameObjectParent, int p_CurrentPlayerIndex = 0, SceneAsset p_SceneAsset = SceneAsset.None)
+	{
+
+		string query = $"P{p_CurrentPlayerIndex}_{ReturnAsset(p_SceneAsset)}";
+
+		if (!p_GameObjectParent.transform.Find(query))
+		{
+			Debug.LogWarning("[GameEntity.FindSceneAssetClone]: " + "Could not find game object parent child transform with search: " + query);
+			return null;
+		}
+		else
+		{
+			return p_GameObjectParent.transform.Find(query).transform;
+		}
+	}
+
+	public static Transform FindSceneAssetClone(int p_CurrentPlayerIndex = 0, SceneAsset p_SceneAsset = SceneAsset.None)
+	{
+
+		string asset = ReturnAsset(p_SceneAsset);
+
+
+		string query = $"P{p_CurrentPlayerIndex}_{asset}(Clone)";
+	
+		if (GameObject.Find(query) != null)
+		{
+			return GameObject.Find(query).transform;
+		}
+		else
+		{
+			Debug.LogWarning("Could not find scene asset clone!");
+			return null;
+		}
+	}
+
+	public static Transform FindSceneAssetClone(int p_CurrentPlayerIndex = 0, Asset p_Asset = Asset.None)
+	{
+		string asset = ReturnAsset(p_Asset);
+
+
+		string query = $"P{p_CurrentPlayerIndex}_{asset}(Clone)";
+
+		if (GameObject.Find(query) != null)
+		{
+			return GameObject.Find(query).transform;
+		}
+		else
+		{
+			Debug.LogWarning("Could not find scene asset clone!");
+			return null;
+		}
+	}
+	
+
+
+	/// <summary>
+	///		Searchings the Game Object Tags dictionary using the GameTag enum, returning the string value 
+	/// </summary>
+	/// <param name="tag"></param>
+	/// <returns></returns>
+	public static string ReturnGameTag(GameTag tag)
+	{
+			
+		if (m_GameObjectTags.TryGetValue(tag, out string value))
+		{
+			return value;
+		}
+		else
+		{
+			Debug.LogWarning("Could not find a game object with that tag!");
+			return null;
+		}
+	}
+
+	/// <summary>
+	///		Returns an asset folder by the resource folder type 
+	/// </summary>
+	/// <param name="Folder"></param>
+	/// <returns></returns>
+	private static string ReturnAssetFolder(ResourceFolder Folder)
+	{
+		if (m_ResourceFolders.TryGetValue(Folder, out string s_AssetFolder))
+		{
+			return s_AssetFolder + "/";
+		}
+		else
+		{
+			Debug.LogWarning("[GameEntity.ReturnAssetFolder]: " + "Could not find an asset folder with that name!");
+			return "";
+		}
+	}
+
+	/// <summary>
+	///		Returns an asset using the Asset enum type 
+	/// </summary>
+	/// <param name="asset"></param>
+	/// <returns></returns>
+	public static string ReturnAsset(Asset asset)
+	{
+		if (m_AssetTypes.TryGetValue(asset, out string s_ResourceAsset))
+		{
+			return s_ResourceAsset;
+		}
+		else
+		{
+			Debug.Log("Could not find asset!");
+			return "";
+		}
+	}
+	
+	/// <summary>
+	///		Retruns a scene asset using the scene asset enum type 
+	/// </summary>
+	/// <param name="asset"></param>
+	/// <returns></returns>
+	public static string ReturnAsset(SceneAsset asset)
+	{
+		if (m_SceneAssets.TryGetValue(asset, out string s_SceneAsset))
+		{
+			return s_SceneAsset;
+		}
+		else
+		{
+			Debug.LogWarning("Could not find scene asset!");
+			return "";
+		}
+	}
+
+	/// <summary>
+	///		Finds and gets the player camera layer 
+	/// </summary>
+	/// <param name="PlayerIndex"></param>
+	/// <returns></returns>
+	public static int GetPlayerCameraLayer(int PlayerIndex) => ReturnCameraLayer(PlayerIndex);
+
+	/// <summary>
+	///		Finds and gets the player's camera tag 
+	/// </summary>
+	/// <param name="PlayerIndex"></param>
+	/// <returns></returns>
+	public static string GetPlayerCameraTag(int PlayerIndex) => $"{ReturnGameTag(GameTag.CM_Camera)}{PlayerIndex}";
+
+	/// <summary>
+	///		Returns the camera layer defined in the playercameralayer enum based on the player's index 
+	/// </summary>
+	/// <param name="PlayerIndex"></param>
+	/// <returns></returns>
+	private static int ReturnCameraLayer(int PlayerIndex)
+	{
+		switch (PlayerIndex)
+		{
+			case 1:
+				return (int)PlayerCameraLayer.Camera1;
+			case 2:
+				return (int)PlayerCameraLayer.Camera2;
+			case 3:
+				return (int)PlayerCameraLayer.Camera3;
+			case 4:
+				return (int)PlayerCameraLayer.Camera4;
+			default:
+				return (int)PlayerCameraLayer.None;
+		}
+	}
+
+	/// <summary>
+	///		The different types of camera layer index's 
+	/// </summary>
+	private enum PlayerCameraLayer { None = 0, Camera1 = 11, Camera2 = 12, Camera3 = 13, Camera4 = 14 };
+
+	/// <summary>
+	///		Set's the Split Screen Camera's Views
+	///		Requires ACTIVE scene camera's and the SplitScreenMode 
+	/// </summary>
+	/// <param name="AvailableCameras"></param>
+	/// <param name="Mode"></param>
+	public static void SetSplitScreenCameras(List<Camera> AvailableCameras, SplitScreenMode Mode)
+	{
+		if (AvailableCameras.Count > 0 && AvailableCameras.Count <= GameManager.Instance.MaxPlayers)
+		{ 
+			foreach (KeyValuePair<CameraView, Rect> element in m_CameraViewDictionary)
+			{
+
+				switch (Mode)
+				{
+					case SplitScreenMode.NoConnectedPlayers:
+						Debug.LogError("No connected players!");
+						break;
+					case SplitScreenMode.SinglePlayer:
+						{
+							if (element.Key == CameraView.Fullscreen)
+							{
+								AvailableCameras[0].rect = element.Value;
+							}
+						}
+						break;
+					case SplitScreenMode.TwoPlayer:
+						{
+							if (element.Key == CameraView.TopScreen)
+							{
+								AvailableCameras[0].rect = element.Value;
+							}
+							else if (element.Key == CameraView.BottomScreen)
+							{
+								AvailableCameras[1].rect = element.Value;
+							}
+						}
+						break;
+					case SplitScreenMode.ThreePlayer:
+						{
+							if (element.Key == CameraView.TopScreen)
+							{
+								AvailableCameras[0].rect = element.Value;
+							}
+							else if (element.Key == CameraView.LowerLeft)
+							{
+								AvailableCameras[1].rect = element.Value;
+							}
+							else if (element.Key == CameraView.LowerRight)
+							{
+								AvailableCameras[2].rect = element.Value;
+							}
+						}
+						break;
+					case SplitScreenMode.FourPlayer:
+						{
+							if (element.Key == CameraView.UpperLeft)
+							{
+								AvailableCameras[0].rect = element.Value;
+							}
+							else if (element.Key == CameraView.UpperRight)
+							{
+								AvailableCameras[1].rect = element.Value;
+							}
+							else if (element.Key == CameraView.LowerLeft)
+							{
+								AvailableCameras[2].rect = element.Value;
+							}
+							else if (element.Key == CameraView.LowerRight)
+							{
+								AvailableCameras[3].rect = element.Value;
+							}
+						}
+						break;
+				}
+			}
+		}
+	}
+
+}

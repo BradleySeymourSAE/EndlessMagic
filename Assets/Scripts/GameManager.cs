@@ -5,10 +5,6 @@ using UnityEngine;
 #endregion
 
 
-public enum SplitScreenMode { NoConnectedPlayers = 0, SinglePlayer = 1, TwoPlayer = 2, ThreePlayer = 3, FourPlayer = 4 };
-
-
-
 /// <summary>
 /// Game Manager - Handles Game Logic 
 /// </summary>
@@ -40,7 +36,7 @@ public class GameManager : MonoBehaviour
 	/// <summary>
 	///		Returns the current split screen mode 
 	/// </summary>
-	public SplitScreenMode ScreenMode
+	[HideInInspector] public SplitScreenMode ScreenMode
 	{
 		get
 		{
@@ -81,7 +77,7 @@ public class GameManager : MonoBehaviour
 	/// <summary>
 	///		Reference to the Game UI Manager Instance 
 	/// </summary>
-	GameUIManager m_GameUIManager;
+	private GameUIManager m_GameUIManager;
 
 	#endregion
 
@@ -158,7 +154,6 @@ public class GameManager : MonoBehaviour
 
 	private void CheckAllowCharacterCreation() => AllowCharacterSelecting = Instance.m_SelectionCursors.Count > 0 == true;
 
-
 	private void SetCharacterCreationCursors(List<GameObject> cursors)
 	{
 		m_SelectionCursors.Clear();
@@ -175,7 +170,6 @@ public class GameManager : MonoBehaviour
 				s_CursorTransform.SetParent(transform);
 
 				m_SelectionCursors.Add(cursors[i].GetComponent<CursorSelectionBehaviour>());
-
 		}
 
 

@@ -141,25 +141,19 @@ public class PlayerJoinMenu
 	/// </summary>
 	public void HandleCooperativeCharacterCreation()
 	{
-
+		// Invoke setting the character creation cursors (With the cursors that have been set as ready) 
 		GameEvents.SetCharacterCreationCursorEvent?.Invoke(readyPlayerCursors);
 
+		// Hide the Player Join Menu UI 
+		DisplayScreen(false); 
 
-
-
-		DisplayScreen(false); // Hide the player count menu UI
-
-
-		// Setup the camera references 
-
-		// 
 
 		// Load the character creation scene 
 		Debug.Log("[PlayerJoinMenu.HandleCooperativeCharacterCreation]: " + "Loading Co-op Character Creation Scene... " + GameScenes.EndlessMagic_CharacterCreation);
 
+		
 		// Load the Character Creation Scene Asyncronously
-		SceneManager.LoadSceneAsync(GameScenes.SelectGameSceneBySceneType(Scenes.EndlessMagic_CharacterCreation));
-
+		GameScenes.LoadScene(Scenes.EndlessMagic_CharacterCreation, true);
 	}
 
 	/// <summary>
@@ -269,14 +263,14 @@ public class PlayerJoinMenu
 	private void ReturnToMainMenu()
 	{
 	
-		if (GameObject.FindGameObjectsWithTag("Cursor").Length > 0)
+		if (GameEntity.FindAllByTag(GameTag.Cursor).Length > 0)
 		{ 
-			foreach (GameObject cursor in GameObject.FindGameObjectsWithTag(GameText.CursorTag))
+			foreach (GameObject cursor in GameEntity.FindAllByTag(GameTag.Cursor))
 			{
 				Object.Destroy(cursor);
 			}
 
-			foreach (GameObject status in GameObject.FindGameObjectsWithTag(GameText.PlayerJoinStatusTag))
+			foreach (GameObject status in GameEntity.FindAllByTag(GameTag.PlayerJoinStatus))
 			{
 				TMP_Text statusText = status.GetComponentInChildren<TMP_Text>();
 				

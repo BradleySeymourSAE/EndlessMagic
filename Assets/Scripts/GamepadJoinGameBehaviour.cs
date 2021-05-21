@@ -10,6 +10,7 @@ using TMPro;
 #endregion
 
 
+public enum GamepadBehaviourState { ALLOW_JOINING, ALLOW_CHARACTER_SELECTION };
 
 /// <summary>
 /// /	Handles Gamepad Joining Behaviour 
@@ -170,10 +171,6 @@ public class GamepadJoinGameBehaviour : MonoBehaviour
 			m_CurrentPlayers.Add(cursor);
 			GameEvents.SetPlayerJoinedEvent?.Invoke(numberOfActivePlayers);
 		}
-		else if (GameManager.Instance.AllowCharacterSelecting == true)
-		{
-
-		}
 	}
 
 	/// <summary>
@@ -198,21 +195,7 @@ public class GamepadJoinGameBehaviour : MonoBehaviour
 			input.DeactivateInput();
 		}
 	}
-	
 
-	public void SetWizardSelectionContainers(List<Transform> p_WizardSelectionTransforms)
-	{
-		m_WizardSelectionContainers.Clear();
-
-		for (int i = 0; i < p_WizardSelectionTransforms.Count; i++)
-		{
-			RectTransform s_WizardSelectionRectTransform = p_WizardSelectionTransforms[i].GetComponent<RectTransform>();
-
-			m_WizardSelectionContainers.Add(s_WizardSelectionRectTransform);
-		}
-
-		Debug.Log("Wizard Selection Transforms added!");
-	}
 
 
 	#endregion
