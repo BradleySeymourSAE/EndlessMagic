@@ -30,17 +30,16 @@ public static class GameEvents
 	public delegate void GameObjectListParameterDelegate(List<GameObject> p_GameObjectList);
 	public delegate void TransformListParameterDelegate(List<Transform> p_TransformList);
 
-	public delegate void SoundCategoryParameterDelegate(SoundCategory p_SoundCategory);
+	public delegate void IntegerTransformListParameterDelegate(int p_Integer, List<Transform> p_TransformList);
+
+	public delegate void SoundCategoryParameterDelegate(SoundEffect p_SoundCategory);
 	public delegate void AsyncOperationFloatParameterDelegate(AsyncOperation p_AsyncOperation, float p_FloatParameter);
 
 	public delegate void BoolParameterDelegate(bool p_BooleanParameter);
 
-
 	#endregion
 
-
 	#region Events
-
 
 	/// <summary>
 	///		Once called - Plays button Selected Sound Effects 
@@ -58,9 +57,14 @@ public static class GameEvents
 	public static IntParameterDelegate SetPlayerJoinedEvent;
 
 	/// <summary>
-	///		Once called - Begins the player join ready up countdown timer
+	///		Once called - Plays the Audio Sound Effect for the selected Wizard
 	/// </summary>
-	public static BoolParameterDelegate UpdatePlayerJoinReadyTimer;
+	public static IntParameterDelegate PlayWizardSelectedEvent;
+
+	/// <summary>
+	///		Once called - Sets the current player's cursors selectable wizards to navigate through 
+	/// </summary>
+	public static IntegerTransformListParameterDelegate SetSelectableWizards;
 
 	/// <summary>
 	///		Once called - ready's the player up on the co-op player join screen, 
@@ -69,17 +73,27 @@ public static class GameEvents
 	/// </summary>
 	public static GameObjectIntegerParameterDelegate SetPlayerReadyEvent;
 
-
 	/// <summary>
 	///		Once called - Sets the character creation cursor's to persist into the next scene 
 	/// </summary>
 	public static GameObjectListParameterDelegate SetCharacterCreationCursorEvent;
 
+
 	/// <summary>
-	///		Toggles allowing character creation
+	///		Once called - Begins the player join ready up countdown timer
+	/// </summary>
+	public static BoolParameterDelegate UpdatePlayerJoinReadyTimer;
+
+	/// <summary>
+	///		Toggles allowing character selection (Called from Game manager) 
 	/// </summary>
 	public static BoolParameterDelegate SetAllowCharacterSelectionEvent;
 
+	/// <summary>
+	///		Toggles Enabling & Disabling Debug Messages 
+	/// </summary>
+	public static BoolParameterDelegate SetDebuggingEvent;
+	
 	#endregion
 
 }

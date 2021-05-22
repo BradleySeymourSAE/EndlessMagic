@@ -3278,10 +3278,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   MaxPlayers: 4
-  AllowPlayerJoining: 0
-  AllowCharacterSelecting: 0
   JoinStartTimer: 3
   m_SelectionCursors: []
+  startDebugging: 0
+  m_Debugging: 1
+  m_AllowPlayerJoining: 0
+  m_AllowCharacterSelecting: 0
 --- !u!1 &1295581830
 GameObject:
   m_ObjectHideFlags: 0
@@ -5949,6 +5951,66 @@ MonoBehaviour:
     MaximumLength: 0
     clip: {fileID: 8300000, guid: 9ea348b7cf7b8194183afb00eccef090, type: 3}
     source: {fileID: 0}
+  - name: Wizard Draco Selected
+    Category: 5
+    loop: 0
+    awake: 1
+    volume: 0.85
+    pitch: 1
+    length: 0
+    MaximumLength: 0
+    clip: {fileID: 8300000, guid: 670d8540893bc9142bcc3c85ca2cd285, type: 3}
+    source: {fileID: 0}
+  - name: Wizard Hermione Selected
+    Category: 6
+    loop: 0
+    awake: 1
+    volume: 0.85
+    pitch: 1
+    length: 0
+    MaximumLength: 0
+    clip: {fileID: 8300000, guid: 8e293045ac6dd99488b7a348a3935733, type: 3}
+    source: {fileID: 0}
+  - name: Wizard Sirius Selected
+    Category: 7
+    loop: 0
+    awake: 1
+    volume: 0.85
+    pitch: 1
+    length: 0
+    MaximumLength: 0
+    clip: {fileID: 8300000, guid: 1fdcb2c69586b5b419778cc6414c9ade, type: 3}
+    source: {fileID: 0}
+  - name: Wizard Snape Selected
+    Category: 8
+    loop: 0
+    awake: 1
+    volume: 0.85
+    pitch: 1
+    length: 0
+    MaximumLength: 0
+    clip: {fileID: 8300000, guid: f6bf2125fdb8fd549810e4df0c95ecb5, type: 3}
+    source: {fileID: 0}
+  - name: Wizard Voldemort Selected
+    Category: 9
+    loop: 0
+    awake: 1
+    volume: 0.85
+    pitch: 1
+    length: 0
+    MaximumLength: 0
+    clip: {fileID: 8300000, guid: 2de2fd5cb69182841a43c3a9795f1fd7, type: 3}
+    source: {fileID: 0}
+  - name: Wizard Yennefer Selected
+    Category: 10
+    loop: 0
+    awake: 1
+    volume: 0.85
+    pitch: 1
+    length: 0
+    MaximumLength: 0
+    clip: {fileID: 8300000, guid: 89f017f244257fc4ba321c93fa796b13, type: 3}
+    source: {fileID: 0}
   PlayerCursors: []
 --- !u!1 &2057502985
 GameObject:
@@ -6190,8 +6252,8 @@ MonoBehaviour:
   - {fileID: 913425212}
   - {fileID: 363618289}
   - {fileID: 1362395005}
-  m_WizardSelectionContainers: []
   m_CurrentPlayers: []
+  m_InputActionControlNames: []
 --- !u!114 &5144562768430915766
 MonoBehaviour:
   m_ObjectHideFlags: 0

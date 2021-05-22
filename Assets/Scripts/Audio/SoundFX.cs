@@ -20,7 +20,7 @@ public class SoundFX
 	/// <summary>
 	///		The Sound Effect Category Name - This is used to find and play the sound effect 
 	/// </summary>
-	public SoundCategory Category;
+	public SoundEffect Category;
 
 	/// <summary>
 	///		Set whether the audio clip is looping or not 

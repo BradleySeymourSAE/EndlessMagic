@@ -7,16 +7,22 @@ using UnityEngine.Audio;
 
 
 /// <summary>
-///		The Sound Category Type - I will likely rename this to something more appropriate, but for the time being this
-///		is the key you use to play the audio effect
+///		The Sound Effect
+///		The key used to play an audio effect from the audio manager instance 
 /// </summary>
-public enum SoundCategory
+public enum SoundEffect
 {
 	UI_StartMenuBackgroundMusic,
 	UI_CharacterCreationBackgroundMusic,
 	GUI_Selected,
 	GUI_MenuSwitched,
-	Game_Level01_Background
+	Game_Level01_Background,
+	Draco_Selected,
+	Hermione_Selected,
+	SiriusBlack_Selected,
+	Snape_Selected,
+	Voldemort_Selected,
+	Yennefer_Selected,
 }
 
 /// <summary>
@@ -78,7 +84,7 @@ public static class AudioManager
 	///		Plays a Sound Effect using the Sound Category Type 
 	/// </summary>
 	/// <param name="p_SoundCategory"></param>
-	public static void PlaySound(SoundCategory p_SoundCategory)
+	public static void PlaySound(SoundEffect p_SoundCategory)
 	{
 		// Gets the sound effect using the sound category name 
 		SoundFX sound = GetSoundEffect(p_SoundCategory);
@@ -106,7 +112,7 @@ public static class AudioManager
 	/// </summary>
 	/// <param name="p_SoundCategory">The sound effects name </param>
 	/// <returns></returns>
-	private static SoundFX GetSoundEffect(SoundCategory p_SoundCategory)
+	private static SoundFX GetSoundEffect(SoundEffect p_SoundCategory)
 	{
 		// Loop through the game assets sound effects array 
 		foreach (SoundFX s_GameSoundEffect in GameAssets.Assets.GameSoundEffects)

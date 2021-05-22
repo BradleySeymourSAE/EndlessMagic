@@ -34,12 +34,13 @@ public class GamepadJoinGameBehaviour : MonoBehaviour
 	/// </summary>
 	[SerializeField] List<Transform> m_PlayerJoinContainers = new List<Transform>();
 
-	/// <summary>
-	///		The Wizard Selection Panel Transform's
-	/// </summary>
-	[SerializeField] List<Transform> m_WizardSelectionContainers = new List<Transform>();
-
 	[SerializeField] List<CursorSelectionBehaviour> m_CurrentPlayers = new List<CursorSelectionBehaviour>();
+
+    InputAction inputAction = new InputAction(binding: "/*/<button>");
+
+	[SerializeField] private List<string> m_InputActionControlNames = new List<string>();
+
+	private bool Debugging;
 
 	#endregion
 
@@ -47,22 +48,34 @@ public class GamepadJoinGameBehaviour : MonoBehaviour
 
 	private void Start()
 	{
+		m_InputActionControlNames.Clear();
 
 		m_CurrentPlayers.Clear();
 
-		var myAction = new InputAction(binding: "/*/<button>");
+		inputAction.performed += action =>
+		{
+			AddGamepad(action.control.device);
+		};
+	
+		inputAction.Enable();
+	}
 
-		myAction.performed += action =>
+	private void OnDisable()
+	{
+		inputAction.performed -= action =>
 		{
 			AddGamepad(action.control.device);
 		};
 
-		myAction.performed -= action =>
-		{
-			AddGamepad(action.control.device);
-		};
+		inputAction.Disable();
+	}
 
-		myAction.Enable();
+	private void Update()
+	{
+		if (GameManager.Instance)
+		{
+			Debugging = GameManager.Instance.Debugging;
+		}
 	}
 
 
@@ -93,51 +106,65 @@ public class GamepadJoinGameBehaviour : MonoBehaviour
 			}
 		}
 
-		// If the device is not a controller, joystick or gamepad, return 
+		// If the device is not a joystick, gamepad or ps4 controller
 		if (!device.displayName.Contains("Controller") &&
 			!device.displayName.Contains("Joystick") && 
 			!device.displayName.Contains("Gamepad") &&
 			!device.description.manufacturer.Contains(GameText.PS4ControllerDevice)
 		) {
+			// Then we want to return
 			return;
 		}
+
+	
+		device.MakeCurrent();   // make this device the current device 
 
 		var s_CurrentPlayerIndex = PlayerInput.all.Count + 1; // Find the current players index
 
 		string s_ActionControlScheme = ReturnControlScheme(device); // Get the Action Control Scheme
 
+		// Find the current player cursor asset using the current player device index
+		GameObject playerCursor = GameEntity.FindAsset(ResourceFolder.CursorPrefabs, s_CurrentPlayerIndex, Asset.Cursor, SceneAsset.None, false);
 	
-		GameObject playerCursor = Resources.Load<GameObject>($"CursorPrefabs/P{s_CurrentPlayerIndex}_Cursor");  // Load up the cursor prefabs 
-		string s_StatusTextSearchString = $"P{s_CurrentPlayerIndex}_Status";
-
-
-		// check if the player is active in the Hierarchy 
+		// check if the players cursor is active in the Hierarchy 
 		if (!playerCursor.activeInHierarchy)
 		{
 		
+			// Instantiate a playerInputCursor using the action control schema 
 			PlayerInput playerInputCursor = PlayerInput.Instantiate(playerCursor, -1, s_ActionControlScheme, -1, device);
+			
+			// Set the player input cursor's tag 
+			playerInputCursor.gameObject.tag = GameEntity.ReturnGameTag(GameTag.Cursor);
 
-		
-			playerInputCursor.gameObject.tag = "Cursor";
-
-		
+			// Set the cursor's parent transform
 			RectTransform s_ParentTransform = m_PlayerJoinContainers[s_CurrentPlayerIndex - 1].GetComponent<RectTransform>();
 
+			// Get the status text to update the button to be pressed 
+			TMP_Text s_StatusText = GameEntity.FindSceneAsset(s_CurrentPlayerIndex, SceneAsset.StatusText).GetComponentInChildren<TMP_Text>();
 			
-			TMP_Text s_StatusText = GameObject.Find(s_StatusTextSearchString).GetComponentInChildren<TMP_Text>();
+			// Find the button east display name 
+			var buttonText = Gamepad.current.buttonEast.displayName;
 
-			if (s_StatusText != null)
+			// If the status text is not null 
+			if (buttonText != null)
 			{
+				// Set the status text with the button text 
+				s_StatusText.text = $"Press {buttonText} to ready up!";
+			}
+			else
+			{
+				// Otherwise - Set the default text 
 				s_StatusText.text = GameText.PlayerJoinUI_PlayerStatus_SlotTaken_ReadyUp;
 			}
 			
-
-			Debug.LogWarning(
-				" Parent Transform Name: " + s_ParentTransform.name + 
-				" Player Cursor: " + playerInputCursor.name + 
-				" Action Control Scheme: " + s_ActionControlScheme
-			);
-
+			if (Debugging)
+			{ 
+				Debug.LogWarning(
+					" Parent Transform Name: " + s_ParentTransform.name + 
+					" Player Cursor: " + playerInputCursor.name + 
+					" Action Control Scheme: " + s_ActionControlScheme
+				);
+			}
 
 			playerInputCursor.transform.SetParent(s_ParentTransform);
 
@@ -160,8 +187,13 @@ public class GamepadJoinGameBehaviour : MonoBehaviour
 	/// <param name="input"></param>
 	public void OnPlayerJoin(PlayerInput input)
 	{
+		if (Debugging)
+		{
+			Debug.Log("[GamepadJoinGameBehaviour.HandleOnPlayerJoin]: " + "There are currently " + numberOfActivePlayers + " players.");
+		}
+
 		numberOfActivePlayers = PlayerInput.all.Count;
-		Debug.Log("[GamepadJoinGameBehaviour.HandleOnPlayerJoin]: " + "There are currently " + numberOfActivePlayers + " players.");
+	
 
 
 		if (GameManager.Instance.AllowPlayerJoining == true)
@@ -179,10 +211,14 @@ public class GamepadJoinGameBehaviour : MonoBehaviour
 	/// <param name="input"></param>
 	public void OnPlayerLeft(PlayerInput input)
 	{
+		if (Debugging)
+		{
+			Debug.Log("[GamepadJoinGameBehaviour.HandleOnPlayerLeft]: " + "Player left the game. There are " + numberOfActivePlayers + " remaining players.");
+		}
+
 
 		numberOfActivePlayers = PlayerInput.all.Count;
-		Debug.Log("[GamepadJoinGameBehaviour.HandleOnPlayerLeft]: " + "Player left the game. There are " + numberOfActivePlayers + " remaining players.");
-
+		
 
 		if (GameManager.Instance.AllowPlayerJoining == true)
 		{ 
@@ -195,8 +231,6 @@ public class GamepadJoinGameBehaviour : MonoBehaviour
 			input.DeactivateInput();
 		}
 	}
-
-
 
 	#endregion
 
@@ -212,7 +246,8 @@ public class GamepadJoinGameBehaviour : MonoBehaviour
 	{
 		if (
 			device.displayName.Contains(GameText.XboxControllerDevice) || 
-			device.displayName.Contains(GameText.GamepadDevice))
+			device.displayName.Contains(GameText.GamepadDevice) || 
+			device.displayName.Contains(GameText.PS4ControllerDevice))
 		{
 			return GameText.ActionControlScheme_Gamepad;
 		}

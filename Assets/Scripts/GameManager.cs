@@ -34,6 +34,22 @@ public class GameManager : MonoBehaviour
 	public int ConnectedPlayers { get; private set; } = 0;
 
 	/// <summary>
+	///		Should players be allowed to join in? 
+	/// </summary>
+	public bool AllowPlayerJoining { get { return m_AllowPlayerJoining; } set { m_AllowPlayerJoining = value; } }
+
+	/// <summary>
+	///		Allow Character Selecting 
+	/// </summary>
+	public bool AllowCharacterSelection { get { return m_AllowCharacterSelecting; } set { m_AllowCharacterSelecting = value; } }
+
+	/// <summary>
+	///		Allow Debug Messages 
+	/// </summary>
+	public bool Debugging { get { return m_Debugging; } private set { m_Debugging = value; } }
+
+
+	/// <summary>
 	///		Returns the current split screen mode 
 	/// </summary>
 	[HideInInspector] public SplitScreenMode ScreenMode
@@ -53,25 +69,6 @@ public class GameManager : MonoBehaviour
 	/// </summary>
 	[HideInInspector] public int MaxPlayers = 4;
 
-	#region @TODO - #future-brad Will eventually stop hardcoding this and use Resources.Load<GameObject>() to get the amount of items in the folder 
-	/// <summary>
-	///		Reference to the total amount of wizard prefabs
-	/// </summary>
-	public int TotalWizards = 5;
-
-	#endregion
-
-
-	/// <summary>
-	///		Should players be allowed to join in? 
-	/// </summary>
-	public bool AllowPlayerJoining { get { return m_AllowPlayerJoining; } set { m_AllowPlayerJoining = value; } }
-
-	/// <summary>
-	///		Allow Character Selecting 
-	/// </summary>
-	public bool AllowCharacterSelection { get {  return m_AllowCharacterSelecting; } set { m_AllowCharacterSelecting = value; } }
-
 	/// <summary>
 	///		The amount of time to wait after all players have ready'd up 
 	/// </summary>
@@ -83,14 +80,31 @@ public class GameManager : MonoBehaviour
 
 	[SerializeField] private List<CursorSelectionBehaviour> m_SelectionCursors = new List<CursorSelectionBehaviour>();
 
-	[SerializeField] private bool m_AllowPlayerJoining;
-
-	[SerializeField] private bool m_AllowCharacterSelecting;
+	/// <summary>
+	///		Begin debugging - Toggles between debug states 
+	/// </summary>
+	[SerializeField] private bool startDebugging = false;
 
 	/// <summary>
 	///		Reference to the Game UI Manager Instance 
 	/// </summary>
 	private GameUIManager m_GameUIManager;
+
+	[Header("--- DEBUGGING ---")]
+	/// <summary>
+	///		If debugging - Will log debug messages to the console 
+	/// </summary>
+	[SerializeField] private bool m_Debugging = true;
+
+	/// <summary>
+	///		Are controllers allowed to join the game 
+	/// </summary>
+	[SerializeField] private bool m_AllowPlayerJoining;
+
+	/// <summary>
+	///		Are controllers input enabled to allow for character selection 
+	/// </summary>
+	[SerializeField] private bool m_AllowCharacterSelecting;
 
 	#endregion
 
@@ -150,11 +164,25 @@ public class GameManager : MonoBehaviour
 		CheckPlayerJoiningIsAllowed();
 
 		CheckAllowCharacterSelecting();
+
+		if (startDebugging)
+		{
+			ToggleDebug();
+			startDebugging = false;
+		}
 	}
 
 	#endregion
 
 	#region Private Methods 
+
+	/// <summary>
+	///		Resets the startDebugging param after x seconds 
+	/// </summary>
+	private void Reset()
+	{
+		startDebugging = false;
+	}
 
 	/// <summary>
 	///		Sets the amount of connected players 
@@ -173,11 +201,39 @@ public class GameManager : MonoBehaviour
 		}
 	}
 
+	/// <summary>
+	///		Check if the player is allowed to start selecting their character 
+	/// </summary>
+	/// <returns></returns>
 	private bool CheckAllowCharacterSelecting() => AllowCharacterSelection == true;
+	
+	/// <summary>
+	///		Toggles debug messages 
+	/// </summary>
+	private void ToggleDebug()
+	{
+		m_Debugging = !m_Debugging;
+		
+		if (m_Debugging)
+		{
+			Debug.LogWarning("[GameManager.ToggleDebug]: " + " --- Debugging has been turned on! --- ");
+		}
+		else
+		{
+			Debug.LogWarning("[GameManager.ToggleDebug]: " + " --- Debugging has been turned off! --- ");
+		}
+	}
 
-
+	/// <summary>
+	///		Handles allowing character to select their character 
+	/// </summary>
+	/// <param name="ShouldAllowCharacterSelection"></param>
 	private void HandleAllowCharacterSelection(bool ShouldAllowCharacterSelection) => m_AllowCharacterSelecting = ShouldAllowCharacterSelection;
 
+	/// <summary>
+	///		Sets the character creation cursors after the controller inputs have been received 
+	/// </summary>
+	/// <param name="cursors"></param>
 	private void SetCharacterCreationCursors(List<GameObject> cursors)
 	{
 		m_SelectionCursors.Clear();
@@ -195,9 +251,6 @@ public class GameManager : MonoBehaviour
 
 				m_SelectionCursors.Add(cursors[i].GetComponent<CursorSelectionBehaviour>());
 		}
-
-
-
 	}
 
 	#endregion

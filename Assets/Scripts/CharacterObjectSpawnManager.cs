@@ -47,8 +47,7 @@ public class CharacterObjectSpawnManager : MonoBehaviour
 	private void PlayerSelectedCharacter(object sender, EventArgs e)
 	{
 
-		GameObject[] currentPlayerCursors = GameObject.FindGameObjectsWithTag("Cursor");
-
+		GameObject[] currentPlayerCursors = GameEntity.FindAllByTag(GameTag.Cursor);
 
 		foreach (var cursor in currentPlayerCursors)
 		{
@@ -63,7 +62,10 @@ public class CharacterObjectSpawnManager : MonoBehaviour
 		for (int i = 0; i < currentPlayerCursors.Length; i++)
 		{
 			var playerInput = currentPlayerCursors[i].GetComponent<PlayerInput>();
-			var playerSelection = currentPlayerCursors[i].GetComponent<CursorSelectionBehaviour>().playerSelection.name;
+			
+			var cursor = currentPlayerCursors[i].GetComponent<CursorSelectionBehaviour>();
+
+			var wizardSelectionName = cursor.GetWizard();
 
 			var playerIndex = playerInput.playerIndex;
 
@@ -71,13 +73,13 @@ public class CharacterObjectSpawnManager : MonoBehaviour
 
 			if (!PlayerNames.ContainsKey(playerIndex))
 			{
-				PlayerNames.Add(playerIndex, new List<string>() {  playerSelection });
+				PlayerNames.Add(playerIndex, new List<string>() {  wizardSelectionName });
 			}
 			else
 			{
 				var currentCharacterList = PlayerNames[playerIndex];
 
-				currentCharacterList.Add(playerSelection);
+				currentCharacterList.Add(wizardSelectionName);
 			}
 
 
@@ -85,7 +87,7 @@ public class CharacterObjectSpawnManager : MonoBehaviour
 		}
 
 
-		m_ShouldPersistCursorObjects = true;
+		m_ShouldPersistCursorObjects = false;
 
 		m_ShouldSpawnSelectedPlayers = true;
 	

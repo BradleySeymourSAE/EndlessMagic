@@ -109,7 +109,7 @@ public class GameUIManager : MonoBehaviour
 		PlayerJoinMenuUI.Setup(this);
 
 
-		AudioManager.PlaySound(SoundCategory.UI_StartMenuBackgroundMusic);
+		AudioManager.PlaySound(SoundEffect.UI_StartMenuBackgroundMusic);
 
 		GameEvents.PlayMenuTransitionEvent?.Invoke();
 
@@ -204,12 +204,12 @@ public class GameUIManager : MonoBehaviour
 	/// <summary>
 	///		 Once Called - Plays the UI sound for selecting
 	/// </summary>
-	private void PlayUISelected() => AudioManager.PlaySound(SoundCategory.GUI_Selected);
+	private void PlayUISelected() => AudioManager.PlaySound(SoundEffect.GUI_Selected);
 
 	/// <summary>
 	/// 	Once Called - Plays the UI sound for menu transitions
 	/// </summary>
-	private void PlayMenuSwitched() => AudioManager.PlaySound(SoundCategory.GUI_MenuSwitched);
+	private void PlayMenuSwitched() => AudioManager.PlaySound(SoundEffect.GUI_MenuSwitched);
 
 	/// <summary>
 	///		Sets the currently connected controllers 

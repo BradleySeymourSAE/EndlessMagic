@@ -37,7 +37,8 @@ public enum GameTag
 	CharacterSelectionInputManager,
 	CinemachineCameraHolder,
 	CinemachineCamera,
-	Environment
+	Environment,
+	CharacterTitle,
 }
 
 /// <summary>
@@ -62,7 +63,11 @@ public enum SceneAsset {
 	None = -1,
 	SelectionUI, 
 	WizardSelectionSpawn,
-	Cursor
+	Cursor,
+	StatusText,
+	SelectionUI_Next,
+	SelectionUI_Prev,
+	SelectionUI_ReadyUp
 }
 
 
@@ -98,7 +103,8 @@ public static class GameEntity
 		{ GameTag.SelectionUIManager, "PlayerSelectionUI" },
 		{ GameTag.CinemachineCameraHolder, "CinemachineCameraHolder" },
 		{ GameTag.CinemachineCamera, "CinemachineCamera" },
-		{ GameTag.Environment, "Environment" }
+		{ GameTag.Environment, "Environment" },
+		{ GameTag.CharacterTitle, "CharacterTitle" }
 	};
 
 	/// <summary>
@@ -127,11 +133,18 @@ public static class GameEntity
 		{ Asset.None, "" }
 	};
 
+	/// <summary>
+	///		Dictionary of scene assets - Searching 
+	/// </summary>
 	private static Dictionary<SceneAsset, string> m_SceneAssets = new Dictionary<SceneAsset, string>
 	{
 		{ SceneAsset.None, "" },
 		{ SceneAsset.SelectionUI, "SelectionUI" },
-		{ SceneAsset.WizardSelectionSpawn, "WizardSelectionSpawn" }
+		{ SceneAsset.WizardSelectionSpawn, "WizardSelectionSpawn" },
+		{ SceneAsset.StatusText, "Status" },
+		{ SceneAsset.SelectionUI_Next, "NextButton" },
+		{ SceneAsset.SelectionUI_Prev, "PreviousButton" },
+		{ SceneAsset.SelectionUI_ReadyUp, "ReadyUpButton" }
 	};
 
 	private static Dictionary<CameraView, Rect> m_CameraViewDictionary = new Dictionary<CameraView, Rect>
@@ -255,6 +268,18 @@ public static class GameEntity
 	}
 
 	/// <summary>
+	///		Returns the total length of resource assets in a folder 
+	/// </summary>
+	/// <param name="p_AssetResourceFolder"></param>
+	/// <returns></returns>
+	public static int ReturnAssetLengthInFolder(ResourceFolder p_AssetResourceFolder)
+	{
+		string search = ReturnAssetFolder(p_AssetResourceFolder);
+
+		return Resources.LoadAll<GameObject>(search).Length; 
+	}
+
+	/// <summary>
 	///		Returns a Prefab Asset for a Player using their player index  
 	/// </summary>
 	/// <param name="p_AssetResourceFolder"></param>
@@ -312,6 +337,41 @@ public static class GameEntity
 		}
 	}
 
+	/// <summary>
+	///		Finds a scene asset by the scene asset name 
+	/// </summary>
+	/// <param name="p_SceneAsset"></param>
+	/// <returns></returns>
+	public static Transform FindSceneAsset(SceneAsset p_SceneAsset = SceneAsset.None)
+	{
+		string search = $"{ReturnAsset(p_SceneAsset)}";
+		return GameObject.Find(search).transform;
+	}
+
+	/// <summary>
+	///		Finds a scene asset by the current player's index 
+	/// </summary>
+	/// <param name="p_CurrentPlayerIndex"></param>
+	/// <param name="p_SceneAsset"></param>
+	/// <returns></returns>
+	public static Transform FindSceneAsset(int p_CurrentPlayerIndex = 0, SceneAsset p_SceneAsset = SceneAsset.None)
+	{
+		string search = $"P{p_CurrentPlayerIndex}_{ReturnAsset(p_SceneAsset)}";
+
+		if (Debugging)
+		{
+			Debug.Log("[GameEntity.FindSceneAsset]: " + "Finding scene asset: " + search);
+		}
+
+		return GameObject.Find(search).transform;
+	}
+
+	/// <summary>
+	///		Finds a scene asset clone 
+	/// </summary>
+	/// <param name="p_CurrentPlayerIndex">The current players identity (index)</param>
+	/// <param name="p_SceneAsset">The scene asset to search for</param>
+	/// <returns></returns>
 	public static Transform FindSceneAssetClone(int p_CurrentPlayerIndex = 0, SceneAsset p_SceneAsset = SceneAsset.None)
 	{
 
@@ -331,22 +391,25 @@ public static class GameEntity
 		}
 	}
 
-	public static Transform FindSceneAssetClone(int p_CurrentPlayerIndex = 0, Asset p_Asset = Asset.None)
+	/// <summary>
+	///		Finds a prefab asset clone in the scene using the current player's index 
+	/// </summary>
+	/// <param name="p_CurrentPlayerIndex">The current players ID index</param>
+	/// <param name="p_Asset">The Asset to search for</param>
+	/// <returns></returns>
+	public static Transform FindAssetClone(int p_CurrentPlayerIndex = 0, Asset p_Asset = Asset.None)
 	{
 		string asset = ReturnAsset(p_Asset);
 
 
 		string query = $"P{p_CurrentPlayerIndex}_{asset}(Clone)";
 
-		if (GameObject.Find(query) != null)
+		if (Debugging)
 		{
-			return GameObject.Find(query).transform;
+			Debug.Log("[GameEntity.FindAssetClone]: " + "Searching for asset " + query);
 		}
-		else
-		{
-			Debug.LogWarning("Could not find scene asset clone!");
-			return null;
-		}
+
+		return GameObject.Find(query).transform;
 	}
 	
 
@@ -447,6 +510,8 @@ public static class GameEntity
 	/// <param name="PlayerIndex"></param>
 	/// <returns></returns>
 	public static string GetPlayerCameraTag(int PlayerIndex) => $"{ReturnGameTag(GameTag.CM_Camera)}{PlayerIndex}";
+
+	public static string GetWizardCharacterTitleTag(int p_CurrentPlayerIndex) => $"{ReturnGameTag(GameTag.CharacterTitle)}{p_CurrentPlayerIndex}";
 
 	/// <summary>
 	///		Returns the camera layer defined in the playercameralayer enum based on the player's index 

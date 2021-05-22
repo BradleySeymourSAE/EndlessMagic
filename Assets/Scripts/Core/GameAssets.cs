@@ -30,10 +30,13 @@ public class GameAssets : MonoBehaviour
 	public AudioMixerGroup m_AudioMixer;
 
 	/// <summary>
-	///		An Array of Game Sound Effects 
+	///		An array of game sound effect assets 
 	/// </summary>
 	public SoundFX[] GameSoundEffects;
 
+	/// <summary>
+	///		Reference to the player cursor assets 
+	/// </summary>
 	public GameObject[] PlayerCursors;
 
 	#endregion
@@ -57,7 +60,6 @@ public class GameAssets : MonoBehaviour
 		if (GameSoundEffects.Length > 0)
 		{ 
 			AudioManager.SetupSounds(GameSoundEffects, m_AudioMixer);
-
 		}
 		else
 		{
@@ -66,17 +68,13 @@ public class GameAssets : MonoBehaviour
 
 		int currentIndex = 0;
 
-		PlayerCursors = new GameObject[maximumAllowedPlayers];
+		PlayerCursors = new GameObject[GameEntity.ReturnAssetLengthInFolder(ResourceFolder.CursorPrefabs)];
 
 		for (int i = 0; i < maximumAllowedPlayers; ++i)
 		{
 			currentIndex++;
 
-			string search = $"CursorPrefabs/P{currentIndex}_Cursor";
-
-			GameObject cursorPrefab = Resources.Load<GameObject>(search);
-
-			PlayerCursors[i] = cursorPrefab;
+			PlayerCursors[i] = GameEntity.FindAsset(ResourceFolder.CursorPrefabs, currentIndex, Asset.Cursor, SceneAsset.None, false);
 		}
 	}
 

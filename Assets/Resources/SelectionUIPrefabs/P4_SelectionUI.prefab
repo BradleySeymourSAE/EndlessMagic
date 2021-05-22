@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 3027733143743716902}
   - component: {fileID: 3027733143743716903}
   m_Layer: 5
-  m_Name: ReadyUpButton
+  m_Name: P4_ReadyUpButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -134,7 +134,7 @@ GameObject:
   - component: {fileID: 3027733144048613253}
   - component: {fileID: 3027733144048613250}
   m_Layer: 5
-  m_Name: NextButton
+  m_Name: P4_NextButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -237,7 +237,7 @@ MonoBehaviour:
     m_SelectedTrigger: Selected
     m_DisabledTrigger: Disabled
   m_Interactable: 1
-  m_TargetGraphic: {fileID: 0}
+  m_TargetGraphic: {fileID: 3027733144048613253}
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
@@ -433,7 +433,7 @@ GameObject:
   - component: {fileID: 3027733144835269419}
   - component: {fileID: 3027733144835269416}
   m_Layer: 5
-  m_Name: PreviousButton
+  m_Name: P4_PreviousButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -536,7 +536,7 @@ MonoBehaviour:
     m_SelectedTrigger: Selected
     m_DisabledTrigger: Disabled
   m_Interactable: 1
-  m_TargetGraphic: {fileID: 0}
+  m_TargetGraphic: {fileID: 3027733144835269419}
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
@@ -631,8 +631,8 @@ GameObject:
   - component: {fileID: 3027733145159833415}
   - component: {fileID: 3027733145159833412}
   m_Layer: 5
-  m_Name: CharacterTitle
-  m_TagString: Untagged
+  m_Name: P4_CharacterTitle
+  m_TagString: CharacterTitle4
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

@@ -16,6 +16,10 @@ TagManager:
   - CinemachineCameraHolder
   - PlayerSelectionUI
   - CharacterSelectionInputManager
+  - CharacterTitle1
+  - CharacterTitle2
+  - CharacterTitle3
+  - CharacterTitle4
   layers:
   - Default
   - TransparentFX

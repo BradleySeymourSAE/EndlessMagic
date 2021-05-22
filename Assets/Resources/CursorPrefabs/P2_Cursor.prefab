@@ -90,7 +90,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   objectSelected: 0
+  isReady: 0
   playerSelection: {fileID: 0}
+  wizardSelectionChoices: []
 --- !u!114 &6914592580568750532
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -200,6 +202,38 @@ MonoBehaviour:
         m_CallState: 2
     m_ActionId: d2f6764d-9e0d-4246-a0fc-6dcf94b4bbc6
     m_ActionName: Player/Start[/USB Gamepad /button10]
+  - m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 7824803196987812671}
+        m_TargetAssemblyTypeName: CursorSelectionBehaviour, Assembly-CSharp
+        m_MethodName: OnNextButton
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_ActionId: c42e59c2-820f-41c9-8967-b07cdd39b823
+    m_ActionName: Player/Next[/DualShock4GamepadHID/dpad/right,/XInputControllerWindows/dpad/right,/XInputControllerWindows/dpad/right,/Keyboard/rightArrow]
+  - m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 7824803196987812671}
+        m_TargetAssemblyTypeName: CursorSelectionBehaviour, Assembly-CSharp
+        m_MethodName: OnPreviousButton
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_ActionId: 9e4227d4-8235-424f-be02-99f0a4146a97
+    m_ActionName: Player/Previous[/DualShock4GamepadHID/dpad/left,/XInputControllerWindows/dpad/left,/XInputControllerWindows/dpad/left,/Keyboard/leftArrow]
   m_NeverAutoSwitchControlSchemes: 1
   m_DefaultControlScheme: Gamepad
   m_DefaultActionMap: Player
