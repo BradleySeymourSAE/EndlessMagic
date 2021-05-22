@@ -7,9 +7,15 @@ using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 #endregion
 
+
+
+/// <summary>
+///		@TODO - At the moment this script is not doing anything and can likely be removed in the future
+///		This would generally be a good way to go about spawning the players. However I couldn't really get it to work 
+/// </summary>
 public class CharacterObjectSpawnManager : MonoBehaviour
 {
-
+	/*
 	/// <summary>
 	///		To preserve the players selections and the controllers they have used, use dictionaries to keep track of both 
 	///		and destroy the cursor and selected objects, then reinstantiate 
@@ -29,21 +35,6 @@ public class CharacterObjectSpawnManager : MonoBehaviour
 	[SerializeField] public static bool m_ShouldPersistCursorObjects = false;
 
 
-	#region Unity References 
-
-	private void OnEnable()
-	{
-		CursorSelectionBehaviour.HandleOnCharacterSelectedEvent += PlayerSelectedCharacter;
-	}
-
-	private void OnDisable()
-	{
-		CursorSelectionBehaviour.HandleOnCharacterSelectedEvent -= PlayerSelectedCharacter;
-	}
-
-
-	#endregion
-
 	private void PlayerSelectedCharacter(object sender, EventArgs e)
 	{
 
@@ -51,7 +42,7 @@ public class CharacterObjectSpawnManager : MonoBehaviour
 
 		foreach (var cursor in currentPlayerCursors)
 		{
-			if (!cursor.GetComponent<CursorSelectionBehaviour>().objectSelected)
+			if (!cursor.GetComponent<CursorSelectionBehaviour>().hasSelectedWizardCharacter)
 			{
 				Debug.Log(cursor + " object has not selected a player!");
 				return;
@@ -93,6 +84,8 @@ public class CharacterObjectSpawnManager : MonoBehaviour
 	
 
 		// Load the scene 
-		SceneManager.LoadSceneAsync(GameScenes.EndlessMagic_GameLevel_01);
+		GameScenes.LoadScene(Scenes.EndlessMagic_GameLevel_01, true);
 	}
+
+	*/
 }

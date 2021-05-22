@@ -10,8 +10,6 @@ using TMPro;
 #endregion
 
 
-public enum GamepadBehaviourState { ALLOW_JOINING, ALLOW_CHARACTER_SELECTION };
-
 /// <summary>
 /// /	Handles Gamepad Joining Behaviour 
 /// </summary>
@@ -38,8 +36,6 @@ public class GamepadJoinGameBehaviour : MonoBehaviour
 
     InputAction inputAction = new InputAction(binding: "/*/<button>");
 
-	[SerializeField] private List<string> m_InputActionControlNames = new List<string>();
-
 	private bool Debugging;
 
 	#endregion
@@ -48,15 +44,16 @@ public class GamepadJoinGameBehaviour : MonoBehaviour
 
 	private void Start()
 	{
-		m_InputActionControlNames.Clear();
-
 		m_CurrentPlayers.Clear();
+	}
 
+	private void OnEnable()
+	{
 		inputAction.performed += action =>
 		{
 			AddGamepad(action.control.device);
 		};
-	
+
 		inputAction.Enable();
 	}
 

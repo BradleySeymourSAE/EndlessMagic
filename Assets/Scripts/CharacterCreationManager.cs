@@ -190,6 +190,12 @@ public class CharacterCreationManager : MonoBehaviour
 				spawnedWizardPrefab.layer = s_WizardSpawnPoint.gameObject.layer; // Set the wizard prefab's layer 
 				spawnedWizardPrefab.tag = s_WizardSpawnPoint.tag; // set the wizard prefab's tag 
 
+				for (int x = 0; x < spawnedWizardPrefab.transform.childCount; x++)
+				{
+					GameObject child = spawnedWizardPrefab.transform.GetChild(x).gameObject;
+					child.layer = s_WizardSpawnPoint.gameObject.layer;
+				}
+
 				// Add the spawned wizard prefab to the wizard selections spawned list 
 				playerWizardSelectionsSpawnedIn.Add(spawnedWizardPrefab.transform);
 				

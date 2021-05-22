@@ -15,27 +15,66 @@ using TMPro;
 public class CursorSelectionBehaviour : MonoBehaviour
 {
 
-	public bool objectSelected = false;
+	#region Public Variables 
+
+	/// <summary>
+	///		Has a wizard character been selected? 
+	/// </summary>
+	public bool hasSelectedWizardCharacter = false;
+
+	/// <summary>
+	///		In the co-op screen - has the player ready'd up 
+	/// </summary>
 	public bool isReady = false;
 
+	/// <summary>
+	///		The selected wizard - or null 
+	/// </summary>
 	public GameObject wizardSelection;
 
+	/// <summary>
+	///		An array of selectable wizards 
+	/// </summary>
 	public GameObject[] wizardSelectionChoices;
 
-	public static EventHandler HandleOnCharacterSelectedEvent;
+	#endregion
 
+	#region Private Variables 
+
+	/// <summary>
+	///		Is the player allowed to join the game? 
+	/// </summary>
 	[SerializeField] private bool allowPlayerJoinBehaviour = false;
 
+	/// <summary>
+	///		Allow character selection (When on the character selection screen) 
+	/// </summary>
 	[SerializeField] private bool allowCharacterSelecting = false;
 
+	/// <summary>
+	///		The current selected wizard index 
+	/// </summary>
 	[SerializeField] private int m_SelectedWizardIndex = 0;
 
+	/// <summary>
+	///		The current controller ID (For each cursor / user)
+	/// </summary>
 	[SerializeField] private int m_CurrentUserID;
 
+	/// <summary>
+	///		Reference to the character name text UI 
+	/// </summary>
 	private TMP_Text m_CharacterName;
 
-	private bool disableNavigation = false;
-	
+	/// <summary>
+	///		Is navigation disabled, if a wizard is selected this is set to true, otherwise false
+	/// </summary>
+	private bool navigationDisabled = false;
+
+	#endregion
+
+	#region Unity References 
+
 	private void OnEnable()
 	{
 		GameEvents.SetSelectableWizards += SetWizardSelectionChoices;
@@ -45,7 +84,6 @@ public class CursorSelectionBehaviour : MonoBehaviour
 	{
 		GameEvents.SetSelectableWizards -= SetWizardSelectionChoices;	
 	}
-
 
 	private void Update()
 	{
@@ -57,17 +95,25 @@ public class CursorSelectionBehaviour : MonoBehaviour
 			allowCharacterSelecting = true;
 		}
 
-		if (objectSelected)
+		if (hasSelectedWizardCharacter)
 		{
 			wizardSelection = ReturnSelectedWizardCharacter();
-			disableNavigation = true;
+			navigationDisabled = true;
 		}
 		else
 		{
-			disableNavigation = false;
+			navigationDisabled = false;
 		}
 	}
 
+	#endregion
+
+	#region Input Action Events 
+
+	/// <summary>
+	///		Cycles through the next character in the wizard selection index 
+	/// </summary>
+	/// <param name="context"></param>
 	public void OnNextButton(InputAction.CallbackContext context)
 	{
 		if (!allowPlayerJoinBehaviour && !allowCharacterSelecting)
@@ -79,7 +125,7 @@ public class CursorSelectionBehaviour : MonoBehaviour
 		if (!allowPlayerJoinBehaviour && allowCharacterSelecting)
 		{
 
-			if (disableNavigation)
+			if (navigationDisabled)
 			{
 				return;
 			}
@@ -102,6 +148,10 @@ public class CursorSelectionBehaviour : MonoBehaviour
 		}
 	}
 
+	/// <summary>
+	///		Cycles through the previous character in the wizard selection index 
+	/// </summary>
+	/// <param name="context"></param>
 	public void OnPreviousButton(InputAction.CallbackContext context)
 	{
 		if (!allowPlayerJoinBehaviour && !allowCharacterSelecting)
@@ -112,7 +162,7 @@ public class CursorSelectionBehaviour : MonoBehaviour
 		
 		if (!allowPlayerJoinBehaviour && allowCharacterSelecting)
 		{
-			if (disableNavigation)
+			if (navigationDisabled)
 			{
 				return;
 			}
@@ -142,6 +192,12 @@ public class CursorSelectionBehaviour : MonoBehaviour
 		}
 	}	
 
+	/// <summary>
+	///		OnSelect 
+	///		- If allow player join behaviour is set to true, handles joining the game and readying up. 
+	///		- If Allow Character Selection is set to true, handles setting an unsetting the selected wizard character 
+	/// </summary>
+	/// <param name="context"></param>
 	public void OnSelect(InputAction.CallbackContext context)
 	{
 		if (!allowPlayerJoinBehaviour && !allowCharacterSelecting)
@@ -150,6 +206,7 @@ public class CursorSelectionBehaviour : MonoBehaviour
 			return;
 		}
 
+		// Cooperation Screen - Allowing the controller to 'Ready up' 
 		if (allowPlayerJoinBehaviour && !allowCharacterSelecting)
 		{
 			if (context.phase == InputActionPhase.Started)
@@ -169,19 +226,21 @@ public class CursorSelectionBehaviour : MonoBehaviour
 				}
 			}
 		}
+		// Character Selection Screen - Allow characters to be selected 
 		else if (!allowPlayerJoinBehaviour && allowCharacterSelecting)
 		{
 			if (context.phase == InputActionPhase.Started)
 			{
-
+				// Returns teh currently selected wizard character 
 				wizardSelection = ReturnSelectedWizardCharacter();
 
+				// Reference to the ready up button for the player's cursor  
 				Button s_ReadyUpButton = GameEntity.FindSceneAsset(m_CurrentUserID, SceneAsset.SelectionUI_ReadyUp).GetComponent<Button>();
 
-
-				if (!objectSelected)
+				// Is there a wizard character selected? 
+				if (!hasSelectedWizardCharacter)
 				{
-					objectSelected = true;
+					hasSelectedWizardCharacter = true;
 					wizardSelection = ReturnSelectedWizardCharacter();
 					
 				
@@ -189,15 +248,23 @@ public class CursorSelectionBehaviour : MonoBehaviour
 
 					AudioManager.PlaySound(s_SoundToPlay); // play the sound effect 
 
-					s_ReadyUpButton.interactable = false;
+					s_ReadyUpButton.interactable = false; // sets the button as not interactable (Fades) 
 					s_ReadyUpButton.GetComponentInChildren<Text>().text = "Ready!";
+
+					// Could also do some lighting particle effects here
+
+					// This is where we will add the currently selected wizard to the GameManager.Instance.SelectedCharacters list (@TODO) 
+
+
 
 					Debug.Log("Selected wizard " + GetWizard());
 				}
-				else if (objectSelected)
+				else if (hasSelectedWizardCharacter)
 				{
-					objectSelected = false;
+					hasSelectedWizardCharacter = false;
 					Debug.Log("Unselected wizard " + GetWizard());
+
+					// This is where you would remove the currently selected wizard from the GameManager.SelectedCharacters list (@TODO)
 
 					s_ReadyUpButton.interactable = true;
 					s_ReadyUpButton.GetComponentInChildren<Text>().text = "Ready up";
@@ -207,22 +274,83 @@ public class CursorSelectionBehaviour : MonoBehaviour
 		}
 	}
 
+	/// <summary>
+	///		OnStart - If all players have selected their character in the list of (@TODO) GameManager.Instance.SelectedCharacters
+	///		This will be used to invoke the StartGame event (Which will be handled from the GameManager instance. 
+	/// </summary>
+	/// <param name="context"></param>
 	public void OnStartButton(InputAction.CallbackContext context)
 	{
-		
-		if (!allowPlayerJoinBehaviour && allowCharacterSelecting)
+
+		if (!hasSelectedWizardCharacter && !navigationDisabled)
 		{
-			Debug.Log("[CursorSelectionManager.OnStartButton]: " + "Allow character selecting! " + context.action.name);
+
+			Debug.Log("[CursorSelectionManager.OnStartButton]: " + "Please select a character first, navigation needs to be disabled." + context.action.name);
+			return;
 		}
 
+		// If we have an object selected and navigation is disabled
+		// We can invoke the done selecting event - Ofcourse this will not fire unless all players have 
+		// selected their characters 
+		if (hasSelectedWizardCharacter && navigationDisabled)
+		{
+			if (context.phase == InputActionPhase.Started)
+			{ 
+				Debug.Log("[CursorSelectionManager.OnStartButton]: " + "Player pressed start button... - User: " + m_CurrentUserID + " Character: " + GetWizard());
+			}
+		}
 	}
 
-	public void SetCursorIdentity(int Identity = 0) => m_CurrentUserID = Identity; 
+	#endregion
 
+	#region Public Methods 
+
+	/// <summary>
+	///		Sets the current players identity - This could also be improved but it works 
+	/// </summary>
+	/// <param name="Identity"></param>
+	public void SetCursorIdentity(int Identity = 0) => m_CurrentUserID = Identity;
+
+	/// <summary>
+	///		Really dodgy way of returning the wizard's name 
+	/// </summary>
+	/// <returns></returns>
+	public string GetWizard()
+	{
+		switch (m_SelectedWizardIndex)
+		{
+			case 0:
+				return "Draco Malfoy";
+			case 1:
+				return "Hermione Granger";
+			case 2:
+				return "Sirius Black";
+			case 3:
+				return "Severus Snape";
+			case 4:
+				return "Yennefer";
+			case 5:
+				return "Voldemort";
+			default:
+				return null;
+		}
+	}
+
+	/// <summary>
+	///		Returns the currently selected wizard character 
+	/// </summary>
+	/// <returns></returns>
 	public GameObject ReturnSelectedWizardCharacter() => wizardSelectionChoices[m_SelectedWizardIndex];
+
+	#endregion
 
 	#region Private Methods
 
+	/// <summary>
+	///		Sets the wizard selection options for this particular controller 
+	/// </summary>
+	/// <param name="p_CurrentCursorIdentity"></param>
+	/// <param name="p_WizardSelectionsSpawned"></param>
 	private void SetWizardSelectionChoices(int p_CurrentCursorIdentity, List<Transform> p_WizardSelectionsSpawned)
 	{
 
@@ -255,27 +383,6 @@ public class CursorSelectionBehaviour : MonoBehaviour
 		m_CharacterName.text = GetWizard();
 	}
 
-	public string GetWizard()
-	{
-		switch (m_SelectedWizardIndex)
-		{
-			case 0:
-				return "Draco Malfoy";
-			case 1:
-				return "Hermione Granger";
-			case 2:
-				return "Sirius Black";
-			case 3:
-				return "Severus Snape";
-			case 4:
-				return "Yennefer";
-			case 5:
-				return "Voldemort";
-			default:
-				return null;
-		}
-	}
-	
 	/// <summary>
 	///		Returns the wizard sound effect to play - should probably move this to a different folder but this 
 	///		is just due to my poor organisation of code. Will fix it up eventually 
@@ -302,5 +409,6 @@ public class CursorSelectionBehaviour : MonoBehaviour
 				return (SoundEffect)p_WizardIndex;
 		}
 	}
+
 	#endregion
 }

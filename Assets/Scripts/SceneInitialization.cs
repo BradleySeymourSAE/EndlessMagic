@@ -7,7 +7,9 @@ using UnityEngine.InputSystem.Users;
 using UnityEngine.SceneManagement;
 #endregion
 
-
+/// <summary>
+///		TODO - Scene Initialization, I will work out another way of doing this part. Its a little messy lol 
+/// </summary>
 public class SceneInitialization : MonoBehaviour
 {
 
@@ -35,19 +37,21 @@ public class SceneInitialization : MonoBehaviour
 		 * 
 		 */
 
-
+	
+		/* 
 		if (CharacterObjectSpawnManager.m_ShouldSpawnSelectedPlayers)
 		{
 			HandleSpawnSelectedPlayers();
 			CharacterObjectSpawnManager.m_ShouldSpawnSelectedPlayers = false;
 		}
+		*/
 	}
 
 
 	private void HandleSpawnSelectedPlayers()
 	{
 		
-		foreach (var player in CharacterObjectSpawnManager.Controllers)
+		/* foreach (var player in CharacterObjectSpawnManager.Controllers)
 		{
 
 			var playerController = CharacterObjectSpawnManager.Controllers[player.Key];
@@ -95,6 +99,6 @@ public class SceneInitialization : MonoBehaviour
 				}
 			}
 		}
-
+		*/
 	}
 }

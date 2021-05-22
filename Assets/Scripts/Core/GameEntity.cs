@@ -162,7 +162,7 @@ public static class GameEntity
 	/// <summary>
 	///		Whether to debug the search strings for each result 
 	/// </summary>
-	public static bool Debugging = true;
+	public static bool Debugging = GameManager.Instance.Debugging;
 
 
 	/// <summary>

@@ -3281,7 +3281,7 @@ MonoBehaviour:
   JoinStartTimer: 3
   m_SelectionCursors: []
   startDebugging: 0
-  m_Debugging: 1
+  m_Debugging: 0
   m_AllowPlayerJoining: 0
   m_AllowCharacterSelecting: 0
 --- !u!1 &1295581830
@@ -6253,7 +6253,6 @@ MonoBehaviour:
   - {fileID: 363618289}
   - {fileID: 1362395005}
   m_CurrentPlayers: []
-  m_InputActionControlNames: []
 --- !u!114 &5144562768430915766
 MonoBehaviour:
   m_ObjectHideFlags: 0

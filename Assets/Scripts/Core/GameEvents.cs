@@ -94,6 +94,13 @@ public static class GameEvents
 	/// </summary>
 	public static BoolParameterDelegate SetDebuggingEvent;
 	
+	/// <summary>
+	///		Once Called - Handles selecting a character in the character selection screen 
+	/// </summary>
+	public static GameObjectIntegerParameterDelegate HandleCharacterSelectedEvent;
+
+
+
 	#endregion
 
 }
