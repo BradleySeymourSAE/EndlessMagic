@@ -577,7 +577,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2420522012620527286}
   m_Layer: 0
-  m_Name: Snape 1
+  m_Name: SnapeWithoutWand
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1120,7 +1120,7 @@ GameObject:
   - component: {fileID: 766446097945587786}
   - component: {fileID: 6277120520097287936}
   m_Layer: 0
-  m_Name: Eyes
+  m_Name: Eyes 1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

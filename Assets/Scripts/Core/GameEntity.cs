@@ -20,7 +20,8 @@ public enum ResourceFolder
 	WizardPrefabs = 3,
 	CinemachineCameraPrefabs = 4,
 	PlayerCameraPrefabs = 5,
-	PlayerSelectionUIPrefabs = 6
+	PlayerSelectionUIPrefabs = 6,
+	ControllerInputIcons = 7
 }
 
 /// <summary>
@@ -52,7 +53,10 @@ public enum Asset
 	Camera,
 	CinemachineCamera,
 	Wizard,
-	Broomstick
+	Broomstick,
+	PS4,
+	Xbox,
+	NintendoSwitch
 }
 
 
@@ -119,7 +123,8 @@ public static class GameEntity
 		{ ResourceFolder.WizardPrefabs, "WizardSelectionPrefabs" },
 		{ ResourceFolder.CinemachineCameraPrefabs, "Cinemachine_CinemachineCameraPrefabs" },
 		{ ResourceFolder.PlayerCameraPrefabs, "Cinemachine_PlayerCameraPrefabs" },
-		{ ResourceFolder.PlayerSelectionUIPrefabs, "SelectionUIPrefabs" }
+		{ ResourceFolder.PlayerSelectionUIPrefabs, "SelectionUIPrefabs" },
+		{ ResourceFolder.ControllerInputIcons, "ControllerInputIcons" }
 	};
 
 	private static Dictionary<Asset, string> m_AssetTypes = new Dictionary<Asset, string>
@@ -130,6 +135,9 @@ public static class GameEntity
 		{ Asset.CinemachineCamera, "CinemachineCamera" },
 		{ Asset.Wizard, "SelectableWizard" },
 		{ Asset.Broomstick, "SelectableBroom" },
+		{ Asset.PS4, "PS4/PS4" },
+		{ Asset.Xbox, "Xbox/XboxOne" },
+		{ Asset.NintendoSwitch, "NintendoSwitch/Switch" },
 		{ Asset.None, "" }
 	};
 
@@ -162,7 +170,7 @@ public static class GameEntity
 	/// <summary>
 	///		Whether to debug the search strings for each result 
 	/// </summary>
-	public static bool Debugging = true;
+	public static bool Debugging = GameManager.Instance.Debugging;
 
 
 	/// <summary>
@@ -316,6 +324,22 @@ public static class GameEntity
 	}
 
 	/// <summary>
+	///		Finds a Sprite Asset from the asset resource folder 
+	/// </summary>
+	/// <param name="p_AssetResourceFolder">The asset resource folder to search</param>
+	/// <param name="p_Asset">The asset to find, Options include PS4, Xbox & NintendoSwitch</param>
+	/// <param name="p_Button">The button asset you are looking for</param>
+	/// <returns></returns>
+	public static Sprite FindAsset(ResourceFolder p_AssetResourceFolder = ResourceFolder.ControllerInputIcons, Asset p_Asset = Asset.Xbox, string p_Button = "B")
+	{
+		string query = $"{ReturnAssetFolder(p_AssetResourceFolder)}{ReturnAsset(p_Asset)}_{p_Button}";
+		
+		Debug.Log("Query: " + query);
+
+		return Resources.Load<Sprite>(query);
+	}
+
+	/// <summary>
 	///		Finds a cloned game asset transform using the players current index and the query string 
 	/// </summary>
 	/// <param name="p_CurrentPlayerIndex"></param>
@@ -411,8 +435,6 @@ public static class GameEntity
 
 		return GameObject.Find(query).transform;
 	}
-	
-
 
 	/// <summary>
 	///		Searchings the Game Object Tags dictionary using the GameTag enum, returning the string value 
@@ -619,4 +641,17 @@ public static class GameEntity
 		}
 	}
 
+	/// <summary>
+	///		Sets children of a gameobject's layer to the player's camera layer
+	/// </summary>
+	/// <param name="p_GameObject"></param>
+	/// <param name="p_PlayerIndex"></param>
+	public static void SetLayerRecursively(GameObject p_GameObject, int p_PlayerIndex)
+	{
+		foreach (Transform trans in p_GameObject.GetComponentsInChildren<Transform>(true))
+		{
+			int layer = ReturnCameraLayer(p_PlayerIndex);
+			trans.gameObject.layer = layer;
+		}
+	}
 }

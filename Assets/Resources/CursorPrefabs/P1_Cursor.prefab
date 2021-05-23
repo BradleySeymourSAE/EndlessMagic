@@ -91,11 +91,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   objectSelected: 0
   isReady: 0
-  playerSelection: {fileID: 0}
+  wizardSelection: {fileID: 0}
   wizardSelectionChoices: []
   allowPlayerJoinBehaviour: 0
   allowCharacterSelecting: 0
   m_SelectedWizardIndex: 0
+  m_CurrentUserID: 0
 --- !u!114 &6914592580568750532
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -237,6 +238,22 @@ MonoBehaviour:
         m_CallState: 2
     m_ActionId: 9e4227d4-8235-424f-be02-99f0a4146a97
     m_ActionName: Player/Previous[/DualShock4GamepadHID/dpad/left,/XInputControllerWindows/dpad/left,/XInputControllerWindows/dpad/left,/Keyboard/leftArrow]
+  - m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 7824803196987812671}
+        m_TargetAssemblyTypeName: CursorSelectionBehaviour, Assembly-CSharp
+        m_MethodName: OnBackButton
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_ActionId: e9a7758f-2d72-49d9-982b-8eed6bcbd3ef
+    m_ActionName: Player/Back[/DualShock4GamepadHID/buttonEast,/XInputControllerWindows/buttonEast,/XInputControllerWindows/buttonEast,/Keyboard/escape]
   m_NeverAutoSwitchControlSchemes: 1
   m_DefaultControlScheme: Gamepad
   m_DefaultActionMap: Player

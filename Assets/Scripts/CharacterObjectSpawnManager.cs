@@ -7,9 +7,15 @@ using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 #endregion
 
+
+/// <summary>
+///		Scene Initialization - This script should be removed at some point, but I will leave it for the meantime in case 
+///		i need to reference it later on 
+/// </summary>
 public class CharacterObjectSpawnManager : MonoBehaviour
 {
 
+	/* 
 	/// <summary>
 	///		To preserve the players selections and the controllers they have used, use dictionaries to keep track of both 
 	///		and destroy the cursor and selected objects, then reinstantiate 
@@ -95,4 +101,6 @@ public class CharacterObjectSpawnManager : MonoBehaviour
 		// Load the scene 
 		SceneManager.LoadSceneAsync(GameScenes.EndlessMagic_GameLevel_01);
 	}
+
+	*/
 }

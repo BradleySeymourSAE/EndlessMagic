@@ -8,9 +8,13 @@ using UnityEngine.SceneManagement;
 #endregion
 
 
+/// <summary>
+///		Scene Initialization - This script should be removed at some point, but I will leave it for the meantime in case 
+///		i need to reference it later on 
+/// </summary>
 public class SceneInitialization : MonoBehaviour
 {
-
+	/* 
 
 
 	#region Unity References
@@ -30,10 +34,9 @@ public class SceneInitialization : MonoBehaviour
 
 	private void BeginSceneCheck(Scene p_FromScene, Scene p_ToScene)
 	{
-		/*
-		 *		foreach (var scheme in CharacterObjectSpawnManager.playerControlSchemes) { Debug.Log(scheme); }
-		 * 
-		 */
+		
+		foreach (var scheme in CharacterObjectSpawnManager.playerControlSchemes) { Debug.Log(scheme); }
+		
 
 
 		if (CharacterObjectSpawnManager.m_ShouldSpawnSelectedPlayers)
@@ -97,4 +100,6 @@ public class SceneInitialization : MonoBehaviour
 		}
 
 	}
+
+*/
 }

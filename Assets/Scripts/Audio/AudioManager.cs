@@ -16,6 +16,8 @@ public enum SoundEffect
 	UI_CharacterCreationBackgroundMusic,
 	GUI_Selected,
 	GUI_MenuSwitched,
+	GUI_Move,
+	GUI_Confirm,
 	Game_Level01_Background,
 	Draco_Selected,
 	Hermione_Selected,

@@ -10,7 +10,6 @@ using TMPro;
 #endregion
 
 
-public enum GamepadBehaviourState { ALLOW_JOINING, ALLOW_CHARACTER_SELECTION };
 
 /// <summary>
 /// /	Handles Gamepad Joining Behaviour 
@@ -54,7 +53,10 @@ public class GamepadJoinGameBehaviour : MonoBehaviour
 
 		inputAction.performed += action =>
 		{
-			AddGamepad(action.control.device);
+			if (action.control.displayName.Contains("Start") || action.control.displayName.Contains("Options"))
+			{ 
+				AddGamepad(action.control.device);
+			}
 		};
 	
 		inputAction.Enable();
@@ -64,7 +66,10 @@ public class GamepadJoinGameBehaviour : MonoBehaviour
 	{
 		inputAction.performed -= action =>
 		{
-			AddGamepad(action.control.device);
+			if (action.control.displayName.Contains("Start") || action.control.displayName.Contains("Options"))
+			{ 
+				AddGamepad(action.control.device);
+			}
 		};
 
 		inputAction.Disable();
@@ -126,6 +131,11 @@ public class GamepadJoinGameBehaviour : MonoBehaviour
 		// Find the current player cursor asset using the current player device index
 		GameObject playerCursor = GameEntity.FindAsset(ResourceFolder.CursorPrefabs, s_CurrentPlayerIndex, Asset.Cursor, SceneAsset.None, false);
 	
+		// Set the player cursor's type (Using the action control scheme) 
+
+		playerCursor.GetComponent<CursorSelectionBehaviour>().SetControllerType(s_ActionControlScheme);
+
+
 		// check if the players cursor is active in the Hierarchy 
 		if (!playerCursor.activeInHierarchy)
 		{
@@ -143,7 +153,7 @@ public class GamepadJoinGameBehaviour : MonoBehaviour
 			TMP_Text s_StatusText = GameEntity.FindSceneAsset(s_CurrentPlayerIndex, SceneAsset.StatusText).GetComponentInChildren<TMP_Text>();
 			
 			// Find the button east display name 
-			var buttonText = Gamepad.current.buttonEast.displayName;
+			var buttonText = Gamepad.current.buttonSouth.displayName;
 
 			// If the status text is not null 
 			if (buttonText != null)
@@ -173,11 +183,15 @@ public class GamepadJoinGameBehaviour : MonoBehaviour
 			cursorTransform.localPosition = new Vector3(0,0,0);
 			cursorTransform.anchorMin = new Vector2(0.5f, 1);
 			cursorTransform.anchorMax = new Vector2(0.5f, 1);
-
-
-
-
 			playerCursor.transform.localScale = new Vector3(1, 1, 1);
+
+
+			foreach (InputControl control in device.allControls)
+			{
+
+				playerCursor.GetComponent<CursorSelectionBehaviour>().Controls.Add(control.displayName);
+
+			}
 		}
 	}
 
@@ -187,6 +201,8 @@ public class GamepadJoinGameBehaviour : MonoBehaviour
 	/// <param name="input"></param>
 	public void OnPlayerJoin(PlayerInput input)
 	{
+
+	
 		if (Debugging)
 		{
 			Debug.Log("[GamepadJoinGameBehaviour.HandleOnPlayerJoin]: " + "There are currently " + numberOfActivePlayers + " players.");

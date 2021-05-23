@@ -516,7 +516,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Navigation:
-    m_Mode: -1
+    m_Mode: 3
     m_WrapAround: 0
     m_SelectOnUp: {fileID: 0}
     m_SelectOnDown: {fileID: 0}
@@ -528,7 +528,7 @@ MonoBehaviour:
     m_HighlightedColor: {r: 0.8784314, g: 0.65882355, b: 0.54901963, a: 1}
     m_PressedColor: {r: 0.8784314, g: 0.65882355, b: 0.54901963, a: 1}
     m_SelectedColor: {r: 0.7529412, g: 0.39215687, b: 0.14509805, a: 1}
-    m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
+    m_DisabledColor: {r: 0.7529412, g: 0.39215687, b: 0.14509805, a: 1}
     m_ColorMultiplier: 1
     m_FadeDuration: 0.1
   m_SpriteState:
@@ -542,7 +542,7 @@ MonoBehaviour:
     m_PressedTrigger: Pressed
     m_SelectedTrigger: Selected
     m_DisabledTrigger: Disabled
-  m_Interactable: 1
+  m_Interactable: 0
   m_TargetGraphic: {fileID: 325288456}
   m_OnClick:
     m_PersistentCalls:
@@ -4067,17 +4067,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_MoveRepeatDelay: 0.5
   m_MoveRepeatRate: 0.1
-  m_ActionsAsset: {fileID: -944628639613478452, guid: ca9f5fa95ffab41fb9a615ab714db018, type: 3}
-  m_PointAction: {fileID: 1054132383583890850, guid: ca9f5fa95ffab41fb9a615ab714db018, type: 3}
-  m_MoveAction: {fileID: 3710738434707379630, guid: ca9f5fa95ffab41fb9a615ab714db018, type: 3}
-  m_SubmitAction: {fileID: 2064916234097673511, guid: ca9f5fa95ffab41fb9a615ab714db018, type: 3}
-  m_CancelAction: {fileID: -1967631576421560919, guid: ca9f5fa95ffab41fb9a615ab714db018, type: 3}
-  m_LeftClickAction: {fileID: 8056856818456041789, guid: ca9f5fa95ffab41fb9a615ab714db018, type: 3}
-  m_MiddleClickAction: {fileID: 3279352641294131588, guid: ca9f5fa95ffab41fb9a615ab714db018, type: 3}
-  m_RightClickAction: {fileID: 3837173908680883260, guid: ca9f5fa95ffab41fb9a615ab714db018, type: 3}
-  m_ScrollWheelAction: {fileID: 4502412055082496612, guid: ca9f5fa95ffab41fb9a615ab714db018, type: 3}
-  m_TrackedDevicePositionAction: {fileID: 4754684134866288074, guid: ca9f5fa95ffab41fb9a615ab714db018, type: 3}
-  m_TrackedDeviceOrientationAction: {fileID: 1025543830046995696, guid: ca9f5fa95ffab41fb9a615ab714db018, type: 3}
+  m_ActionsAsset: {fileID: -944628639613478452, guid: 08b27385760c0994ea00a0b5c9327334, type: 3}
+  m_PointAction: {fileID: 2566705396816707694, guid: 08b27385760c0994ea00a0b5c9327334, type: 3}
+  m_MoveAction: {fileID: -7429270725623097517, guid: 08b27385760c0994ea00a0b5c9327334, type: 3}
+  m_SubmitAction: {fileID: -9109049652643634072, guid: 08b27385760c0994ea00a0b5c9327334, type: 3}
+  m_CancelAction: {fileID: 4760100455171880121, guid: 08b27385760c0994ea00a0b5c9327334, type: 3}
+  m_LeftClickAction: {fileID: 1515332535526342415, guid: 08b27385760c0994ea00a0b5c9327334, type: 3}
+  m_MiddleClickAction: {fileID: -3924232118400561526, guid: 08b27385760c0994ea00a0b5c9327334, type: 3}
+  m_RightClickAction: {fileID: 626680339628355852, guid: 08b27385760c0994ea00a0b5c9327334, type: 3}
+  m_ScrollWheelAction: {fileID: -4796032759801847773, guid: 08b27385760c0994ea00a0b5c9327334, type: 3}
+  m_TrackedDevicePositionAction: {fileID: -2005111541702868788, guid: 08b27385760c0994ea00a0b5c9327334, type: 3}
+  m_TrackedDeviceOrientationAction: {fileID: -8205852883891246619, guid: 08b27385760c0994ea00a0b5c9327334, type: 3}
   m_DeselectOnBackgroundClick: 0
   m_PointerBehavior: 0
 --- !u!114 &1340824367
@@ -5626,6 +5626,7 @@ MonoBehaviour:
     m_PlayerInputBackgroundImage: {fileID: 10907, guid: 0000000000000000f000000000000000, type: 0}
     readyPlayerCursors: []
     shouldStartCountdown: 0
+  m_DisplayingPlayerJoinMenu: 0
 --- !u!1 &1903167903
 GameObject:
   m_ObjectHideFlags: 0
@@ -5952,7 +5953,7 @@ MonoBehaviour:
     clip: {fileID: 8300000, guid: 9ea348b7cf7b8194183afb00eccef090, type: 3}
     source: {fileID: 0}
   - name: Wizard Draco Selected
-    Category: 5
+    Category: 7
     loop: 0
     awake: 1
     volume: 0.85
@@ -5962,54 +5963,74 @@ MonoBehaviour:
     clip: {fileID: 8300000, guid: 670d8540893bc9142bcc3c85ca2cd285, type: 3}
     source: {fileID: 0}
   - name: Wizard Hermione Selected
-    Category: 6
+    Category: 8
     loop: 0
     awake: 1
-    volume: 0.85
+    volume: 0.8
     pitch: 1
     length: 0
     MaximumLength: 0
     clip: {fileID: 8300000, guid: 8e293045ac6dd99488b7a348a3935733, type: 3}
     source: {fileID: 0}
   - name: Wizard Sirius Selected
-    Category: 7
+    Category: 9
     loop: 0
     awake: 1
-    volume: 0.85
+    volume: 1
     pitch: 1
     length: 0
     MaximumLength: 0
     clip: {fileID: 8300000, guid: 1fdcb2c69586b5b419778cc6414c9ade, type: 3}
     source: {fileID: 0}
   - name: Wizard Snape Selected
-    Category: 8
+    Category: 10
     loop: 0
     awake: 1
-    volume: 0.85
+    volume: 1
     pitch: 1
     length: 0
     MaximumLength: 0
     clip: {fileID: 8300000, guid: f6bf2125fdb8fd549810e4df0c95ecb5, type: 3}
     source: {fileID: 0}
   - name: Wizard Voldemort Selected
-    Category: 9
+    Category: 11
     loop: 0
     awake: 1
-    volume: 0.85
+    volume: 1
     pitch: 1
     length: 0
     MaximumLength: 0
     clip: {fileID: 8300000, guid: 2de2fd5cb69182841a43c3a9795f1fd7, type: 3}
     source: {fileID: 0}
   - name: Wizard Yennefer Selected
-    Category: 10
+    Category: 12
     loop: 0
     awake: 1
-    volume: 0.85
+    volume: 0.6
     pitch: 1
     length: 0
     MaximumLength: 0
     clip: {fileID: 8300000, guid: 89f017f244257fc4ba321c93fa796b13, type: 3}
+    source: {fileID: 0}
+  - name: GUI Move
+    Category: 4
+    loop: 0
+    awake: 1
+    volume: 0.7
+    pitch: 1
+    length: 0
+    MaximumLength: 0
+    clip: {fileID: 8300000, guid: f61e1650007bf364480012d402c74ea8, type: 3}
+    source: {fileID: 0}
+  - name: GUI Confirm
+    Category: 5
+    loop: 0
+    awake: 1
+    volume: 0.7
+    pitch: 1
+    length: 0
+    MaximumLength: 0
+    clip: {fileID: 8300000, guid: ab346d31f2fdfc841a306b4e5add2151, type: 3}
     source: {fileID: 0}
   PlayerCursors: []
 --- !u!1 &2057502985
@@ -6223,18 +6244,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   InitialButton: {fileID: 780266384}
---- !u!114 &973938021370753443
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7684743650507757920}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 67fb54810097e1a44a135d151f2fbe6b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &5034781011830431445
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6254,18 +6263,6 @@ MonoBehaviour:
   - {fileID: 1362395005}
   m_CurrentPlayers: []
   m_InputActionControlNames: []
---- !u!114 &5144562768430915766
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7684743650507757920}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1598fbeecc9bfa94d88944c360a9e8df, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!4 &5246707985271593188
 Transform:
   m_ObjectHideFlags: 0
@@ -6358,8 +6355,6 @@ GameObject:
   - component: {fileID: 5246707985271593188}
   - component: {fileID: 5702242761699096486}
   - component: {fileID: 8967181037981128153}
-  - component: {fileID: 5144562768430915766}
-  - component: {fileID: 973938021370753443}
   - component: {fileID: 5034781011830431445}
   m_Layer: 0
   m_Name: CharacterSelectionScreenInputManager

@@ -22,8 +22,6 @@ public class CursorSelectionBehaviour : MonoBehaviour
 
 	public GameObject[] wizardSelectionChoices;
 
-	public static EventHandler HandleOnCharacterSelectedEvent;
-
 	[SerializeField] private bool allowPlayerJoinBehaviour = false;
 
 	[SerializeField] private bool allowCharacterSelecting = false;
@@ -32,10 +30,28 @@ public class CursorSelectionBehaviour : MonoBehaviour
 
 	[SerializeField] private int m_CurrentUserID;
 
+	[SerializeField] private string m_CurrentControllerType;
+
 	private TMP_Text m_CharacterName;
 
 	private bool disableNavigation = false;
-	
+
+	public List<string> Controls
+	{
+		get
+		{
+			return m_DeviceControls;
+		}
+		set
+		{
+			m_DeviceControls = value;
+		}
+	}
+
+	[SerializeField] private List<string> m_DeviceControls = new List<string>();
+
+	#region Unity References 
+
 	private void OnEnable()
 	{
 		GameEvents.SetSelectableWizards += SetWizardSelectionChoices;
@@ -46,6 +62,10 @@ public class CursorSelectionBehaviour : MonoBehaviour
 		GameEvents.SetSelectableWizards -= SetWizardSelectionChoices;	
 	}
 
+	private void Awake()
+	{
+		m_DeviceControls.Clear();
+	}
 
 	private void Update()
 	{
@@ -68,6 +88,14 @@ public class CursorSelectionBehaviour : MonoBehaviour
 		}
 	}
 
+	#endregion
+
+	#region Input System Events 
+
+	/// <summary>
+	///		Devices Next Button has been pressed ( DPAG Right / Right Arrow Key ) 
+	/// </summary>
+	/// <param name="context"></param>
 	public void OnNextButton(InputAction.CallbackContext context)
 	{
 		if (!allowPlayerJoinBehaviour && !allowCharacterSelecting)
@@ -94,14 +122,21 @@ public class CursorSelectionBehaviour : MonoBehaviour
 				// Set the selected wizard index to increase by 1, using a percetage of the total wizardSelectionChoices
 				m_SelectedWizardIndex = (m_SelectedWizardIndex + 1) % wizardSelectionChoices.Length;
 
+				AudioManager.PlaySound(SoundEffect.GUI_Move);
 				// Set the current wizard selection choice as active 
 				wizardSelectionChoices[m_SelectedWizardIndex].SetActive(true);
+
+			
 
 				m_CharacterName.text = GetWizard();
 			}
 		}
 	}
 
+	/// <summary>
+	///		Devices Previous Button has been pressed ( DPAD Left / Left Arrow Key ) 
+	/// </summary>
+	/// <param name="context"></param>
 	public void OnPreviousButton(InputAction.CallbackContext context)
 	{
 		if (!allowPlayerJoinBehaviour && !allowCharacterSelecting)
@@ -137,11 +172,17 @@ public class CursorSelectionBehaviour : MonoBehaviour
 				// Set the index as active 
 				wizardSelectionChoices[m_SelectedWizardIndex].SetActive(true);
 
+				AudioManager.PlaySound(SoundEffect.GUI_Move);
+
 				m_CharacterName.text = GetWizard();
 			}
 		}
 	}	
 
+	/// <summary>
+	///		Devices Select Button has been pressed (A Button) / (Button South) 
+	/// </summary>
+	/// <param name="context"></param>
 	public void OnSelect(InputAction.CallbackContext context)
 	{
 		if (!allowPlayerJoinBehaviour && !allowCharacterSelecting)
@@ -159,12 +200,16 @@ public class CursorSelectionBehaviour : MonoBehaviour
 					Debug.Log("[CursorSelectionManager.OnSelect]: " + "Ready to join the game -" + context.action.name);
 					GameEvents.SetPlayerReadyEvent?.Invoke(gameObject, 1);
 
+					AudioManager.PlaySound(SoundEffect.GUI_Confirm);
+
 					isReady = true;
 				}
 				else
 				{
 					Debug.Log("[CursorSelectionManager.OnSelect]: " + "Cancelled ready up - " + context.action.name);
 					GameEvents.SetPlayerReadyEvent?.Invoke(gameObject, -1);
+
+					AudioManager.PlaySound(SoundEffect.GUI_Confirm);
 					isReady = false;
 				}
 			}
@@ -189,8 +234,14 @@ public class CursorSelectionBehaviour : MonoBehaviour
 
 					AudioManager.PlaySound(s_SoundToPlay); // play the sound effect 
 
+				
+
 					s_ReadyUpButton.interactable = false;
-					s_ReadyUpButton.GetComponentInChildren<Text>().text = "Ready!";
+					// s_ReadyUpButton.GetComponentInChildren<Text>().text = "Ready!";
+
+
+					// Technically now, we will just be setting the ready button 
+
 
 					Debug.Log("Selected wizard " + GetWizard());
 				}
@@ -199,14 +250,49 @@ public class CursorSelectionBehaviour : MonoBehaviour
 					objectSelected = false;
 					Debug.Log("Unselected wizard " + GetWizard());
 
+					InputSystem.GetDeviceById(m_CurrentUserID).device.MakeCurrent();
+
+				
+					var buttonText = Gamepad.current.buttonSouth.displayName;
+
+					buttonText[0].ToString().ToUpper();
+		
+					Debug.Log("Gamepad Select Button: " + buttonText);
+
+					// For some reason its not getting this as the current gamepad -_- ughhhh
+
+
+
+					if (buttonText != null)
+					{
+						s_ReadyUpButton.GetComponentInChildren<Text>().text = "Ok";
+
+						// If the device is a ps4 device 
+						if (buttonText.Contains("Cross"))
+						{
+							s_ReadyUpButton.transform.GetChild(1).GetComponent<Image>().sprite = GameEntity.FindAsset(ResourceFolder.ControllerInputIcons, Asset.PS4, buttonText);
+						}
+						// Otherwise, if the device is an xbox controller 
+						else if (buttonText.Contains("A"))
+						{
+							s_ReadyUpButton.transform.GetChild(1).GetComponent<Image>().sprite = GameEntity.FindAsset(ResourceFolder.ControllerInputIcons, Asset.Xbox, buttonText);
+						}
+					}
+
+
+
 					s_ReadyUpButton.interactable = true;
-					s_ReadyUpButton.GetComponentInChildren<Text>().text = "Ready up";
+					// s_ReadyUpButton.GetComponentInChildren<Text>().text = "Ready up";
 
 				}
 			}
 		}
 	}
 
+	/// <summary>
+	///		Devices Start Button has been pressed 
+	/// </summary>
+	/// <param name="context"></param>
 	public void OnStartButton(InputAction.CallbackContext context)
 	{
 		
@@ -217,12 +303,75 @@ public class CursorSelectionBehaviour : MonoBehaviour
 
 	}
 
+	public void OnBackButton(InputAction.CallbackContext context)
+	{
+		if (allowPlayerJoinBehaviour && !allowCharacterSelecting)
+		{
+			Debug.Log("[CursorSelectionManager.OnBackButton]: " + "Back button pressed - Returning to main menu! " + context.action.name);
+
+			if (GameUIManager.Instance)
+			{
+				GameUIManager.Instance.PlayerJoinMenuUI.ReturnToMainMenu();
+			}
+		}
+	}
+
+	#endregion
+
+
+	#region Public Methods 
+
+	/// <summary>
+	///		Sets the current cursor identity to the playerIndex 
+	/// </summary>
+	/// <param name="Identity"></param>
 	public void SetCursorIdentity(int Identity = 0) => m_CurrentUserID = Identity; 
 
+	/// <summary>
+	///		Sets the controllers type 
+	/// </summary>
+	/// <param name="type"></param>
+	public void SetControllerType(string type = "") => m_CurrentControllerType = type;
+	/// <summary>
+	///		Returns the currently selected wizard character game object 
+	/// </summary>
+	/// <returns></returns>
 	public GameObject ReturnSelectedWizardCharacter() => wizardSelectionChoices[m_SelectedWizardIndex];
+
+	/// <summary>
+	///		Gets the wizard name 
+	/// </summary>
+	/// <returns></returns>
+	public string GetWizard()
+	{
+		switch (m_SelectedWizardIndex)
+		{
+			case 0:
+				return "Draco Malfoy";
+			case 1:
+				return "Hermione Granger";
+			case 2:
+				return "Sirius Black";
+			case 3:
+				return "Severus Snape";
+			case 4:
+				return "Yennefer";
+			case 5:
+				return "Voldemort";
+			default:
+				return null;
+		}
+	}
+
+	#endregion
 
 	#region Private Methods
 
+	/// <summary>
+	///		Sets the wizard selection choices - Called from SetSelectableWizards event 
+	/// </summary>
+	/// <param name="p_CurrentCursorIdentity"></param>
+	/// <param name="p_WizardSelectionsSpawned"></param>
 	private void SetWizardSelectionChoices(int p_CurrentCursorIdentity, List<Transform> p_WizardSelectionsSpawned)
 	{
 
@@ -255,27 +404,7 @@ public class CursorSelectionBehaviour : MonoBehaviour
 		m_CharacterName.text = GetWizard();
 	}
 
-	public string GetWizard()
-	{
-		switch (m_SelectedWizardIndex)
-		{
-			case 0:
-				return "Draco Malfoy";
-			case 1:
-				return "Hermione Granger";
-			case 2:
-				return "Sirius Black";
-			case 3:
-				return "Severus Snape";
-			case 4:
-				return "Yennefer";
-			case 5:
-				return "Voldemort";
-			default:
-				return null;
-		}
-	}
-	
+
 	/// <summary>
 	///		Returns the wizard sound effect to play - should probably move this to a different folder but this 
 	///		is just due to my poor organisation of code. Will fix it up eventually 
@@ -302,5 +431,7 @@ public class CursorSelectionBehaviour : MonoBehaviour
 				return (SoundEffect)p_WizardIndex;
 		}
 	}
+	
 	#endregion
+
 }

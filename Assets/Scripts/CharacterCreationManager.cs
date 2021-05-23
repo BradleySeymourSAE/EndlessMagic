@@ -193,7 +193,8 @@ public class CharacterCreationManager : MonoBehaviour
 				// Add the spawned wizard prefab to the wizard selections spawned list 
 				playerWizardSelectionsSpawnedIn.Add(spawnedWizardPrefab.transform);
 				
-				// I think we need to destroy the game object here
+				
+				GameEntity.SetLayerRecursively(spawnedWizardPrefab, s_CurrentPlayerIndex);
 			}
 
 
@@ -214,8 +215,8 @@ public class CharacterCreationManager : MonoBehaviour
 			GameObject s_CurrentPlayerSelectionUIPrefab = Instantiate(s_SelectionUIAssetPrefab, s_SelectionUIManager.position, Quaternion.identity);
 			Transform s_CurrentPlayerCursor = GameEntity.FindAssetClone(s_CurrentPlayerIndex, Asset.Cursor);
 
-			// s_CurrentPlayerCursor.GetComponent<CursorSelectionBehaviour>().wizardSelectionChoices = s_AvailableWizardSelections;
 			s_CurrentPlayerCursor.GetComponent<CursorSelectionBehaviour>().SetCursorIdentity(s_CurrentPlayerIndex);
+	
 
 			GameEvents.SetSelectableWizards?.Invoke(s_CurrentPlayerIndex, playerWizardSelectionsSpawnedIn);
 		

@@ -65,6 +65,8 @@ public class GameUIManager : MonoBehaviour
 	/// </summary>
 	private Coroutine m_Routine;
 
+	[SerializeField] private bool m_DisplayingPlayerJoinMenu = false;
+
 	#endregion
 
 	#region Unity References 
@@ -146,6 +148,9 @@ public class GameUIManager : MonoBehaviour
 	/// </summary>
 	private void Update()
 	{
+
+		m_DisplayingPlayerJoinMenu = IsDisplayingPlayerJoinMenu();
+
 		if (m_StartCountdown)
 		{
 			// Sets the float to deduct from the initial start timer 
@@ -156,11 +161,18 @@ public class GameUIManager : MonoBehaviour
 		}
 		else
 		{
-			if (m_Routine != null)
+			// If we aren't displaying the player join menu 
+			if (!IsDisplayingPlayerJoinMenu())
 			{
-				StopCoroutine(m_Routine);
+				// If the coroutine is still playing
+				if (m_Routine != null)
+				{
+					// Stop the coroutine 
+					StopCoroutine(m_Routine);
+					PlayerJoinMenuUI.timer.text = "";
+				}
 			}
-		}
+		}	
 	}
 
 	#endregion
@@ -241,10 +253,7 @@ public class GameUIManager : MonoBehaviour
 		}
 		else
 		{
-			if (m_Routine != null)
-			{ 
 				StopCoroutine(m_Routine);
-			}
 		}
 	}
 
@@ -263,8 +272,19 @@ public class GameUIManager : MonoBehaviour
 		// Wait x amount of seconds 
 		yield return new WaitForSeconds(GameManager.Instance.JoinStartTimer);
 
-		// Continue to the next scene 
-		PlayerJoinMenuUI.HandleCooperativeCharacterCreation();
+		
+		if (!IsDisplayingPlayerJoinMenu())
+		{
+			Debug.LogWarning("Not moving to next scene - The player join menu is not being displayed");
+			yield return null;
+		}
+		else
+		{
+			Debug.Log("[GameUIManager.DisplayCountdownTimer]: " + "Player join menu is displaying - Moving to the Handle Cooperative Character Creation Scene!");
+			PlayerJoinMenuUI.HandleCooperativeCharacterCreation();
+		}
+	
+
 
 		// Stop displaying the player join menu
 		DisplayPlayerJoinMenu(false);

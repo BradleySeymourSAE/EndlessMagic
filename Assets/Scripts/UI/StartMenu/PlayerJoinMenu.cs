@@ -101,7 +101,7 @@ public class PlayerJoinMenu
 
 		CloseButton.GetComponentInChildren<Text>().text = GameText.PlayerJoinUI_ReturnButton;
 		CloseButton.onClick.RemoveAllListeners();
-		CloseButton.onClick.AddListener(ReturnToMainMenu);
+		// CloseButton.onClick.AddListener(ReturnToMainMenu);
 
 		foreach (GameObject container in playerJoinContainers)
 		{
@@ -254,18 +254,14 @@ public class PlayerJoinMenu
 		UpdateConnectedDevices();
 	}
 
-	#endregion
-
-	#region Private Methods
-
 	/// <summary>
 	///		Returns to the main menu 
 	/// </summary>
-	private void ReturnToMainMenu()
+	public void ReturnToMainMenu()
 	{
-	
+
 		if (GameEntity.FindAllByTag(GameTag.Cursor).Length > 0)
-		{ 
+		{
 			foreach (GameObject cursor in GameEntity.FindAllByTag(GameTag.Cursor))
 			{
 				Object.Destroy(cursor);
@@ -274,7 +270,7 @@ public class PlayerJoinMenu
 			foreach (GameObject status in GameEntity.FindAllByTag(GameTag.PlayerJoinStatus))
 			{
 				TMP_Text statusText = status.GetComponentInChildren<TMP_Text>();
-				
+
 				statusText.text = GameText.PlayerJoinUI_PlayerStatus_EmptySlot;
 			}
 		}
@@ -288,14 +284,16 @@ public class PlayerJoinMenu
 		m_GameUIManager.DisplayMainMenu(true);
 	}
 
+	#endregion
 
+	#region Private Methods
 
 	#region TODO - This is already a function in GameEntity.cs - I will remove this when i get the chance 
-		/// <summary>
-		///		@TODO - Remove 'ReturnPlayerIndex()'
-		/// </summary>
-		/// <param name="name"></param>
-		/// <returns></returns>
+	/// <summary>
+	///		@TODO - Remove 'ReturnPlayerIndex()'
+	/// </summary>
+	/// <param name="name"></param>
+	/// <returns></returns>
 	#endregion
 	private int ReturnPlayerIndex(string name)
 	{

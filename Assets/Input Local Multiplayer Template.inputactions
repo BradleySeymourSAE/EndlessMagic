@@ -60,6 +60,14 @@
                     "expectedControlType": "Button",
                     "processors": "",
                     "interactions": ""
+                },
+                {
+                    "name": "Back",
+                    "type": "Button",
+                    "id": "e9a7758f-2d72-49d9-982b-8eed6bcbd3ef",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": ""
                 }
             ],
             "bindings": [
@@ -130,17 +138,6 @@
                     "isPartOfComposite": true
                 },
                 {
-                    "name": "ARROWS",
-                    "id": "34000148-824a-4437-911e-840e0dd78cde",
-                    "path": "Dpad",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "Keyboard&Mouse",
-                    "action": "Move",
-                    "isComposite": true,
-                    "isPartOfComposite": false
-                },
-                {
                     "name": "",
                     "id": "1635d3fe-58b6-4ba9-a4e2-f4b964f6b5c8",
                     "path": "<XRController>/{Primary2DAxis}",
@@ -161,61 +158,6 @@
                     "action": "Move",
                     "isComposite": false,
                     "isPartOfComposite": false
-                },
-                {
-                    "name": "ARROWS",
-                    "id": "dd390da5-0208-493f-85cd-fd8ad608bffa",
-                    "path": "2DVector",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Move",
-                    "isComposite": true,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "up",
-                    "id": "917b3241-6998-4044-a6f2-93f8e730dfaf",
-                    "path": "<Keyboard>/upArrow",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "Keyboard&Mouse",
-                    "action": "Move",
-                    "isComposite": false,
-                    "isPartOfComposite": true
-                },
-                {
-                    "name": "down",
-                    "id": "0d582671-8499-4983-8a35-88943d615faf",
-                    "path": "<Keyboard>/downArrow",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "Keyboard&Mouse",
-                    "action": "Move",
-                    "isComposite": false,
-                    "isPartOfComposite": true
-                },
-                {
-                    "name": "left",
-                    "id": "b125427c-ece7-47f9-b1be-3b537aa279f5",
-                    "path": "<Keyboard>/leftArrow",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "Keyboard&Mouse",
-                    "action": "Move",
-                    "isComposite": false,
-                    "isPartOfComposite": true
-                },
-                {
-                    "name": "right",
-                    "id": "c316cf87-65f3-4e7c-a8bf-c5478531d2c3",
-                    "path": "<Keyboard>/rightArrow",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "Keyboard&Mouse",
-                    "action": "Move",
-                    "isComposite": false,
-                    "isPartOfComposite": true
                 },
                 {
                     "name": "",
@@ -308,7 +250,7 @@
                 {
                     "name": "",
                     "id": "9491c9df-88ec-49c0-890b-e45faa988cd2",
-                    "path": "<Gamepad>/buttonEast",
+                    "path": "<Gamepad>/buttonSouth",
                     "interactions": "",
                     "processors": "",
                     "groups": "Gamepad;Joystick",
@@ -385,7 +327,7 @@
                 {
                     "name": "",
                     "id": "ba8f7d8e-a0db-4642-a609-6874b53c299c",
-                    "path": "<Keyboard>/f",
+                    "path": "<Keyboard>/enter",
                     "interactions": "",
                     "processors": "",
                     "groups": "Keyboard&Mouse",
@@ -445,6 +387,28 @@
                     "processors": "",
                     "groups": "Keyboard&Mouse",
                     "action": "Previous",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "502add94-9210-4bcb-900e-f117f8ab0071",
+                    "path": "<Gamepad>/buttonEast",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Gamepad;Joystick",
+                    "action": "Back",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "7c9e5c2a-2382-4693-bff2-afdbd92db6a3",
+                    "path": "<Keyboard>/escape",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard&Mouse",
+                    "action": "Back",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
