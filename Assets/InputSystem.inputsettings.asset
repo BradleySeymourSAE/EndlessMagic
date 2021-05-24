@@ -18,6 +18,7 @@ MonoBehaviour:
   - Gamepad
   - Keyboard
   - Mouse
+  - SwitchProControllerHID
   m_UpdateMode: 2
   m_CompensateForScreenOrientation: 1
   m_FilterNoiseOnCurrent: 0

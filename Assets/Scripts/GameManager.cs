@@ -116,7 +116,7 @@ public class GameManager : MonoBehaviour
 	private void Awake()
 	{
 		m_SelectionCursors.Clear();
-
+		
 
 		if (Instance != null)
 		{
@@ -145,7 +145,6 @@ public class GameManager : MonoBehaviour
 		GameEvents.SetPlayerJoinedEvent += SetConnectedPlayers;
 
 		GameEvents.SetCharacterCreationCursorEvent += SetCharacterCreationCursors;
-		GameEvents.SetAllowCharacterSelectionEvent += HandleAllowCharacterSelection;
 	}
 
 	/// <summary>
@@ -156,7 +155,6 @@ public class GameManager : MonoBehaviour
 		GameEvents.SetPlayerJoinedEvent -= SetConnectedPlayers;
 
 		GameEvents.SetCharacterCreationCursorEvent -= SetCharacterCreationCursors;
-		GameEvents.SetAllowCharacterSelectionEvent -= HandleAllowCharacterSelection;
 	}
 
 	private void Update()
@@ -223,12 +221,6 @@ public class GameManager : MonoBehaviour
 			Debug.LogWarning("[GameManager.ToggleDebug]: " + " --- Debugging has been turned off! --- ");
 		}
 	}
-
-	/// <summary>
-	///		Handles allowing character to select their character 
-	/// </summary>
-	/// <param name="ShouldAllowCharacterSelection"></param>
-	private void HandleAllowCharacterSelection(bool ShouldAllowCharacterSelection) => m_AllowCharacterSelecting = ShouldAllowCharacterSelection;
 
 	/// <summary>
 	///		Sets the character creation cursors after the controller inputs have been received 

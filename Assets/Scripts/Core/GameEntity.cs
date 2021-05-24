@@ -1,9 +1,11 @@
 ﻿#region Namespaces
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.InputSystem;
 using TMPro;
 #endregion
 
@@ -14,14 +16,15 @@ using TMPro;
 public enum ResourceFolder
 {
 	None = -1,
-	BroomSelectionPrefabs = 0,
+	MountablePrefabs = 0,
 	PlatformPrefabs = 1,
 	CursorPrefabs = 2,
 	WizardPrefabs = 3,
 	CinemachineCameraPrefabs = 4,
 	PlayerCameraPrefabs = 5,
 	PlayerSelectionUIPrefabs = 6,
-	ControllerInputIcons = 7
+	ControllerInputIcons = 7,
+	ControllerUIIconsData = 8
 }
 
 /// <summary>
@@ -53,7 +56,7 @@ public enum Asset
 	Camera,
 	CinemachineCamera,
 	Wizard,
-	Broomstick,
+	Mountable,
 	PS4,
 	Xbox,
 	NintendoSwitch
@@ -69,9 +72,24 @@ public enum SceneAsset {
 	WizardSelectionSpawn,
 	Cursor,
 	StatusText,
+	StatusIcon,
 	SelectionUI_Next,
 	SelectionUI_Prev,
 	SelectionUI_ReadyUp
+}
+
+/// <summary>
+///		Game Controller Type - The type of input device controller 
+/// </summary>
+public enum GameControllerType
+{
+	XboxController = 1,
+	Playstation4Controller = 2,
+	NintendoSwitchController = 3,
+	JoystickController = 4,
+	MouseController = 5,
+	KeyboardController = 6,
+	UnknownController = -1,
 }
 
 
@@ -117,14 +135,15 @@ public static class GameEntity
 	private static Dictionary<ResourceFolder, string> m_ResourceFolders = new Dictionary<ResourceFolder, string>
 	{
 		{ ResourceFolder.None, "" },
-		{ ResourceFolder.BroomSelectionPrefabs, "BroomSelectionPrefabs" },
+		{ ResourceFolder.MountablePrefabs, "MountablePrefabs" },
 		{ ResourceFolder.PlatformPrefabs, "PlayerSelectionPlatformPrefabs" },
 		{ ResourceFolder.CursorPrefabs, "CursorPrefabs" },
 		{ ResourceFolder.WizardPrefabs, "WizardSelectionPrefabs" },
 		{ ResourceFolder.CinemachineCameraPrefabs, "Cinemachine_CinemachineCameraPrefabs" },
 		{ ResourceFolder.PlayerCameraPrefabs, "Cinemachine_PlayerCameraPrefabs" },
 		{ ResourceFolder.PlayerSelectionUIPrefabs, "SelectionUIPrefabs" },
-		{ ResourceFolder.ControllerInputIcons, "ControllerInputIcons" }
+		{ ResourceFolder.ControllerInputIcons, "ControllerInputIcons" },
+		{ ResourceFolder.ControllerUIIconsData, "ControllerInputIcons/Data" }
 	};
 
 	private static Dictionary<Asset, string> m_AssetTypes = new Dictionary<Asset, string>
@@ -134,7 +153,7 @@ public static class GameEntity
 		{ Asset.Camera, "Camera" },
 		{ Asset.CinemachineCamera, "CinemachineCamera" },
 		{ Asset.Wizard, "SelectableWizard" },
-		{ Asset.Broomstick, "SelectableBroom" },
+		{ Asset.Mountable, "SelectableMountable" },
 		{ Asset.PS4, "PS4/PS4" },
 		{ Asset.Xbox, "Xbox/XboxOne" },
 		{ Asset.NintendoSwitch, "NintendoSwitch/Switch" },
@@ -150,6 +169,7 @@ public static class GameEntity
 		{ SceneAsset.SelectionUI, "SelectionUI" },
 		{ SceneAsset.WizardSelectionSpawn, "WizardSelectionSpawn" },
 		{ SceneAsset.StatusText, "Status" },
+		{ SceneAsset.StatusIcon, "Icon" },
 		{ SceneAsset.SelectionUI_Next, "NextButton" },
 		{ SceneAsset.SelectionUI_Prev, "PreviousButton" },
 		{ SceneAsset.SelectionUI_ReadyUp, "ReadyUpButton" }
@@ -164,6 +184,16 @@ public static class GameEntity
 		{ CameraView.UpperRight, new Rect(0.5f, 0.5f, 1, 1) },
 		{ CameraView.LowerLeft, new Rect(0.5f, -0.5f, 1, 1 ) },
 		{ CameraView.LowerRight, new Rect(-0.5f, -0.5f, 1, 1) }
+	};
+
+	private static Dictionary<string, GameControllerType> m_GameControllerTypes = new Dictionary<string, GameControllerType>
+	{
+		{ "Xbox Controller", GameControllerType.XboxController  },
+		{ GameText.JoystickDevice, GameControllerType.JoystickController },
+		{ GameText.NintendoSwitch, GameControllerType.NintendoSwitchController },
+		{ "Wireless Controller", GameControllerType.Playstation4Controller },
+		{ GameText.KeyboardDevice, GameControllerType.KeyboardController },
+		{ GameText.MouseDevice, GameControllerType.MouseController }
 	};
 
 
@@ -533,7 +563,12 @@ public static class GameEntity
 	/// <returns></returns>
 	public static string GetPlayerCameraTag(int PlayerIndex) => $"{ReturnGameTag(GameTag.CM_Camera)}{PlayerIndex}";
 
-	public static string GetWizardCharacterTitleTag(int p_CurrentPlayerIndex) => $"{ReturnGameTag(GameTag.CharacterTitle)}{p_CurrentPlayerIndex}";
+	/// <summary>
+	///		Finds and returns the character selection title tag 
+	/// </summary>
+	/// <param name="p_CurrentPlayerIndex"></param>
+	/// <returns></returns>
+	public static string GetCharacterSelectionTitle(int p_CurrentPlayerIndex) => $"{ReturnGameTag(GameTag.CharacterTitle)}{p_CurrentPlayerIndex}";
 
 	/// <summary>
 	///		Returns the camera layer defined in the playercameralayer enum based on the player's index 
@@ -652,6 +687,57 @@ public static class GameEntity
 		{
 			int layer = ReturnCameraLayer(p_PlayerIndex);
 			trans.gameObject.layer = layer;
+		}
+	}
+
+	/// <summary>
+	///		Returns the game controller type, 
+	/// </summary>
+	/// <param name="p_GameControllerType"></param>
+	/// <returns></returns>
+	public static GameControllerType GetGameControllerType(Gamepad p_CurrentGamepadDevice)
+	{
+		
+
+		if (m_GameControllerTypes.TryGetValue(p_CurrentGamepadDevice.displayName, out GameControllerType s_Result))
+		{
+			Debug.Log("[GameEntity.GetGameControllerType]: " + "Game Controller Found: " + s_Result);
+			return s_Result;
+		}
+		else
+		{
+			Debug.Log("[GameEntity.GetGameControllerType]: " + "Game controller could not be found " + s_Result);
+			return GameControllerType.UnknownController;
+		}
+	}
+
+	/// <summary>
+	///		Returns Game Controller Scriptable Object Data, depending on the type of game controller the player is using 
+	/// </summary>
+	/// <param name="p_ResourceFolder"></param>
+	/// <param name="p_ControllerType"></param>
+	/// <returns></returns>
+	public static GameControllerUIData GetControllerUIData(GameControllerType p_ControllerType = GameControllerType.UnknownController)
+	{
+		string s_ResourceFolderData = $"{ReturnAssetFolder(ResourceFolder.ControllerUIIconsData)}";
+
+		Debug.Log("[GameEntity.GetControllerUIData]: " + "Searching for asset resource in " + s_ResourceFolderData);
+	
+		GameControllerUIData[] s_GameControllerUIDataObjects = Resources.LoadAll<GameControllerUIData>(s_ResourceFolderData);
+
+		bool s_ControllerDataExists = s_GameControllerUIDataObjects.Any(data => data.ControllerType == p_ControllerType);
+
+		Debug.Log("[GameEntity.GetControllerUIData]: " + "Game Controller UI Data Exists: " + s_ControllerDataExists);
+
+		if (s_GameControllerUIDataObjects.Length <= 0 || !s_ControllerDataExists)
+		{
+			Debug.LogWarning("[GameEntity.GetControllerUIData]: " + "Could not find UI data for " + p_ControllerType);
+			return null;
+		}
+		else
+		{
+			Debug.Log("[GameEntity.GetControllerUIData]: " + "Found Game Controller Data for " + p_ControllerType);
+			return s_GameControllerUIDataObjects.FirstOrDefault(controller => controller.ControllerType == p_ControllerType);
 		}
 	}
 }

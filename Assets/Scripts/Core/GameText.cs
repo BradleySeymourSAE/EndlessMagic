@@ -57,7 +57,7 @@ public static class GameText
 	public const string PlayerJoinUI_ReturnButton = "Return";
 
 	public const string PlayerJoinUI_PlayerStatus_SlotTaken_Ready = "Ready!";
-	public const string PlayerJoinUI_PlayerStatus_SlotTaken_ReadyUp = "Press B to ready up";
+	public const string PlayerJoinUI_PlayerStatus_SlotTaken_ReadyUp = " to ready up";
 	public const string PlayerJoinUI_PlayerStatus_EmptySlot = "Slot is empty";
 
 	#endregion
@@ -76,8 +76,10 @@ public static class GameText
 	#region Device Display Name Keys 
 
 	public const string XboxControllerDevice = "Controller";
+	public const string NintendoSwitch = "Nintendo Switch";
 	public const string GamepadDevice = "Gamepad";
 	public const string PS4ControllerDevice = "Sony Computer Entertainment";
+	public const string WirelessDevice = "Wireless Device";
 	public const string MouseDevice = "Mouse";
 	public const string KeyboardDevice = "Keyboard";
 	public const string JoystickDevice = "Joystick";

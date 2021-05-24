@@ -67,8 +67,13 @@ public static class GameEvents
 	public static IntegerTransformListParameterDelegate SetSelectableWizards;
 
 	/// <summary>
+	///		Once called - Sets the current player cursors selectable mountable vehicles to navigate through 
+	/// </summary>
+	public static IntegerTransformListParameterDelegate SetSelectableMountables;
+
+	/// <summary>
 	///		Once called - ready's the player up on the co-op player join screen, 
-	///		Transform - The parent transform for the player's cursor
+	///		Game Object - The parent game object for the player's cursor
 	///		Integer - Whether the player is ready or not 
 	/// </summary>
 	public static GameObjectIntegerParameterDelegate SetPlayerReadyEvent;
@@ -78,21 +83,10 @@ public static class GameEvents
 	/// </summary>
 	public static GameObjectListParameterDelegate SetCharacterCreationCursorEvent;
 
-
 	/// <summary>
 	///		Once called - Begins the player join ready up countdown timer
 	/// </summary>
 	public static BoolParameterDelegate UpdatePlayerJoinReadyTimer;
-
-	/// <summary>
-	///		Toggles allowing character selection (Called from Game manager) 
-	/// </summary>
-	public static BoolParameterDelegate SetAllowCharacterSelectionEvent;
-
-	/// <summary>
-	///		Toggles Enabling & Disabling Debug Messages 
-	/// </summary>
-	public static BoolParameterDelegate SetDebuggingEvent;
 	
 	#endregion
 

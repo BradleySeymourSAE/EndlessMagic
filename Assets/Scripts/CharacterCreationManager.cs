@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.InputSystem;
 using Cinemachine;
 #endregion
 
@@ -177,9 +178,12 @@ public class CharacterCreationManager : MonoBehaviour
 			}
 
 			List<Transform> playerWizardSelectionsSpawnedIn = new List<Transform>();
+			List<Transform> playerMountableSelectionsSpawnedIn = new List<Transform>();
 			playerWizardSelectionsSpawnedIn.Clear();
+			playerMountableSelectionsSpawnedIn.Clear();
 
 			GameObject[] s_WizardPrefabAssets = GameEntity.FindAllIndexedAssets(ResourceFolder.WizardPrefabs);
+			GameObject[] s_MountablePrefabAssets = GameEntity.FindAllIndexedAssets(ResourceFolder.MountablePrefabs);
 
 			for (int j = 0; j < s_WizardPrefabAssets.Length; j++)
 			{
@@ -195,6 +199,19 @@ public class CharacterCreationManager : MonoBehaviour
 				
 				
 				GameEntity.SetLayerRecursively(spawnedWizardPrefab, s_CurrentPlayerIndex);
+			}
+
+			for (int z = 0; z < s_MountablePrefabAssets.Length; z++)
+			{
+				GameObject spawnedMountablePrefab = Instantiate(s_MountablePrefabAssets[z], s_WizardSpawnPoint.position, s_WizardPrefabAssets[z].transform.rotation);
+
+				spawnedMountablePrefab.transform.SetParent(s_WizardSpawnPoint);
+				spawnedMountablePrefab.layer = s_WizardSpawnPoint.gameObject.layer;
+				spawnedMountablePrefab.tag = s_WizardSpawnPoint.tag;
+
+				playerMountableSelectionsSpawnedIn.Add(spawnedMountablePrefab.transform);
+
+				GameEntity.SetLayerRecursively(spawnedMountablePrefab, s_CurrentPlayerIndex);
 			}
 
 
@@ -215,10 +232,13 @@ public class CharacterCreationManager : MonoBehaviour
 			GameObject s_CurrentPlayerSelectionUIPrefab = Instantiate(s_SelectionUIAssetPrefab, s_SelectionUIManager.position, Quaternion.identity);
 			Transform s_CurrentPlayerCursor = GameEntity.FindAssetClone(s_CurrentPlayerIndex, Asset.Cursor);
 
-			s_CurrentPlayerCursor.GetComponent<CursorSelectionBehaviour>().SetCursorIdentity(s_CurrentPlayerIndex);
-	
+
+			CursorSelectionBehaviour s_CurrentPlayerCursorBehaviour = s_CurrentPlayerCursor.GetComponent<CursorSelectionBehaviour>();
+
+			s_CurrentPlayerCursorBehaviour.SetCursorIdentity(s_CurrentPlayerIndex);
 
 			GameEvents.SetSelectableWizards?.Invoke(s_CurrentPlayerIndex, playerWizardSelectionsSpawnedIn);
+			GameEvents.SetSelectableMountables?.Invoke(s_CurrentPlayerIndex, playerMountableSelectionsSpawnedIn);
 		
 			s_CurrentPlayerSelectionUIPrefab.transform.SetParent(s_SelectionUIManager);
 			s_CurrentPlayerSelectionUIPrefab.layer = GameEntity.GetPlayerCameraLayer(s_CurrentPlayerIndex);
@@ -233,7 +253,16 @@ public class CharacterCreationManager : MonoBehaviour
 				
 			playerSelectionUICanvas.renderMode = RenderMode.ScreenSpaceCamera;
 			playerSelectionUICanvas.worldCamera = playerCam;
-				
+
+			GameObject s_readyUpButtonIcon = GameEntity.FindSceneAsset(s_CurrentPlayerIndex, SceneAsset.SelectionUI_ReadyUp).Find("Icon").gameObject;
+
+			GameControllerUIData data = s_CurrentPlayerCursorBehaviour.ControllerUI;
+
+			if (data != null)
+			{
+				s_readyUpButtonIcon.GetComponent<Image>().sprite = data.ButtonSouth;
+			}
+			
 			m_ActivePlayerCameras.Add(playerCam);
 			m_SelectionUI.Add(playerSelectionUICanvas);
 		}

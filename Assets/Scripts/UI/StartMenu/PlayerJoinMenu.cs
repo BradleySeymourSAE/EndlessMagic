@@ -81,6 +81,8 @@ public class PlayerJoinMenu
 	///		Reference to start the countdown timer 
 	/// </summary>
 	[SerializeField] private bool shouldStartCountdown = false;
+
+	[SerializeField] private float m_StatusTextXOffset = 23f;
 	
 	#endregion
 
@@ -108,14 +110,21 @@ public class PlayerJoinMenu
 			Image image = container.GetComponent<Image>();
 			image.color = m_PlayerInputContainerBackgroundColor;
 
-			for (int i = 1; i < container.transform.childCount; i++)
-			{
-				TMP_Text statusText = container.transform.GetChild(i).GetComponentInChildren<TMP_Text>();
-				
-				statusText.text = GameText.PlayerJoinUI_PlayerStatus_EmptySlot;
+			TMP_Text statusText = container.transform.GetChild(1).GetComponentInChildren<TMP_Text>();
 
-				playerJoinStatusTextFields.Add(statusText);
-			}
+			RectTransform statusTextTransform = statusText.GetComponent<RectTransform>();
+
+			Vector3 s_CurrentPosition = statusTextTransform.localPosition;
+
+			s_CurrentPosition.x = m_StatusTextXOffset;
+
+			statusTextTransform.localPosition = s_CurrentPosition;
+
+			Image iconImage = container.transform.GetChild(2).GetComponent<Image>();
+			iconImage.enabled = false;
+
+			statusText.text = GameText.PlayerJoinUI_PlayerStatus_EmptySlot;
+			playerJoinStatusTextFields.Add(statusText);
 		}
 
 	}
@@ -191,9 +200,10 @@ public class PlayerJoinMenu
 	{
 		bool isPlayerReady = PlayerReadyValue > 0 == true;
 
-		int playerIndex = ReturnPlayerIndex(PlayerGameObject.name.ToString());
-		string s_StatusString = $"P{playerIndex}_Status";
+		int playerIndex = ReturnPlayerIndex(PlayerGameObject.name);
 
+		TMP_Text statusText = GameEntity.FindSceneAsset(playerIndex, SceneAsset.StatusText).GetComponentInChildren<TMP_Text>();
+		Image statusIcon = GameEntity.FindSceneAsset(playerIndex, SceneAsset.StatusIcon).GetComponent<Image>();
 
 		// If the player is ready
 		if (isPlayerReady)
@@ -206,15 +216,13 @@ public class PlayerJoinMenu
 			}
 			else
 			{
-				// Otherwise, try to find the game object by the status string 
-
-				TMP_Text statusText = GameObject.Find(s_StatusString).GetComponentInChildren<TMP_Text>();
 
 				// Check that the status text is not null 
 				if (statusText != null)
 				{
 					// If it isnt, set the status text to Ready!  
 					statusText.text = GameText.PlayerJoinUI_PlayerStatus_SlotTaken_Ready;
+					statusIcon.enabled = false;
 				}
 		
 
@@ -225,21 +233,30 @@ public class PlayerJoinMenu
 		// Otherwise, if the player is not ready or has un-ready'd up 
 		else
 		{
-			// If the list does not contain the playerCurso Game Object then we want to return 
+			// If the list does not contain the playerCursor Game Object then we want to return 
 			if (!readyPlayerCursors.Contains(PlayerGameObject))
 			{
 				return;
 			}
 			else
 			{
-
-				// Otherwise, Try to find Status GameObject TMP_Text using the status string 
-				TMP_Text statusText = GameObject.Find(s_StatusString).GetComponentInChildren<TMP_Text>();
-
+				
 				// Check the status text is not null 
 				if (statusText != null)
 				{
 					// If it isnt, set the status text to `Ready up`
+
+					statusIcon.sprite = PlayerGameObject.GetComponent<CursorSelectionBehaviour>().ControllerUI.ButtonSouth;
+					statusIcon.enabled = true;
+
+					RectTransform statusTextTransform = statusText.GetComponent<RectTransform>();
+
+					Vector3 s_CurrentPosition = statusTextTransform.localPosition;
+
+					s_CurrentPosition.x = 55f;
+
+					statusTextTransform.localPosition = s_CurrentPosition;
+
 					statusText.text = GameText.PlayerJoinUI_PlayerStatus_SlotTaken_ReadyUp;
 				}
 

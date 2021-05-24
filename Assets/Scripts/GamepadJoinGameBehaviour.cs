@@ -130,11 +130,6 @@ public class GamepadJoinGameBehaviour : MonoBehaviour
 
 		// Find the current player cursor asset using the current player device index
 		GameObject playerCursor = GameEntity.FindAsset(ResourceFolder.CursorPrefabs, s_CurrentPlayerIndex, Asset.Cursor, SceneAsset.None, false);
-	
-		// Set the player cursor's type (Using the action control scheme) 
-
-		playerCursor.GetComponent<CursorSelectionBehaviour>().SetControllerType(s_ActionControlScheme);
-
 
 		// check if the players cursor is active in the Hierarchy 
 		if (!playerCursor.activeInHierarchy)
@@ -151,21 +146,33 @@ public class GamepadJoinGameBehaviour : MonoBehaviour
 
 			// Get the status text to update the button to be pressed 
 			TMP_Text s_StatusText = GameEntity.FindSceneAsset(s_CurrentPlayerIndex, SceneAsset.StatusText).GetComponentInChildren<TMP_Text>();
-			
-			// Find the button east display name 
-			var buttonText = Gamepad.current.buttonSouth.displayName;
+			Image s_StatusIcon = GameEntity.FindSceneAsset(s_CurrentPlayerIndex, SceneAsset.StatusIcon).GetComponent<Image>();
 
-			// If the status text is not null 
-			if (buttonText != null)
-			{
-				// Set the status text with the button text 
-				s_StatusText.text = $"Press {buttonText} to ready up!";
-			}
-			else
-			{
-				// Otherwise - Set the default text 
-				s_StatusText.text = GameText.PlayerJoinUI_PlayerStatus_SlotTaken_ReadyUp;
-			}
+			// Get the current controller type 
+			GameControllerType s_ControllerType = GameEntity.GetGameControllerType(Gamepad.current);
+
+			// Get the Cursor Selection Behaviour component attached to the player input cursor 
+			CursorSelectionBehaviour s_CursorSelectionBehaviour = playerInputCursor.GetComponent<CursorSelectionBehaviour>();
+
+			// Set the game controller type for the cursor selection behaviour reference 
+			s_CursorSelectionBehaviour.SetGameControllerType(s_ControllerType);
+
+			// Get the game controller ui data by passing in the controller type 
+			GameControllerUIData s_GameControllerData = GameEntity.GetControllerUIData(s_ControllerType);
+
+			// Set the game controller UI data for the cursor selection behaviour reference 
+			s_CursorSelectionBehaviour.SetGameControllerUIData(s_GameControllerData);
+
+			// Set the status text to ready up 
+			s_StatusText.text = GameText.PlayerJoinUI_PlayerStatus_SlotTaken_ReadyUp;
+
+			Vector3 newPosition = new Vector3(55f, s_StatusText.rectTransform.localPosition.y, s_StatusText.rectTransform.localPosition.z);
+			s_StatusText.GetComponent<RectTransform>().localPosition = newPosition;
+
+			// Set the status icon sprite image to the controller's button south image 
+			s_StatusIcon.sprite = s_CursorSelectionBehaviour.ControllerUI.ButtonSouth;
+			s_StatusIcon.enabled = true;
+
 			
 			if (Debugging)
 			{ 
@@ -184,14 +191,6 @@ public class GamepadJoinGameBehaviour : MonoBehaviour
 			cursorTransform.anchorMin = new Vector2(0.5f, 1);
 			cursorTransform.anchorMax = new Vector2(0.5f, 1);
 			playerCursor.transform.localScale = new Vector3(1, 1, 1);
-
-
-			foreach (InputControl control in device.allControls)
-			{
-
-				playerCursor.GetComponent<CursorSelectionBehaviour>().Controls.Add(control.displayName);
-
-			}
 		}
 	}
 
