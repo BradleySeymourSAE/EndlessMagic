@@ -111,19 +111,20 @@ public class GamepadJoinGameBehaviour : MonoBehaviour
 			}
 		}
 
-		// If the device is not a joystick, gamepad or ps4 controller
+		// If the device is not a joystick, gamepad or controller type (OR sony controller device) 
 		if (!device.displayName.Contains("Controller") &&
 			!device.displayName.Contains("Joystick") && 
 			!device.displayName.Contains("Gamepad") &&
-			!device.description.manufacturer.Contains(GameText.PS4ControllerDevice)
+			!device.description.manufacturer.Contains(GameText.SonyControllerDevice)
 		) {
 			// Then we want to return
 			return;
 		}
 
-	
-		device.MakeCurrent();   // make this device the current device 
+		// Make this device the current one 
+		device.MakeCurrent();
 
+		// Get the current player index from the PlayerInput.all array 
 		var s_CurrentPlayerIndex = PlayerInput.all.Count + 1; // Find the current players index
 
 		string s_ActionControlScheme = ReturnControlScheme(device); // Get the Action Control Scheme
@@ -143,6 +144,9 @@ public class GamepadJoinGameBehaviour : MonoBehaviour
 
 			// Set the cursor's parent transform
 			RectTransform s_ParentTransform = m_PlayerJoinContainers[s_CurrentPlayerIndex - 1].GetComponent<RectTransform>();
+
+			// Set the player input cursor parent transform to the player join containers current index's transform rect  
+			playerInputCursor.transform.SetParent(s_ParentTransform);
 
 			// Get the status text to update the button to be pressed 
 			TMP_Text s_StatusText = GameEntity.FindSceneAsset(s_CurrentPlayerIndex, SceneAsset.StatusText).GetComponentInChildren<TMP_Text>();
@@ -166,14 +170,22 @@ public class GamepadJoinGameBehaviour : MonoBehaviour
 			// Set the status text to ready up 
 			s_StatusText.text = GameText.PlayerJoinUI_PlayerStatus_SlotTaken_ReadyUp;
 
-			Vector3 newPosition = new Vector3(55f, s_StatusText.rectTransform.localPosition.y, s_StatusText.rectTransform.localPosition.z);
-			s_StatusText.GetComponent<RectTransform>().localPosition = newPosition;
+			// Reset the status text position by grabbing the local position of the text 
+			Vector3 newStatusTextPosition = s_StatusText.GetComponent<RectTransform>().localPosition;
+
+			// I just know that this value should either be 55 (With the Icon), or 23 - Without the icon 
+			newStatusTextPosition.x = 55f;
+
+			// Set the status text local position to the newStatusTextPosition 
+			s_StatusText.GetComponent<RectTransform>().localPosition = newStatusTextPosition;
 
 			// Set the status icon sprite image to the controller's button south image 
 			s_StatusIcon.sprite = s_CursorSelectionBehaviour.ControllerUI.ButtonSouth;
+
+			// Set the status icon visibility to be enabled
 			s_StatusIcon.enabled = true;
 
-			
+			// Simple check, if we are debuggin this is handy 
 			if (Debugging)
 			{ 
 				Debug.LogWarning(
@@ -183,14 +195,13 @@ public class GamepadJoinGameBehaviour : MonoBehaviour
 				);
 			}
 
-			playerInputCursor.transform.SetParent(s_ParentTransform);
-
+			// Get the current rect transform for the cursor 
 			RectTransform cursorTransform = playerInputCursor.GetComponent<RectTransform>();
 
-			cursorTransform.localPosition = new Vector3(0,0,0);
-			cursorTransform.anchorMin = new Vector2(0.5f, 1);
-			cursorTransform.anchorMax = new Vector2(0.5f, 1);
-			playerCursor.transform.localScale = new Vector3(1, 1, 1);
+			cursorTransform.localPosition = new Vector3(0,0,0); // Set the local position of the cursor to zero (or it shits bricks) 
+			cursorTransform.anchorMin = new Vector2(0.5f, 1); // Anchor to the center, middle 
+			cursorTransform.anchorMax = new Vector2(0.5f, 1); // Anchor to the center, middle 
+			playerCursor.transform.localScale = new Vector3(1, 1, 1); // Set the local scale of the transform to 1 
 		}
 	}
 
@@ -200,23 +211,33 @@ public class GamepadJoinGameBehaviour : MonoBehaviour
 	/// <param name="input"></param>
 	public void OnPlayerJoin(PlayerInput input)
 	{
-
-	
 		if (Debugging)
 		{
-			Debug.Log("[GamepadJoinGameBehaviour.HandleOnPlayerJoin]: " + "There are currently " + numberOfActivePlayers + " players.");
+			Debug.LogWarning("[GamepadJoinGameBehaviour.OnPlayerJoin]: " + "There are currently " + numberOfActivePlayers + " players.");
 		}
 
 		numberOfActivePlayers = PlayerInput.all.Count;
 	
 
-
+		// Check if we are currently allowing player joining 
 		if (GameManager.Instance.AllowPlayerJoining == true)
-		{ 
-			CursorSelectionBehaviour cursor = input.GetComponent<CursorSelectionBehaviour>();
+		{
+			// If the input has the CursorSelectionBehaviourComponent script 
+			if (input.GetComponent<CursorSelectionBehaviour>())
+			{
+				// Set reference in the Game Manager Instance 
+				CursorSelectionBehaviour s_CurrentPlayerCursor = input.GetComponent<CursorSelectionBehaviour>();
+				
+				// Add the current cursor to the current players list 
+				m_CurrentPlayers.Add(s_CurrentPlayerCursor);
 
-			m_CurrentPlayers.Add(cursor);
-			GameEvents.SetPlayerJoinedEvent?.Invoke(numberOfActivePlayers);
+				// Invoke the Player Joined Event taking in the number of active players 
+
+				GameEvents.SetPlayerJoinedEvent?.Invoke(numberOfActivePlayers);
+
+				// Activate input 
+				input.ActivateInput();
+			}
 		}
 	}
 
@@ -228,22 +249,30 @@ public class GamepadJoinGameBehaviour : MonoBehaviour
 	{
 		if (Debugging)
 		{
-			Debug.Log("[GamepadJoinGameBehaviour.HandleOnPlayerLeft]: " + "Player left the game. There are " + numberOfActivePlayers + " remaining players.");
+			Debug.LogWarning("[GamepadJoinGameBehaviour.OnPlayerLeft]: " + "Player left the game. There are " + numberOfActivePlayers + " remaining players.");
 		}
 
-
+		// Update the number of active players remaining 
 		numberOfActivePlayers = PlayerInput.all.Count;
 		
-
+		// If allow player joining is true
 		if (GameManager.Instance.AllowPlayerJoining == true)
-		{ 
-			CursorSelectionBehaviour cursor = input.GetComponent<CursorSelectionBehaviour>();
+		{
+			// If the PlayerInput (player) has the CursorSelectionBehaviour script 
+			if (input.GetComponent<CursorSelectionBehaviour>())
+			{ 
+				// Get a reference to the current player cursor 
+				CursorSelectionBehaviour s_CurrentPlayerCursor = input.GetComponent<CursorSelectionBehaviour>();
 
-			m_CurrentPlayers.Remove(cursor);
+				// Remove the player cursor from the current active players list in the GameManager Instance 
+				m_CurrentPlayers.Remove(s_CurrentPlayerCursor);
 			
-	
-			GameEvents.SetPlayerJoinedEvent?.Invoke(numberOfActivePlayers);
-			input.DeactivateInput();
+				// Invoke the SetPlayerJoinedEvent taking in the updated amount of active players 
+				GameEvents.SetPlayerJoinedEvent?.Invoke(numberOfActivePlayers);
+
+				// Deactivate the input 
+				input.DeactivateInput();
+			}
 		}
 	}
 
@@ -262,7 +291,7 @@ public class GamepadJoinGameBehaviour : MonoBehaviour
 		if (
 			device.displayName.Contains(GameText.XboxControllerDevice) || 
 			device.displayName.Contains(GameText.GamepadDevice) || 
-			device.displayName.Contains(GameText.PS4ControllerDevice))
+			device.displayName.Contains(GameText.SonyControllerDevice))
 		{
 			return GameText.ActionControlScheme_Gamepad;
 		}

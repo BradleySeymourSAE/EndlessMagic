@@ -78,8 +78,8 @@ public static class GameText
 	public const string XboxControllerDevice = "Controller";
 	public const string NintendoSwitch = "Nintendo Switch";
 	public const string GamepadDevice = "Gamepad";
-	public const string PS4ControllerDevice = "Sony Computer Entertainment";
-	public const string WirelessDevice = "Wireless Device";
+	public const string SonyControllerDevice = "Sony Computer Entertainment";
+	public const string Playstation4Controller = "Wireless Device";
 	public const string MouseDevice = "Mouse";
 	public const string KeyboardDevice = "Keyboard";
 	public const string JoystickDevice = "Joystick";

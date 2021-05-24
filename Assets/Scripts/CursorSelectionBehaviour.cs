@@ -136,39 +136,25 @@ public class CursorSelectionBehaviour : MonoBehaviour
 		{
 			// Allow Character Selecting 
 			allowCharacterSelecting = true;
-		}
-
-		if (wizardSelected && wizardSelection && !mountableSelected && !mountableSelection)
-		{
 			wizardSelection = ReturnSelectedWizardCharacter();
-			disableNavigation = true;
-
+		}
+		else if (wizardSelected && wizardSelection && !mountableSelected && mountableSelection)
+		{ 
 			allowCharacterSelecting = false;
 			allowMountableSelecting = true;
-		}	
-		else
-		{
-			//
-		}
-		/* 
-		
-		if (mountableSelected)
-		{
-			mountableSelection = ReturnSelectedMountable();
 
+			mountableSelection = ReturnSelectedMountableVehicle();
 		}
-
-		if (wizardSelected)
+		else if (wizardSelected && mountableSelected)
 		{
-			wizardSelection = ReturnSelectedWizardCharacter();
 			disableNavigation = true;
+			Debug.Log("Both Wizard and Mountable Selected!");
 		}
 		else
 		{
 			disableNavigation = false;
 		}
 
-		*/
 	}
 
 	#endregion
@@ -189,11 +175,6 @@ public class CursorSelectionBehaviour : MonoBehaviour
 
 		if (!allowPlayerJoinBehaviour && !allowMountableSelecting && allowCharacterSelecting)
 		{
-
-			if (disableNavigation)
-			{
-				return;
-			}
 
 			if (context.phase == InputActionPhase.Started)
 			{
@@ -217,15 +198,21 @@ public class CursorSelectionBehaviour : MonoBehaviour
 
 			if (context.phase == InputActionPhase.Started)
 			{
-
+				Debug.Log("[CursorSelectionManager.OnNextButton]: " + "Selecting next mountable vehicle " + context.action.name);
+				
+				// Disable the current selected mountable index 
 				mountableSelectionChoices[m_SelectedMountableIndex].SetActive(false);
 
+				// Set the selected mountable vehicle index to increase by 1, using a percentage of the total mountableSelectionChoices 
 				m_SelectedMountableIndex = (m_SelectedMountableIndex + 1) % mountableSelectionChoices.Length;
 
+				// Play the UI Move Sound Effect 
 				AudioManager.PlaySound(SoundEffect.GUI_Move);
 
+				// Set the current mountable selection choice as active 
 				mountableSelectionChoices[m_SelectedMountableIndex].SetActive(true);
 
+				// Update the character text ui with the mountable name  
 				m_CharacterName.text = ReturnMountableName();
 			}
 		}
@@ -245,10 +232,6 @@ public class CursorSelectionBehaviour : MonoBehaviour
 		
 		if (!allowPlayerJoinBehaviour && !allowMountableSelecting && allowCharacterSelecting)
 		{
-			if (disableNavigation)
-			{
-				return;
-			}
 
 			if (context.phase == InputActionPhase.Started)
 			{
@@ -270,30 +253,41 @@ public class CursorSelectionBehaviour : MonoBehaviour
 				// Set the index as active 
 				wizardSelectionChoices[m_SelectedWizardIndex].SetActive(true);
 
+				// Play the UI Move Sound Effect 
 				AudioManager.PlaySound(SoundEffect.GUI_Move);
 
+				// Return the wizard's character name 
 				m_CharacterName.text = ReturnWizardName();
 			}
 		}
+		// Otherwise, if not allowing player join and also not allowing character selecting BUT allowing mountable item selection  
 		else if (!allowPlayerJoinBehaviour && !allowCharacterSelecting && allowMountableSelecting)
 		{
-
+			// If the context phase is in the `first phase` of the action.. 
 			if (context.phase == InputActionPhase.Started)
 			{
+				Debug.Log("[CursorSelectionManager.OnPreviousButton]: " + "Selecing previous mountable vehicle " + context.action.name);
 
+				// Set the current mountable selection as inactive 
 				mountableSelectionChoices[m_SelectedMountableIndex].SetActive(false);
 
+				// Deduct the index by 1 
 				m_SelectedMountableIndex--;
 
+				// If the selected mountable index is less than 0 
 				if (m_SelectedMountableIndex < 0)
 				{
+					// Set the index to the last mountable selection choice in the array 
 					m_SelectedMountableIndex += mountableSelectionChoices.Length;
 				}
 
+				// Set the index as active 
 				mountableSelectionChoices[m_SelectedMountableIndex].SetActive(true);
-
+				
+				// Play the audio effect 
 				AudioManager.PlaySound(SoundEffect.GUI_Move);
 
+				// Reset the character name text to the mountable vehicles name 
 				m_CharacterName.text = ReturnMountableName();
 			}
 		}
@@ -307,53 +301,68 @@ public class CursorSelectionBehaviour : MonoBehaviour
 	{
 		if (!allowPlayerJoinBehaviour && !allowCharacterSelecting && !allowMountableSelecting)
 		{
-			Debug.Log("Both player join & character selecting is false. Join Behaviour: " + allowPlayerJoinBehaviour + " Character Selecting: " + allowCharacterSelecting);
+			Debug.Log("Player join, Character Selection AND MountableSelecting is false -- Join Behaviour: " + allowPlayerJoinBehaviour + " Character Selecting: " + allowCharacterSelecting + " Allow Mountable Vehicle Selecting: " + allowMountableSelecting);
 			return;
 		}
 
-		if (allowPlayerJoinBehaviour && !allowCharacterSelecting)
+		// If allowing player join behaviour and not allowing character selecting, or not allowing mountable selecting 
+		if (allowPlayerJoinBehaviour && !allowCharacterSelecting && !allowMountableSelecting)
 		{
+			// If the first frame of the input action 
 			if (context.phase == InputActionPhase.Started)
 			{
+				// If the player is not ready, then set the player as being ready 
 				if (!isReady)
 				{
 					Debug.Log("[CursorSelectionManager.OnSelect]: " + "Ready to join the game -" + context.action.name);
 					GameEvents.SetPlayerReadyEvent?.Invoke(gameObject, 1);
 
+					// Play the Confirm Sound Effect 
 					AudioManager.PlaySound(SoundEffect.GUI_Confirm);
 
+					// Set ready to true 
 					isReady = true;
 				}
+				// Otherwise, IF the player is already `Ready`, then set the player as NOT being ready anymore 
 				else
 				{
+					
 					Debug.Log("[CursorSelectionManager.OnSelect]: " + "Cancelled ready up - " + context.action.name);
 					GameEvents.SetPlayerReadyEvent?.Invoke(gameObject, -1);
 
+					// Play the confirm sound effect 
 					AudioManager.PlaySound(SoundEffect.GUI_Confirm);
+					
+					// Set is ready to false 
 					isReady = false;
 				}
 			}
 		}
+		// Otherwise, If NOT allowing player join behaviour and NOT allowing mountable selecting but we are allowing character selection 
 		else if (!allowPlayerJoinBehaviour && !allowMountableSelecting && allowCharacterSelecting)
 		{
+			// If the action's phase is in the first frame 
 			if (context.phase == InputActionPhase.Started)
 			{
-
-				wizardSelection = ReturnSelectedWizardCharacter();
-
+				// Return the ready up button asset 
 				Button s_ReadyUpButton = GameEntity.FindSceneAsset(m_CurrentUserID, SceneAsset.SelectionUI_ReadyUp).GetComponent<Button>();
 
 
+				// If a wizard has not been selected yet
 				if (!wizardSelected)
 				{
-					// The wizard is then selected 
+					// Then set the wizard as being selected 
 					wizardSelected = true;
 
-					// Return the selected wizard character 
+					Debug.Log("Wizard has been selected!! Wizard Selection: " + ReturnWizardName());
+
+					// Return the currently selected wizard character 
 					wizardSelection = ReturnSelectedWizardCharacter();
 
+					// If the selected prefabs list contains the currently selected wizard 
 					if (m_SelectedPrefabs.Contains(wizardSelection))
 					{
+						// Then we just want to return 
 						Debug.LogWarning("That wizard has already been selected! - Returning!");
 						return;
 					}
@@ -361,85 +370,91 @@ public class CursorSelectionBehaviour : MonoBehaviour
 					// Add the wizard Selection to the selected prefabs list 
 					m_SelectedPrefabs.Add(wizardSelection);
 
-					Debug.Log("Wizard has been selected!! Wizard Selection: " + ReturnWizardName());
-
 					// Find the sound effect for the wizard character 
 					SoundEffect s_SoundToPlay = ReturnWizardSoundEffect(m_SelectedWizardIndex);
 					
 					// Play the sound effect 
 					AudioManager.PlaySound(s_SoundToPlay); // play the sound effect 
 
-				
 					// Set ready up button as not interactable 
 					s_ReadyUpButton.interactable = false;
-					
-					// Loop through each wizard selection choice and set inactive 
-					foreach (var wizard in wizardSelectionChoices) { wizard.SetActive(false); }
-					
-					allowMountableSelecting = true;
-					// Set the first mountable choice active 
+				
+					// Hide the currently selected wizard selection 
+					wizardSelection.SetActive(false);
 
-					// Change the text to the mountable text 
-					m_CharacterName.text = ReturnMountableName();
+					// Show the currently selected mountable vehicle selection
+					mountableSelection.SetActive(true);
 
-					// Set the ready button as interactable 
+					// Set the ready up button to be interactable
 					s_ReadyUpButton.interactable = true;
-
 				}
-				else if (wizardSelected)
+				else 
 				{
+
+					Debug.Log("[CursorSelectionBehaviour.OnSelect]: " + "Unselecting wizard -- " + ReturnWizardName());
+
 					// The wizard is unselected 
 					wizardSelected = false;
 
-					Debug.Log("Unselected wizard " + ReturnWizardName());
-
-					allowMountableSelecting = false;
-
-					m_SelectedPrefabs.Remove(wizardSelection);
-
-					wizardSelection = null;
-
-					s_ReadyUpButton.interactable = true;
-					// s_ReadyUpButton.GetComponentInChildren<Text>().text = "Ready up";
-
+					// If the selected prefabs list contains the wizard selection 
+					if (m_SelectedPrefabs.Contains(wizardSelection))
+					{
+						// Remove the wizard selection game object from the list 
+						m_SelectedPrefabs.Remove(wizardSelection);
+					}
 				}
 			}
 		}
+		// Otherwise, If NOT allowing player join behaviour and NOT allowing character selection BUT we are allowing mountable vehicles selection 
 		else if (!allowPlayerJoinBehaviour && !allowCharacterSelecting && allowMountableSelecting)
 		{
+			// If the input action happens in the first phase 
 			if (context.phase == InputActionPhase.Started)
 			{
-				mountableSelection = ReturnSelectedMountable();
+				
+				Debug.Log("[CursorSelectionBehaviour.OnSelect]: " + "Mountable has been selected " + mountableSelected);
 
-
+				// If the mountable vehicle selection is not selected 
 				if (!mountableSelected)
 				{ 
-					Debug.Log("Mountable Selected!");
+					Debug.Log("Mountable has now been selected!");
+
+					// Select the mountable item as selected 
 					mountableSelected = true;
 
-					mountableSelection.SetActive(true);
+					// Return the current mountable selection item 
+					mountableSelection = ReturnSelectedMountableVehicle();
 
+					// if the selected prefabs contains the mountable selection 
 					if (m_SelectedPrefabs.Contains(mountableSelection))
 					{
+						// just return 
 						Debug.Log("Selected Prefabs already contains Mountable Selection!");
 						return;
 					}
-
+					
+					// Add the mountable vehicle selection to the selected prefabs list 
 					m_SelectedPrefabs.Add(mountableSelection);
 
+					// Update the mountable character name text 
 					m_CharacterName.text = ReturnMountableName();
 
+					// Show the ready screen 
 				}
+				// Otherwise, if mountable vehicle has been selected 
 				else if (mountableSelected)
 				{
+					Debug.Log("[CursorSelectionBehaviour.OnSelect]: " + "Removed Selected Mountable " + ReturnMountableName());
+				
+					// Stop selecting the mountable vehicle 
 					mountableSelected = false;
 
-					m_SelectedPrefabs.Remove(mountableSelection);
-
-					Debug.Log("Mountable Unselected! " + ReturnMountableName());
-
-					mountableSelection = null;
-				
+					// If the selected prefabs list contains the mountable selection game object 
+					if (m_SelectedPrefabs.Contains(mountableSelection))
+					{
+						// Remove the mountable selection from the game object list 
+						m_SelectedPrefabs.Remove(mountableSelection);
+					}
 				}
 			}
 		}
@@ -532,7 +547,7 @@ public class CursorSelectionBehaviour : MonoBehaviour
 	/// <returns></returns>
 	public GameObject ReturnSelectedWizardCharacter() => wizardSelectionChoices[m_SelectedWizardIndex];
 
-	public GameObject ReturnSelectedMountable() => mountableSelectionChoices[m_SelectedMountableIndex];
+	public GameObject ReturnSelectedMountableVehicle() => mountableSelectionChoices[m_SelectedMountableIndex];
 
 	/// <summary>
 	///		Gets the wizard name 
@@ -637,7 +652,13 @@ public class CursorSelectionBehaviour : MonoBehaviour
 			mountableSelectionChoices[i] = p_MountableSelectionsSpawned[i].gameObject;
 		}
 
-		mountableSelection = null;
+
+		// Set the player selection to the selected index (Which enables `allowMountableSelection` to true (Receiving input))
+		mountableSelection = ReturnSelectedMountableVehicle();
+
+	
+
+		mountableSelected = false;
 	}
 
 	/// <summary>
