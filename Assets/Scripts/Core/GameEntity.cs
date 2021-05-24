@@ -75,7 +75,8 @@ public enum SceneAsset {
 	StatusIcon,
 	SelectionUI_Next,
 	SelectionUI_Prev,
-	SelectionUI_ReadyUp
+	SelectionUI_ReadyUp,
+	SelectionUI_BackButton
 }
 
 /// <summary>
@@ -172,7 +173,8 @@ public static class GameEntity
 		{ SceneAsset.StatusIcon, "Icon" },
 		{ SceneAsset.SelectionUI_Next, "NextButton" },
 		{ SceneAsset.SelectionUI_Prev, "PreviousButton" },
-		{ SceneAsset.SelectionUI_ReadyUp, "ReadyUpButton" }
+		{ SceneAsset.SelectionUI_ReadyUp, "ReadyUpButton" },
+		{ SceneAsset.SelectionUI_BackButton, "BackButton" }
 	};
 
 	private static Dictionary<CameraView, Rect> m_CameraViewDictionary = new Dictionary<CameraView, Rect>

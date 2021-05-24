@@ -171,13 +171,15 @@ public class GamepadJoinGameBehaviour : MonoBehaviour
 			s_StatusText.text = GameText.PlayerJoinUI_PlayerStatus_SlotTaken_ReadyUp;
 
 			// Reset the status text position by grabbing the local position of the text 
-			Vector3 newStatusTextPosition = s_StatusText.GetComponent<RectTransform>().localPosition;
+			RectTransform statusTextTransform = s_StatusText.GetComponent<RectTransform>();
+			Vector3 currentTextPosition = statusTextTransform.localPosition;
 
+			Vector3 newStatusTextPosition = new Vector3(55f, currentTextPosition.y, currentTextPosition.z);
 			// I just know that this value should either be 55 (With the Icon), or 23 - Without the icon 
-			newStatusTextPosition.x = 55f;
+			
 
 			// Set the status text local position to the newStatusTextPosition 
-			s_StatusText.GetComponent<RectTransform>().localPosition = newStatusTextPosition;
+			statusTextTransform.localPosition = newStatusTextPosition;
 
 			// Set the status icon sprite image to the controller's button south image 
 			s_StatusIcon.sprite = s_CursorSelectionBehaviour.ControllerUI.ButtonSouth;

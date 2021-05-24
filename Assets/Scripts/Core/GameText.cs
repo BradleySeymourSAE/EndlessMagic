@@ -19,7 +19,7 @@ public static class GameText
 
 	public const string MainMenuUI_Title = "Endless Magic";
 	public const string MainMenuUI_Subtitle = "Battle your friends n shiet";
-	public const string MainMenuUI_Version = "Version 1.0.5 Development";
+	public const string MainMenuUI_Version = "Version 1.7.2 Development";
 	public const string MainMenuUI_StartButton = "Start Game";
 	public const string MainMenuUI_CreditsButton = "Credits";
 	public const string MainMenuUI_SettingsButton = "Settings";
@@ -62,10 +62,10 @@ public static class GameText
 
 	#endregion
 
-	#region Loading Screen Menu ( WIP ) 
+	#region Selection UI 
 
-	public const string LoadingScreenUI_Title = "Loading";
-	public const string LoadingScreenUI_Progress = "0";
+	public const string PlayerSelectionUI_ReadyButton = "OK";
+	public const string PlayerSelectionUI_BackButton = "BACK";
 
 	#endregion
 

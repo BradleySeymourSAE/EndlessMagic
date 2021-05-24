@@ -5,10 +5,15 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.InputSystem;
 using Cinemachine;
+using TMPro;
 #endregion
 
 
-
+/// <summary>
+///		Character Creation Manager 
+///		- Handles Setting up wizard characters, cameras and objects 
+///		- Handles Settings up players mountable vehicle selections 
+/// </summary>
 public class CharacterCreationManager : MonoBehaviour
 {
 
@@ -37,7 +42,7 @@ public class CharacterCreationManager : MonoBehaviour
 	/// <summary>
 	///		List of the Wizard Prefab Spawn Positions 
 	/// </summary>
-	[SerializeField] private List<Transform> m_WizardPrefabSpawnPoints = new List<Transform>();
+	[SerializeField] private List<Transform> m_WizardCharacterPlatformSpawnPositions = new List<Transform>();
 
 	/// <summary>
 	///		List of all the platform prefab spawn points after they are set 
@@ -94,7 +99,7 @@ public class CharacterCreationManager : MonoBehaviour
 
 			if (hasWizardSelectionSpawnPoints)
 			{
-				foreach (Transform wizardSpawnPoint in m_WizardPrefabSpawnPoints)
+				foreach (Transform wizardSpawnPoint in m_WizardCharacterPlatformSpawnPositions)
 				{
 					Gizmos.color = m_WizardSelectionSpawnPointColor;
 
@@ -138,6 +143,8 @@ public class CharacterCreationManager : MonoBehaviour
 
 	#endregion
 
+	#region Public Methods 
+
 	/// <summary>
 	///		Sets up the Character Creation Scene - Based on the amount of players that have joined the game 
 	/// </summary>
@@ -145,18 +152,23 @@ public class CharacterCreationManager : MonoBehaviour
 	public void Setup(int PlayerCount)
 	{
 		m_ActivePlayerCameras.Clear();
-
 		Debug.Log("[CharacterCreationManager.Setup]: " + "Setting up camera & Game object references for " + PlayerCount + " players!");
 
 		int s_CurrentPlayerIndex = 0;
-		// Loop through the amount of players 
+
 		for (int i = 0; i < PlayerCount; i++)
 		{
-
 			s_CurrentPlayerIndex++;
+
+			List<Transform> s_WizardSelectionsSpawnedIn = new List<Transform>();
+			List<Transform> s_MountableVehicleSelectionsSpawnedIn = new List<Transform>();
+
+			s_WizardSelectionsSpawnedIn.Clear();
+			s_MountableVehicleSelectionsSpawnedIn.Clear();
 
 			Transform s_Environment = GameEntity.FindByTag(GameTag.Environment).transform;
 			Transform s_CameraHolder = GameEntity.FindByTag(GameTag.CinemachineCameraHolder).transform;
+
 
 			GameObject s_PlatformAssetPrefab = GameEntity.FindAsset(ResourceFolder.PlatformPrefabs, s_CurrentPlayerIndex, Asset.PlayerSelectPlatform);
 			GameObject s_PlayerCameraAssetPrefab = GameEntity.FindAsset(ResourceFolder.PlayerCameraPrefabs, s_CurrentPlayerIndex, Asset.Camera);
@@ -165,52 +177,56 @@ public class CharacterCreationManager : MonoBehaviour
 			
 
 			GameObject platform = Instantiate(s_PlatformAssetPrefab, m_PlatformPrefabSpawnPoints[s_CurrentPlayerIndex - 1].position, s_PlatformAssetPrefab.transform.rotation);
-
-				platform.transform.SetParent(s_Environment);
-				platform.layer = GameEntity.GetPlayerCameraLayer(s_CurrentPlayerIndex);
-				platform.tag = GameEntity.GetPlayerCameraTag(s_CurrentPlayerIndex);
+					   platform.transform.SetParent(s_Environment);
+					   platform.layer = GameEntity.GetPlayerCameraLayer(s_CurrentPlayerIndex);
+					   platform.tag = GameEntity.GetPlayerCameraTag(s_CurrentPlayerIndex);
 			
-			Transform s_WizardSpawnPoint = GameEntity.FindGameObjectChildTransform(platform, s_CurrentPlayerIndex, SceneAsset.WizardSelectionSpawn);
+			Transform s_CharacterPlatformSpawnPosition = GameEntity.FindGameObjectChildTransform(platform, s_CurrentPlayerIndex, SceneAsset.WizardSelectionSpawn);
 			
-			if (s_WizardSpawnPoint != null)
+			if (s_CharacterPlatformSpawnPosition != null)
 			{ 
-				m_WizardPrefabSpawnPoints.Add(s_WizardSpawnPoint);
+				m_WizardCharacterPlatformSpawnPositions.Add(s_CharacterPlatformSpawnPosition);
 			}
 
-			List<Transform> playerWizardSelectionsSpawnedIn = new List<Transform>();
-			List<Transform> playerMountableSelectionsSpawnedIn = new List<Transform>();
-			playerWizardSelectionsSpawnedIn.Clear();
-			playerMountableSelectionsSpawnedIn.Clear();
-
+			// All Wizard Prefab Assets in the Wizard Prefab Asset Resource Folder 
 			GameObject[] s_WizardPrefabAssets = GameEntity.FindAllIndexedAssets(ResourceFolder.WizardPrefabs);
+
+			// All Mountable Vehicle Prefab Assets in the Asset Resource Folder 
 			GameObject[] s_MountablePrefabAssets = GameEntity.FindAllIndexedAssets(ResourceFolder.MountablePrefabs);
 
+			// Loop through the wizard prefab assets 
 			for (int j = 0; j < s_WizardPrefabAssets.Length; j++)
 			{
-				GameObject spawnedWizardPrefab = Instantiate(s_WizardPrefabAssets[j], s_WizardSpawnPoint.position, s_WizardPrefabAssets[j].transform.rotation);
+				// Instantiate the wizard prefab 
+				GameObject spawnedWizardPrefab = Instantiate(s_WizardPrefabAssets[j], s_CharacterPlatformSpawnPosition.position, s_WizardPrefabAssets[j].transform.rotation);
 
-
-				spawnedWizardPrefab.transform.SetParent(s_WizardSpawnPoint); // Set the spawned wizard prefab's parent position 
-				spawnedWizardPrefab.layer = s_WizardSpawnPoint.gameObject.layer; // Set the wizard prefab's layer 
-				spawnedWizardPrefab.tag = s_WizardSpawnPoint.tag; // set the wizard prefab's tag 
+				// Setting the Transform's Parent, Layer and Tag (To hide it from other camera's view) 
+				spawnedWizardPrefab.transform.SetParent(s_CharacterPlatformSpawnPosition); // Set the spawned wizard prefab's parent position 
+				spawnedWizardPrefab.layer = s_CharacterPlatformSpawnPosition.gameObject.layer; // Set the wizard prefab's layer 
+				spawnedWizardPrefab.tag = s_CharacterPlatformSpawnPosition.tag; // set the wizard prefab's tag 
 
 				// Add the spawned wizard prefab to the wizard selections spawned list 
-				playerWizardSelectionsSpawnedIn.Add(spawnedWizardPrefab.transform);
+				s_WizardSelectionsSpawnedIn.Add(spawnedWizardPrefab.transform);
 				
-				
+				// Utility function i created to basically set the layer like above, except for every child transform 
 				GameEntity.SetLayerRecursively(spawnedWizardPrefab, s_CurrentPlayerIndex);
 			}
 
+			// All mountable prefab assets in the mountable prefab asset resource folder 
 			for (int z = 0; z < s_MountablePrefabAssets.Length; z++)
 			{
-				GameObject spawnedMountablePrefab = Instantiate(s_MountablePrefabAssets[z], s_WizardSpawnPoint.position, s_WizardPrefabAssets[z].transform.rotation);
+				// Instantiate the mountable prefab asset 
+				GameObject spawnedMountablePrefab = Instantiate(s_MountablePrefabAssets[z], s_CharacterPlatformSpawnPosition.position, s_WizardPrefabAssets[z].transform.rotation);
 
-				spawnedMountablePrefab.transform.SetParent(s_WizardSpawnPoint);
-				spawnedMountablePrefab.layer = s_WizardSpawnPoint.gameObject.layer;
-				spawnedMountablePrefab.tag = s_WizardSpawnPoint.tag;
+				// Setting the Transform's parent, layer and Tag (To hide it from the other camera's view) 
+				spawnedMountablePrefab.transform.SetParent(s_CharacterPlatformSpawnPosition);
+				spawnedMountablePrefab.layer = s_CharacterPlatformSpawnPosition.gameObject.layer;
+				spawnedMountablePrefab.tag = s_CharacterPlatformSpawnPosition.tag;
 
-				playerMountableSelectionsSpawnedIn.Add(spawnedMountablePrefab.transform);
+				// Add's the Mountable Vehicle Selection Asset to the spawned in list 
+				s_MountableVehicleSelectionsSpawnedIn.Add(spawnedMountablePrefab.transform);
 
+				// Sets the layer for every child transform 
 				GameEntity.SetLayerRecursively(spawnedMountablePrefab, s_CurrentPlayerIndex);
 			}
 
@@ -222,54 +238,88 @@ public class CharacterCreationManager : MonoBehaviour
 			cinemachineCamera.transform.SetParent(s_CameraHolder); // Set the camera holder transform 
 
 			CinemachineVirtualCamera camera = cinemachineCamera.GetComponent<CinemachineVirtualCamera>(); // Get cinemachine component 
-			camera.Follow = s_WizardSpawnPoint; // Set the follow property 
-			camera.LookAt = s_WizardSpawnPoint; // Set the lookat property 
+			camera.Follow = s_CharacterPlatformSpawnPosition; // Set the follow property 
+			camera.LookAt = s_CharacterPlatformSpawnPosition; // Set the lookat property 
 
 
-
+			// Selection UI Manager is basically the Character Creation Scene's UI Manager - This just finds the tag for it 
+			// I commonly translate unity func's to javascript similarities as it's easier for me to remember 
+			// Example: Instead of GameObject.FindGameObjectsWithTag("string") -> GameEntity.FindByTag(GameTag.TAGNAME) || ("string")
 			Transform s_SelectionUIManager = GameEntity.FindByTag(GameTag.SelectionUIManager).transform;
 			
+			// Instantiates the Selection UI that is specific to the player 
 			GameObject s_CurrentPlayerSelectionUIPrefab = Instantiate(s_SelectionUIAssetPrefab, s_SelectionUIManager.position, Quaternion.identity);
+
+			// Reference to the current player's cursor, using FindAssetClone -> GameObject.Find("P{i}_Cursor(Clone)")
 			Transform s_CurrentPlayerCursor = GameEntity.FindAssetClone(s_CurrentPlayerIndex, Asset.Cursor);
 
-
+			// Reference to the cursor selection behaviour component 
 			CursorSelectionBehaviour s_CurrentPlayerCursorBehaviour = s_CurrentPlayerCursor.GetComponent<CursorSelectionBehaviour>();
 
+			// Set the cursor identity using the current player index 
 			s_CurrentPlayerCursorBehaviour.SetCursorIdentity(s_CurrentPlayerIndex);
 
-			GameEvents.SetSelectableWizards?.Invoke(s_CurrentPlayerIndex, playerWizardSelectionsSpawnedIn);
-			GameEvents.SetSelectableMountables?.Invoke(s_CurrentPlayerIndex, playerMountableSelectionsSpawnedIn);
+			// Begin spawning in the wizard prefabs & the selectable mountable vehicle prefabs 
+			GameEvents.SetSelectableWizards?.Invoke(s_CurrentPlayerIndex, s_WizardSelectionsSpawnedIn);
+			GameEvents.SetSelectableMountables?.Invoke(s_CurrentPlayerIndex, s_MountableVehicleSelectionsSpawnedIn);
 		
+			// Set the selection UI manager as the current player selection ui prefab's parent 
 			s_CurrentPlayerSelectionUIPrefab.transform.SetParent(s_SelectionUIManager);
+
+			// Set the player selectionUIPrefab's layer to the player's camera layer. Accepts player index of 1, 2, 3 or 4 -> returns 14,15,16,17 depending (which is the layer index) 
 			s_CurrentPlayerSelectionUIPrefab.layer = GameEntity.GetPlayerCameraLayer(s_CurrentPlayerIndex);
 
-			// The current player's cursor 
+			// Set the current player cursor transform's parent to the selectionUIPrefab's transform 
 			s_CurrentPlayerCursor.SetParent(s_CurrentPlayerSelectionUIPrefab.transform);
+
+			// Get the image component for the current player's cursor and disable it 
 			s_CurrentPlayerCursor.gameObject.GetComponent<Image>().enabled = false;	
 
+			// Get the player camera 
 			var playerCam = playerCamera.GetComponent<Camera>();
 			
+			// Get the selection UI canvas component 
 			var playerSelectionUICanvas = s_CurrentPlayerSelectionUIPrefab.GetComponent<Canvas>();
 				
+			// Set the player selection ui render mode to use the screen space 
 			playerSelectionUICanvas.renderMode = RenderMode.ScreenSpaceCamera;
+
+			// and set it's camera reference to the player camera 
 			playerSelectionUICanvas.worldCamera = playerCam;
 
-			GameObject s_readyUpButtonIcon = GameEntity.FindSceneAsset(s_CurrentPlayerIndex, SceneAsset.SelectionUI_ReadyUp).Find("Icon").gameObject;
+			// Scriptable Object Data that is attached to the CursorSelectionBehaviour Component 
+			GameControllerUIData s_GameControllerData = s_CurrentPlayerCursorBehaviour.ControllerUI;
 
-			GameControllerUIData data = s_CurrentPlayerCursorBehaviour.ControllerUI;
-
-			if (data != null)
+			if (s_GameControllerData != null)
 			{
-				s_readyUpButtonIcon.GetComponent<Image>().sprite = data.ButtonSouth;
+				Transform s_BackButton = GameEntity.FindSceneAsset(s_CurrentPlayerIndex, SceneAsset.SelectionUI_BackButton);
+				Transform s_ReadyButton = GameEntity.FindSceneAsset(s_CurrentPlayerIndex, SceneAsset.SelectionUI_ReadyUp);
+
+				GameObject s_BackButtonIcon = s_BackButton.Find("Icon").gameObject;
+				GameObject s_ReadyUpButtonIcon = s_ReadyButton.Find("Icon").gameObject;
+
+				
+				// Set the button icon's sprite images using the GameControllerUIData Attached to the current player cursor behaviour 
+				s_BackButtonIcon.GetComponent<Image>().sprite = s_GameControllerData.ButtonWest;
+				s_ReadyUpButtonIcon.GetComponent<Image>().sprite = s_GameControllerData.ButtonSouth;
+
+				s_BackButton.gameObject.SetActive(false);
 			}
 			
+			// Add the playerCamera to the active player camera's list 
 			m_ActivePlayerCameras.Add(playerCam);
+
+			// Add the playerSelectionUICanvas to the selection UI list 
 			m_SelectionUI.Add(playerSelectionUICanvas);
 		}
 
+		// Set a local reference to the split screen mode defined in the game manager instance 
 		SplitScreenMode Mode = GameManager.Instance.ScreenMode;
+
+		// Setup the split screen camera's using the active player cameras list and the split screen mode 
 		GameEntity.SetSplitScreenCameras(m_ActivePlayerCameras, Mode);
 	}
 
+	#endregion
 
 }
