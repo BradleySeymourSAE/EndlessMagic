@@ -20,11 +20,12 @@ TagManager:
   - CharacterTitle2
   - CharacterTitle3
   - CharacterTitle4
+  - RoadSectionTrigger
   layers:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - 
+  - IgnoreReflection
   - Water
   - UI
   - 
