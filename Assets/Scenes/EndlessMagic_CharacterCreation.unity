@@ -172,9 +172,16 @@ MonoBehaviour:
   - {fileID: 615741158}
   - {fileID: 1322841450}
   - {fileID: 1323052410}
+  characterStatsData:
+  - {fileID: 11400000, guid: d5914aa0923845f4c9822f776d172bab, type: 2}
+  - {fileID: 11400000, guid: 4f77b84f5d1b49440819f9cf932e6f62, type: 2}
+  - {fileID: 11400000, guid: 8f2ad62971d4dd74ea75a1bb3b1575a4, type: 2}
+  - {fileID: 11400000, guid: da544fffcbd68f54fbf2ff06f04aa0f2, type: 2}
+  - {fileID: 11400000, guid: 7a8a087663230134c8faf78a0fc2e9ea, type: 2}
+  - {fileID: 11400000, guid: b620b554da6fb614b99a012868ac5ff6, type: 2}
   m_ActivePlayerCameras: []
   m_SelectionUI: []
-  m_WizardPrefabSpawnPoints: []
+  m_WizardCharacterPlatformSpawnPositions: []
   m_PlatformPrefabSpawnPoints: []
   m_Players: 0
   m_PlatformSpawnPointColor: {r: 1, g: 0, b: 0, a: 1}

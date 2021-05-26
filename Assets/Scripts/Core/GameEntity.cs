@@ -76,7 +76,29 @@ public enum SceneAsset {
 	SelectionUI_Next,
 	SelectionUI_Prev,
 	SelectionUI_ReadyUp,
-	SelectionUI_BackButton
+	SelectionUI_BackButton,
+	SelectionUI_CharacterName,
+	SelectionUI_CharacterStats,
+	SelectionUI_StatsTitle,
+	SelectionUI_FlavourText,
+	SelectionUI_Mobility,
+	SelectionUI_Mobility_WeightSlider,
+	SelectionUI_Mobility_WeightBarLabel,
+	SelectionUI_Mobility_WeightBarTextValue,
+	SelectionUI_Survivability,
+	SelectionUI_Survivability_HealthRatingSlider,
+	SelectionUI_Survivability_HealthRatingBarLabel,
+	SelectionUI_Survivability_HealthRatingBarTextValue,
+	SelectionUI_Survivability_DefenceRatingSlider,
+	SelectionUI_Survivability_DefenceRatingBarLabel,
+	SelectionUI_Survivability_DefenceRatingBarTextValue,
+	SelectionUI_OffensiveAbility,
+	SelectionUI_OffensiveAbility_AttackRatingSlider,
+	SelectionUI_OffensiveAbility_AttackRatingBarLabel,
+	SelectionUI_OffensiveAbility_AttackRatingBarTextValue,
+	SelectionUI_OffensiveAbility_AbilityCooldownSlider,
+	SelectionUI_OffensiveAbility_AbilityCooldownBarLabel,
+	SelectionUI_OffensiveAbility_AbilityCooldownBarTextValue
 }
 
 /// <summary>
@@ -103,7 +125,6 @@ public enum SplitScreenMode { NoConnectedPlayers = 0, SinglePlayer = 1, TwoPlaye
 ///		The different types of split screen camera view's 
 /// </summary>
 public enum CameraView { Fullscreen, TopScreen, BottomScreen, UpperLeft, UpperRight, LowerLeft, LowerRight };
-
 
 
 /// <summary>
@@ -171,10 +192,32 @@ public static class GameEntity
 		{ SceneAsset.WizardSelectionSpawn, "WizardSelectionSpawn" },
 		{ SceneAsset.StatusText, "Status" },
 		{ SceneAsset.StatusIcon, "Icon" },
+		{ SceneAsset.SelectionUI_CharacterName, "CharacterName" },
+		{ SceneAsset.SelectionUI_CharacterStats, "CharacterStats" },
+		{ SceneAsset.SelectionUI_StatsTitle, "StatsTitle" },
+		{ SceneAsset.SelectionUI_FlavourText, "FlavourText" },
 		{ SceneAsset.SelectionUI_Next, "NextButton" },
 		{ SceneAsset.SelectionUI_Prev, "PreviousButton" },
 		{ SceneAsset.SelectionUI_ReadyUp, "ReadyUpButton" },
-		{ SceneAsset.SelectionUI_BackButton, "BackButton" }
+		{ SceneAsset.SelectionUI_BackButton, "BackButton" },
+		{ SceneAsset.SelectionUI_Mobility, "Mobility" },
+		{ SceneAsset.SelectionUI_Mobility_WeightSlider, "WeightSlider" },
+		{ SceneAsset.SelectionUI_Mobility_WeightBarLabel, "WeightBarLabel" },
+		{ SceneAsset.SelectionUI_Mobility_WeightBarTextValue, "WeightBar_ValueText" },
+		{ SceneAsset.SelectionUI_Survivability, "Survivability" },
+		{ SceneAsset.SelectionUI_Survivability_HealthRatingSlider, "HealthRatingSlider" },
+		{ SceneAsset.SelectionUI_Survivability_HealthRatingBarLabel, "HealthRatingBarLabel" },
+		{ SceneAsset.SelectionUI_Survivability_HealthRatingBarTextValue, "HealthRatingBar_ValueText" },
+		{ SceneAsset.SelectionUI_Survivability_DefenceRatingSlider, "DefenceRatingSlider" },
+		{ SceneAsset.SelectionUI_Survivability_DefenceRatingBarLabel, "DefenceRatingBarLabel" },
+		{ SceneAsset.SelectionUI_Survivability_DefenceRatingBarTextValue, "DefenceRatingBar_ValueText" },
+		{ SceneAsset.SelectionUI_OffensiveAbility, "OffensiveAbility" },
+		{ SceneAsset.SelectionUI_OffensiveAbility_AttackRatingSlider, "AttackRatingSlider" },
+		{ SceneAsset.SelectionUI_OffensiveAbility_AttackRatingBarLabel, "AttackRatingBarLabel" },
+		{ SceneAsset.SelectionUI_OffensiveAbility_AttackRatingBarTextValue, "AttackRatingBar_ValueText" },
+		{ SceneAsset.SelectionUI_OffensiveAbility_AbilityCooldownSlider, "AbilityCooldownSlider" },
+		{ SceneAsset.SelectionUI_OffensiveAbility_AbilityCooldownBarLabel, "AbilityCooldownBarLabel" },
+		{ SceneAsset.SelectionUI_OffensiveAbility_AbilityCooldownBarTextValue, "AbilityCooldownBar_ValueText" }
 	};
 
 	private static Dictionary<CameraView, Rect> m_CameraViewDictionary = new Dictionary<CameraView, Rect>

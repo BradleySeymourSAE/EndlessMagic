@@ -25,6 +25,8 @@ public class CharacterCreationManager : MonoBehaviour
 	/// </summary>
 	public List<Transform> platformSpawnPositions = new List<Transform>();
 
+	public CharacterStats[] characterStatsData;
+
 	#endregion
 
 	#region Private Variables
@@ -182,12 +184,27 @@ public class CharacterCreationManager : MonoBehaviour
 					   platform.tag = GameEntity.GetPlayerCameraTag(s_CurrentPlayerIndex);
 			
 			Transform s_CharacterPlatformSpawnPosition = GameEntity.FindGameObjectChildTransform(platform, s_CurrentPlayerIndex, SceneAsset.WizardSelectionSpawn);
-			
+
 			if (s_CharacterPlatformSpawnPosition != null)
-			{ 
+			{
 				m_WizardCharacterPlatformSpawnPositions.Add(s_CharacterPlatformSpawnPosition);
 			}
 
+			// Selection UI Manager is basically the Character Creation Scene's UI Manager - This just finds the tag for it 
+			// I commonly translate unity func's to javascript similarities as it's easier for me to remember 
+			// Example: Instead of GameObject.FindGameObjectsWithTag("string") -> GameEntity.FindByTag(GameTag.TAGNAME) || ("string")
+			Transform s_SelectionUIManager = GameEntity.FindByTag(GameTag.SelectionUIManager).transform;
+
+			// Instantiates the Selection UI that is specific to the player 
+			GameObject s_CurrentPlayerSelectionUIPrefab = Instantiate(s_SelectionUIAssetPrefab, s_SelectionUIManager.position, Quaternion.identity);
+
+			// Set the selection UI manager as the current player selection ui prefab's parent 
+			s_CurrentPlayerSelectionUIPrefab.transform.SetParent(s_SelectionUIManager);
+
+			// Set the player selectionUIPrefab's layer to the player's camera layer. Accepts player index of 1, 2, 3 or 4 -> returns 14,15,16,17 depending (which is the layer index) 
+			s_CurrentPlayerSelectionUIPrefab.layer = GameEntity.GetPlayerCameraLayer(s_CurrentPlayerIndex);
+
+		
 			// All Wizard Prefab Assets in the Wizard Prefab Asset Resource Folder 
 			GameObject[] s_WizardPrefabAssets = GameEntity.FindAllIndexedAssets(ResourceFolder.WizardPrefabs);
 
@@ -197,8 +214,16 @@ public class CharacterCreationManager : MonoBehaviour
 			// Loop through the wizard prefab assets 
 			for (int j = 0; j < s_WizardPrefabAssets.Length; j++)
 			{
+
 				// Instantiate the wizard prefab 
 				GameObject spawnedWizardPrefab = Instantiate(s_WizardPrefabAssets[j], s_CharacterPlatformSpawnPosition.position, s_WizardPrefabAssets[j].transform.rotation);
+
+				WizardType s_WizardType = (WizardType)j;
+
+				CharacterStats s_CharacterStatsType = GetCharacterStats(s_WizardType);
+
+				spawnedWizardPrefab.AddComponent<CharacterStatsUI>().Setup(s_CurrentPlayerIndex, s_CharacterStatsType);
+
 
 				// Setting the Transform's Parent, Layer and Tag (To hide it from other camera's view) 
 				spawnedWizardPrefab.transform.SetParent(s_CharacterPlatformSpawnPosition); // Set the spawned wizard prefab's parent position 
@@ -241,15 +266,6 @@ public class CharacterCreationManager : MonoBehaviour
 			camera.Follow = s_CharacterPlatformSpawnPosition; // Set the follow property 
 			camera.LookAt = s_CharacterPlatformSpawnPosition; // Set the lookat property 
 
-
-			// Selection UI Manager is basically the Character Creation Scene's UI Manager - This just finds the tag for it 
-			// I commonly translate unity func's to javascript similarities as it's easier for me to remember 
-			// Example: Instead of GameObject.FindGameObjectsWithTag("string") -> GameEntity.FindByTag(GameTag.TAGNAME) || ("string")
-			Transform s_SelectionUIManager = GameEntity.FindByTag(GameTag.SelectionUIManager).transform;
-			
-			// Instantiates the Selection UI that is specific to the player 
-			GameObject s_CurrentPlayerSelectionUIPrefab = Instantiate(s_SelectionUIAssetPrefab, s_SelectionUIManager.position, Quaternion.identity);
-
 			// Reference to the current player's cursor, using FindAssetClone -> GameObject.Find("P{i}_Cursor(Clone)")
 			Transform s_CurrentPlayerCursor = GameEntity.FindAssetClone(s_CurrentPlayerIndex, Asset.Cursor);
 
@@ -262,12 +278,6 @@ public class CharacterCreationManager : MonoBehaviour
 			// Begin spawning in the wizard prefabs & the selectable mountable vehicle prefabs 
 			GameEvents.SetSelectableWizards?.Invoke(s_CurrentPlayerIndex, s_WizardSelectionsSpawnedIn);
 			GameEvents.SetSelectableMountables?.Invoke(s_CurrentPlayerIndex, s_MountableVehicleSelectionsSpawnedIn);
-		
-			// Set the selection UI manager as the current player selection ui prefab's parent 
-			s_CurrentPlayerSelectionUIPrefab.transform.SetParent(s_SelectionUIManager);
-
-			// Set the player selectionUIPrefab's layer to the player's camera layer. Accepts player index of 1, 2, 3 or 4 -> returns 14,15,16,17 depending (which is the layer index) 
-			s_CurrentPlayerSelectionUIPrefab.layer = GameEntity.GetPlayerCameraLayer(s_CurrentPlayerIndex);
 
 			// Set the current player cursor transform's parent to the selectionUIPrefab's transform 
 			s_CurrentPlayerCursor.SetParent(s_CurrentPlayerSelectionUIPrefab.transform);
@@ -303,6 +313,7 @@ public class CharacterCreationManager : MonoBehaviour
 				s_BackButtonIcon.GetComponent<Image>().sprite = s_GameControllerData.ButtonWest;
 				s_ReadyUpButtonIcon.GetComponent<Image>().sprite = s_GameControllerData.ButtonSouth;
 
+				// Set the back button as inactive 
 				s_BackButton.gameObject.SetActive(false);
 			}
 			
@@ -321,5 +332,26 @@ public class CharacterCreationManager : MonoBehaviour
 	}
 
 	#endregion
+
+	/// <summary>
+	///		Gets the character stats from the casted integer Wizard Type (index) provided
+	/// </summary>
+	/// <param name="p_Type"></param>
+	/// <returns></returns>
+	private CharacterStats GetCharacterStats(WizardType p_Type)
+	{
+
+		int value = (int)p_Type;
+
+		if (characterStatsData[value] == null)
+		{
+			Debug.LogError("[CharacterStatsData.GetCharacterStats]: " + "Could not fetch stats for " + p_Type.ToString());
+			return null;
+		}
+		else
+		{
+			return characterStatsData[value];
+		}
+	}
 
 }

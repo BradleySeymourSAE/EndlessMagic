@@ -190,7 +190,9 @@ public class CursorSelectionBehaviour : MonoBehaviour
 				// Set the current wizard selection choice as active 
 				wizardSelectionChoices[m_SelectedWizardIndex].SetActive(true);
 
-				m_CharacterName.text = ReturnWizardName();
+
+				UpdateCharacterUI(wizardSelectionChoices[m_SelectedWizardIndex]);
+				// m_CharacterName.text = ReturnWizardName();
 			}
 		}
 		else if (!allowPlayerJoinBehaviour && !allowCharacterSelecting && allowMountableSelecting)
@@ -213,7 +215,8 @@ public class CursorSelectionBehaviour : MonoBehaviour
 				mountableSelectionChoices[m_SelectedMountableIndex].SetActive(true);
 
 				// Update the character text ui with the mountable name  
-				m_CharacterName.text = ReturnMountableName();
+				// m_CharacterName.text = ReturnMountableName();
+				UpdateMountableUI();
 			}
 		}
 	}
@@ -257,7 +260,9 @@ public class CursorSelectionBehaviour : MonoBehaviour
 				AudioManager.PlaySound(SoundEffect.GUI_Move);
 
 				// Return the wizard's character name 
-				m_CharacterName.text = ReturnWizardName();
+				// m_CharacterName.text = ReturnWizardName();
+
+				UpdateCharacterUI(wizardSelectionChoices[m_SelectedWizardIndex]);
 			}
 		}
 		// Otherwise, if not allowing player join and also not allowing character selecting BUT allowing mountable item selection  
@@ -288,7 +293,9 @@ public class CursorSelectionBehaviour : MonoBehaviour
 				AudioManager.PlaySound(SoundEffect.GUI_Move);
 
 				// Reset the character name text to the mountable vehicles name 
-				m_CharacterName.text = ReturnMountableName();
+				// m_CharacterName.text = ReturnMountableName();
+
+				UpdateMountableUI();
 			}
 		}
 	}	
@@ -494,7 +501,6 @@ public class CursorSelectionBehaviour : MonoBehaviour
 
 	#endregion
 
-
 	#region Public Methods 
 
 	/// <summary>
@@ -595,6 +601,19 @@ public class CursorSelectionBehaviour : MonoBehaviour
 		}
 	}
 
+	public void UpdateCharacterUI(GameObject p_WizardSelection)
+	{
+		if (p_WizardSelection.GetComponent<CharacterStatsUI>() != null)
+		{
+			p_WizardSelection.GetComponent<CharacterStatsUI>().DisplayCharacterUI();
+		}
+	}
+
+	public void UpdateMountableUI()
+	{
+
+	}
+
 	#endregion
 
 	#region Private Methods
@@ -628,6 +647,11 @@ public class CursorSelectionBehaviour : MonoBehaviour
 
 		// Set the player selection to the selected index (Enables `allowCharacterSelection` to true (Receiving input))
 		wizardSelection = ReturnSelectedWizardCharacter();
+
+		if (wizardSelection.GetComponent<CharacterStatsUI>() != null)
+		{
+			UpdateCharacterUI(wizardSelection);
+		}
 
 		// Set the character title text to the current selected prefab's name 
 		GameObject title = GameEntity.FindByTag(GameEntity.GetCharacterSelectionTitle(m_CurrentUserID));
