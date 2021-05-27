@@ -105,6 +105,11 @@ public class CharacterStatsUI : MonoBehaviour
 		}
 	}
 
+	/// <summary>
+	///		Toggles displaying the ui
+	/// </summary>
+	/// <param name="ShouldDisplayUI"></param>
+	public void Show(bool ShouldDisplayUI) => m_CharacterUIReference.gameObject.SetActive(ShouldDisplayUI);
 	
 
 	/// <summary>

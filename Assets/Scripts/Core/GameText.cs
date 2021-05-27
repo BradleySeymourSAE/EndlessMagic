@@ -15,6 +15,8 @@ public static class GameText
 
 	#region UI 
 
+	#region Starting Menu Scene 
+
 	#region Main Menu
 
 	public const string MainMenuUI_Title = "Endless Magic";
@@ -62,10 +64,35 @@ public static class GameText
 
 	#endregion
 
+	#endregion
+
+	#region Character Selection Scene 
+
 	#region Selection UI 
 
 	public const string PlayerSelectionUI_ReadyButton = "OK";
 	public const string PlayerSelectionUI_BackButton = "BACK";
+
+	#endregion
+
+	#endregion
+
+	#region IN GAME
+
+	public const string PauseMenu_Title = "Paused";
+	public const string PauseMenu_Subtitle_Text1 = "Press";
+	public const string PauseMenu_Subtitle_ButtonText = "B";
+	public const string PauseMenu_Subtitle_Text2 = "to return";
+	
+	public const string PauseMenu_Resume = "Resume";
+	public const string PauseMenu_Restart = "Restart";
+	public const string PauseMenu_Options = "Options";
+	public const string PauseMenu_Leave = "Leave Game";
+
+	public const string PauseMenu_ConfirmModal_Title = "Leave Game";
+	public const string PauseMenu_ConfirmModal_Subtitle = "Are you sure?";
+	public const string PauseMenu_ConfirmModal_ConfirmQuit = "Quit Game";
+	public const string PauseMenu_ConfirmModal_ConfirmCancel = "Cancel";
 
 	#endregion
 

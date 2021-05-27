@@ -17,7 +17,6 @@ using TMPro;
 public class CharacterCreationManager : MonoBehaviour
 {
 
-
 	#region Public Variables 
 
 	/// <summary>
@@ -333,6 +332,7 @@ public class CharacterCreationManager : MonoBehaviour
 
 	#endregion
 
+	#region Private Methods
 	/// <summary>
 	///		Gets the character stats from the casted integer Wizard Type (index) provided
 	/// </summary>
@@ -353,5 +353,7 @@ public class CharacterCreationManager : MonoBehaviour
 			return characterStatsData[value];
 		}
 	}
+
+	#endregion
 
 }

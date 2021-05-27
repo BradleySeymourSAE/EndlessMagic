@@ -465,6 +465,15 @@ public static class GameEntity
 		return GameObject.Find(search).transform;
 	}
 
+	public static GameObject Find(int p_CurrentPlayerIndex = 0, SceneAsset p_SceneAsset = SceneAsset.None)
+	{
+		string search = $"P{p_CurrentPlayerIndex}_{ReturnAsset(p_SceneAsset)}";
+
+		Debug.Log("Searching for scene asset " + search);
+
+		return GameObject.Find(search);
+	}
+
 	/// <summary>
 	///		Finds a scene asset clone 
 	/// </summary>

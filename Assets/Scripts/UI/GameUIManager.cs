@@ -46,6 +46,11 @@ public class GameUIManager : MonoBehaviour
 	/// </summary>
 	public PlayerJoinMenu PlayerJoinMenuUI;
 
+	/// <summary>
+	///		Reference to the Pause Menu UI 
+	/// </summary>
+	public PauseMenu PauseMenuUI;
+
 	#endregion
 
 	#region Private Variables 
@@ -71,6 +76,12 @@ public class GameUIManager : MonoBehaviour
 
 	#region Unity References 
 
+	#region @TODO - ADD PAUSE MENU EVENTS 
+	/// <summary>
+	///		Need to Add Events to handle setting the current player controlling the pause menu UI 
+	/// </summary>
+	#endregion
+	
 	/// <summary>
 	///		Subscribes to events 
 	/// </summary>
@@ -110,6 +121,8 @@ public class GameUIManager : MonoBehaviour
 		SettingsMenuUI.Setup(this);
 		PlayerJoinMenuUI.Setup(this);
 
+		PauseMenuUI.Setup(this);
+
 
 		AudioManager.PlaySound(SoundEffect.UI_StartMenuBackgroundMusic);
 
@@ -120,6 +133,9 @@ public class GameUIManager : MonoBehaviour
 		DisplayCreditsMenu(false); // Hides the Settings Menu UI  
 		DisplaySettingsMenu(false); // Hides the Settings Menu UI 
 		DisplayPlayerJoinMenu(false); // Hides the Player Count UI 
+
+		DisplayPauseMenu(false); // Hides the Pause Menu UI 
+		DisplayPauseMenuConfirmModal(false); // Hides the Pause Menu Confirm Modal 
 	
 		if (GameObject.Find("StartButton"))
 		{
@@ -179,6 +195,8 @@ public class GameUIManager : MonoBehaviour
 
 	#region Public Methods
 
+	// --- START MENU METHODS ---
+	
 	/// <summary>
 	///		Displays the main menu ui 
 	/// </summary>
@@ -209,6 +227,20 @@ public class GameUIManager : MonoBehaviour
 	/// <returns></returns>
 	public bool IsDisplayingPlayerJoinMenu() => PlayerJoinMenuUI.PlayerJoinMenuScreen.active == true;
 
+	// --- IN GAME METHODS --- 
+
+	/// <summary>
+	///		Displays the Pause menu ui 
+	/// </summary>
+	/// <param name="show"></param>
+	public void DisplayPauseMenu(bool show) => PauseMenuUI.DisplayPauseMenu(show);
+
+	/// <summary>
+	///		Toggles Displaying the Pause Menu Confirm Leave Modal 
+	/// </summary>
+	/// <param name="show"></param>
+	public void DisplayPauseMenuConfirmModal(bool show) => PauseMenuUI.DisplayConfirmModal(show);
+	
 	#endregion
 
 	#region Private Methods
@@ -235,6 +267,12 @@ public class GameUIManager : MonoBehaviour
 	/// <param name="p_CursorGameObject"></param>
 	/// <param name="p_IsPlayerReady"></param>
 	private void SetPlayerReady(GameObject p_CursorGameObject, int p_IsPlayerReady) => PlayerJoinMenuUI.SetPlayerReady(p_CursorGameObject, p_IsPlayerReady);
+
+	/// <summary>
+	///		Handles Setting Reference to the Current Player (controller) Controlling the Pause Menu UI 
+	/// </summary>
+	/// <param name="p_CurrentPlayerIndex"></param>
+	private void SetPauseMenuCurrentPlayer(int p_CurrentPlayerIndex) => PauseMenuUI.SetCurrentPlayer(p_CurrentPlayerIndex);
 
 	/// <summary>
 	///		 Begins the player join countdown timer event 
