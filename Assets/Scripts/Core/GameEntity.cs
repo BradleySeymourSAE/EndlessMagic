@@ -73,6 +73,8 @@ public enum SceneAsset {
 	Cursor,
 	StatusText,
 	StatusIcon,
+	SelectionUI_Panel,
+	SelectionUI_ReadyOverlay,
 	SelectionUI_Next,
 	SelectionUI_Prev,
 	SelectionUI_ReadyUp,
@@ -189,6 +191,8 @@ public static class GameEntity
 	{
 		{ SceneAsset.None, "" },
 		{ SceneAsset.SelectionUI, "SelectionUI" },
+		{ SceneAsset.SelectionUI_Panel, "SelectionPanel" },
+		{ SceneAsset.SelectionUI_ReadyOverlay, "ReadyOverlay" },
 		{ SceneAsset.WizardSelectionSpawn, "WizardSelectionSpawn" },
 		{ SceneAsset.StatusText, "Status" },
 		{ SceneAsset.StatusIcon, "Icon" },
@@ -463,15 +467,6 @@ public static class GameEntity
 		}
 
 		return GameObject.Find(search).transform;
-	}
-
-	public static GameObject Find(int p_CurrentPlayerIndex = 0, SceneAsset p_SceneAsset = SceneAsset.None)
-	{
-		string search = $"P{p_CurrentPlayerIndex}_{ReturnAsset(p_SceneAsset)}";
-
-		Debug.Log("Searching for scene asset " + search);
-
-		return GameObject.Find(search);
 	}
 
 	/// <summary>

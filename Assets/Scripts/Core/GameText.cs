@@ -70,8 +70,12 @@ public static class GameText
 
 	#region Selection UI 
 
-	public const string PlayerSelectionUI_ReadyButton = "OK";
-	public const string PlayerSelectionUI_BackButton = "BACK";
+	public const string PlayerSelectionUI_ReadyButton = "Ok";
+	public const string PlayerSelectionUI_BackButton = "Back";
+
+	public const string PlayerSelectionUI_ReadyOverlayTitle = "Waiting for other players to ready up...";
+	public const string PlayerSelectionUI_ReadyOverlay_CancelTextLeft = "Press";
+	public const string PlayerSelectionUI_ReadyOverlay_CancelTextRight = "to cancel";
 
 	#endregion
 

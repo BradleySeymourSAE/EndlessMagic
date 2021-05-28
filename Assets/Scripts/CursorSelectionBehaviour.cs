@@ -72,6 +72,11 @@ public class CursorSelectionBehaviour : MonoBehaviour
 	[SerializeField] private bool allowMountableSelecting = false;
 
 	/// <summary>
+	///		Whether the player has selected their characters and is currently displaying the Overlay UI 
+	/// </summary>
+	[SerializeField] private bool displayingOverlayUI = false;
+
+	/// <summary>
 	///		The currently selected wizard index 
 	/// </summary>
 	[SerializeField] private int m_SelectedWizardIndex = 0;
@@ -126,23 +131,28 @@ public class CursorSelectionBehaviour : MonoBehaviour
 	{
 		allowPlayerJoinBehaviour = GameManager.Instance.AllowPlayerJoining;
 
-		// If a wizard has not been selected yet and we need to select a wizard 
-		if (!wizardSelected && wizardSelection)
+		if (wizardSelected && mountableSelected)
 		{
-			// Allow Character Selecting 
-			allowCharacterSelecting = true;
-			wizardSelection = ReturnSelectedWizardCharacter();
-		}
-		else if (wizardSelected && wizardSelection && !mountableSelected && mountableSelection)
-		{ 
 			allowCharacterSelecting = false;
-			allowMountableSelecting = true;
-
-			mountableSelection = ReturnSelectedMountableVehicle();
+			allowCharacterSelecting = false;
+			return;
 		}
-		else if (wizardSelected && mountableSelected)
-		{
-			Debug.Log("[CursorSelectionBehaviour.Update]: " + "Both Wizard and mountable have been selected!");
+		else
+		{ 
+			// If a wizard has not been selected yet and we need to select a wizard 
+			if (!wizardSelected && wizardSelection)
+			{
+				// Allow Character Selecting 
+				allowCharacterSelecting = true;
+				wizardSelection = ReturnSelectedWizardCharacter();
+			}
+			else if (wizardSelected && wizardSelection && !mountableSelected && mountableSelection)
+			{ 
+				allowCharacterSelecting = false;
+				allowMountableSelecting = true;
+
+				mountableSelection = ReturnSelectedMountableVehicle();
+			}
 		}
 
 	}
@@ -200,7 +210,7 @@ public class CursorSelectionBehaviour : MonoBehaviour
 					mountableSelectionChoices[m_SelectedMountableIndex].SetActive(true);
 
 					// Updates the mountable vehicle UI 
-					UpdateMountableUI(mountableSelectionChoices[m_SelectedMountableIndex]);
+					m_CharacterName.text = ReturnMountableName();
 			}
 		}
 	}
@@ -270,7 +280,7 @@ public class CursorSelectionBehaviour : MonoBehaviour
 				// Play the audio effect 
 				AudioManager.PlaySound(SoundEffect.GUI_Move);
 
-				UpdateMountableUI(mountableSelectionChoices[m_SelectedMountableIndex]);
+				m_CharacterName.text = ReturnMountableName();
 		}
 	}
 }	
@@ -341,11 +351,73 @@ public class CursorSelectionBehaviour : MonoBehaviour
 	{
 		if (context.phase == InputActionPhase.Started)
 		{ 
-			if (allowPlayerJoinBehaviour && !allowCharacterSelecting && !allowMountableSelecting)
+			if (allowPlayerJoinBehaviour && !allowCharacterSelecting && !allowMountableSelecting && !displayingOverlayUI)
 			{
 				// Returns to main menu 
 				Debug.Log("[CursorSelectionManager.OnBackButton]: " + "Back button has been pressed - Returning to main menu " + context.action.name);
 				HandleOnBackToMainMenu();
+			}
+			else if (!allowPlayerJoinBehaviour && !allowCharacterSelecting && !displayingOverlayUI && allowMountableSelecting)
+			{
+				AudioManager.PlaySound(SoundEffect.GUI_Confirm);
+
+				Debug.Log("[CursorSelectionBehaviour.OnBackButton]: " + "Back button has been pressed in mountable selection screen " + context.action.name);
+
+				GameObject s_SelectionPanel = GameEntity.FindSceneAsset(m_CurrentUserID, SceneAsset.SelectionUI_Panel).gameObject;
+
+				Button s_Button = GameEntity.FindGameObjectChildTransform(s_SelectionPanel, m_CurrentUserID, SceneAsset.SelectionUI_BackButton).GetComponent<Button>();
+
+				s_Button.gameObject.SetActive(false);
+				s_Button.interactable = false;
+
+				// If there is a wizard selection 
+				if (wizardSelection)
+				{
+					// set wizard selected as false 
+					wizardSelected = false;
+
+					Debug.Log("[CursorSelectionBehaviour.OnBackButton]: " + "Removing wizard selection " + ReturnWizardName());
+
+					// If the selected prefab contains the wizard selection 
+					if (m_SelectedPrefabs.Contains(wizardSelection))
+					{ 
+						// Remove the wizard selection from the list of selected prefabs 
+						m_SelectedPrefabs.Remove(wizardSelection);
+					}
+					
+					// Hide the mountable selection
+					mountableSelection.SetActive(false);
+
+					// set the current wizard selection as active 
+					wizardSelection.SetActive(true);
+
+					// Dislay the character stats UI
+					wizardSelection.GetComponent<CharacterStatsUI>().Show(true);
+
+					// Update the wizard character name text 
+					m_CharacterName.text = ReturnWizardName();
+
+					// Set mountable selected to false 
+					mountableSelected = false;
+					
+					// Set allow mountable selecting to false 
+					allowMountableSelecting = false;
+				}
+			}
+			else if (displayingOverlayUI)
+			{
+				Debug.Log("[CursorSelectionBehaviour.OnBackButton]: " + "Hide Overlay UI for player " + m_CurrentUserID);
+
+				// Find the current parent selection UI - We do this because the `Ready` UI is a child of that gameobject, which we can search easily 
+
+				// If the selected prefabs contains the mountable selection 
+				if (m_SelectedPrefabs.Contains(mountableSelection))
+				{ 
+					// remove it from the selected prefabs list 
+					m_SelectedPrefabs.Remove(mountableSelection);
+				}
+
+				DisplayReadyOverlayUI(false);
 			}
 		}
 	}
@@ -482,20 +554,6 @@ public class CursorSelectionBehaviour : MonoBehaviour
 		}
 	}
 
-	/// <summary>
-	///		Updates the mountable UI - Unsure whether we are doing this just yet, so this is really doing nothing right now 
-	/// </summary>
-	/// <param name="p_MountableSelection"></param>
-	public void UpdateMountableUI(GameObject p_MountableSelection)
-	{
-		Debug.Log("[CursorSelectionBehaviour.UpdateMountableUI]: " + "@TODO - Updating Mountable Vehicle Stats UI for " + ReturnMountableName());
-
-		if (p_MountableSelection.GetComponent<CharacterStatsUI>() != null)
-		{
-			// p_MountableSelection.GetComponent<CharacterStatsUI>().DisplayMountableUI();
-		}
-	}
-
 	#endregion
 
 	#region Private Methods
@@ -551,8 +609,13 @@ public class CursorSelectionBehaviour : MonoBehaviour
 			m_CharacterName.text = ReturnMountableName();
 
 			// Show the ready screen
-			Debug.Log("[CursorSelectionBehaviour.HandleSelectMountable]: " + "@TODO - Display `Ready` screen...");
+			Debug.Log("[CursorSelectionBehaviour.HandleSelectMountable]: " + "Display Ready Screen Overlay for " + m_CurrentUserID);
 
+			// Begin displaying the ready screen 
+			if (wizardSelected && mountableSelected && !displayingOverlayUI)
+			{ 
+				DisplayReadyOverlayUI(true);
+			}
 		}
 		// Otherwise, if mountable vehicle has been selected 
 		else if (mountableSelected)
@@ -572,6 +635,65 @@ public class CursorSelectionBehaviour : MonoBehaviour
 	}
 
 	/// <summary>
+	///		Displays the Ready Screen Overlay UI 
+	/// </summary>
+	private void DisplayReadyOverlayUI(bool ShouldDisplayReadyScreen = false)
+	{
+		// Find the current parent selection UI - We do this because the `Ready` UI is a child of that gameobject, which we can search easily 
+		GameObject s_SelectionUIParent = GameEntity.FindSceneAssetClone(m_CurrentUserID, SceneAsset.SelectionUI).gameObject;
+		GameObject s_ReadyOverlay = GameEntity.FindGameObjectChildTransform(s_SelectionUIParent, m_CurrentUserID, SceneAsset.SelectionUI_ReadyOverlay).gameObject;
+
+		// Fade the Selection UI Panel Background Color 
+		Image s_SelectionPanelBackgroundColor = GameEntity.FindSceneAsset(m_CurrentUserID, SceneAsset.SelectionUI_Panel).GetComponent<Image>();
+		Color s_Color = new Color(0, 0, 0, 0.85f);  // The color to transition to 
+		
+		// Set the ready overlay title 
+		TMP_Text s_ReadyOverlayTitle = s_ReadyOverlay.transform.Find("Title").GetComponent<TMP_Text>(); // the overlay title 
+		s_ReadyOverlayTitle.text = GameText.PlayerSelectionUI_ReadyOverlayTitle;
+		
+		// Set the ready overlay button fields 
+		s_ReadyOverlay.transform.Find("Cancel").Find("TextLeft").GetComponent<Text>().text = GameText.PlayerSelectionUI_ReadyOverlay_CancelTextLeft; // the left text ui 
+		s_ReadyOverlay.transform.Find("Cancel").Find("ButtonIcon").GetComponent<Image>().sprite = ControllerUI.ButtonEast; // the button icon image 
+		s_ReadyOverlay.transform.Find("Cancel").Find("TextRight").GetComponent<Text>().text = GameText.PlayerSelectionUI_ReadyOverlay_CancelTextRight; ; // the right text ui 
+
+
+		if (ShouldDisplayReadyScreen)
+		{
+			// lerp between the current color value to the new color value 
+			s_SelectionPanelBackgroundColor.color = Color.Lerp(s_SelectionPanelBackgroundColor.color, s_Color, 1.5f); 
+
+	
+			Debug.Log("[CursorSelectionBehaviour.HandleSelectMountable]: " + "Displaying the Ready Overlay UI!");
+			
+			// Display the ready overlay... 
+			s_ReadyOverlay.SetActive(true);
+
+			// Set currently displaying overlay ui to true
+			displayingOverlayUI = true;
+		}
+		else
+		{
+			Debug.Log("[CursorSelectionBehaviour.HandleSelectMountable]: " + "Hiding the overlay UI!");
+			// Fade the selection UI panel background color back to white 
+
+			Color s_AlphaWhite = new Color(255f,255f,255f, 0f);
+			
+			s_SelectionPanelBackgroundColor.color = Color.Lerp(s_SelectionPanelBackgroundColor.color, s_AlphaWhite, 1.5f);
+
+			// Hide the ready overlay UI 
+			s_ReadyOverlay.SetActive(false);
+
+			// Set currently displaying overlay ui to false 
+			displayingOverlayUI = false;
+
+			// Set mountable selected to false, which should enable ui interaction again 
+			mountableSelected = false;
+
+			mountableSelection.SetActive(true);
+		}
+	}
+
+	/// <summary>
 	///		Handles the logic for selecting a character 
 	/// </summary>
 	private void HandleSelectCharacter()
@@ -579,6 +701,9 @@ public class CursorSelectionBehaviour : MonoBehaviour
 		// Return the ready up button asset 
 		Button s_ReadyUpButton = GameEntity.FindSceneAsset(m_CurrentUserID, SceneAsset.SelectionUI_ReadyUp).GetComponent<Button>();
 
+		GameObject s_SelectionUIPanel = GameEntity.FindSceneAsset(m_CurrentUserID, SceneAsset.SelectionUI_Panel).gameObject;
+
+		Button s_BackButton = GameEntity.FindGameObjectChildTransform(s_SelectionUIPanel, m_CurrentUserID, SceneAsset.SelectionUI_BackButton).GetComponent<Button>();
 
 		// If a wizard has not been selected yet
 		if (!wizardSelected)
@@ -620,8 +745,14 @@ public class CursorSelectionBehaviour : MonoBehaviour
 			// Update the Character name text field with the mountable vehicles name 
 			m_CharacterName.text = ReturnMountableName();
 
+			s_BackButton.gameObject.SetActive(true);
+
+			s_BackButton.transform.Find("Icon").GetComponent<Image>().sprite = ControllerUI.ButtonEast;
+			s_BackButton.transform.Find("Text").GetComponentInChildren<Text>().text = GameText.PlayerSelectionUI_BackButton;
+
 			// Set the ready up button to be interactable
 			s_ReadyUpButton.interactable = true;
+			s_BackButton.interactable = true;
 		}
 		else
 		{
@@ -630,6 +761,8 @@ public class CursorSelectionBehaviour : MonoBehaviour
 
 			// The wizard is unselected 
 			wizardSelected = false;
+
+			s_BackButton.gameObject.SetActive(false);
 
 			// If the selected prefabs list contains the wizard selection 
 			if (m_SelectedPrefabs.Contains(wizardSelection))
