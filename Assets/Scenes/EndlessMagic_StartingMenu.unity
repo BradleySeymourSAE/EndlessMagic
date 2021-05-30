@@ -4835,8 +4835,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   MaxPlayers: 4
   JoinStartTimer: 3
+  MatchStartTimer: 5
   m_SelectionCursors: []
-  startDebugging: 0
+  startDebugging: 1
   m_Debugging: 1
   m_AllowPlayerJoining: 0
   m_AllowCharacterSelecting: 0

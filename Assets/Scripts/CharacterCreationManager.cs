@@ -24,6 +24,9 @@ public class CharacterCreationManager : MonoBehaviour
 	/// </summary>
 	public List<Transform> platformSpawnPositions = new List<Transform>();
 
+	/// <summary>
+	///		References to the Character Stats Scriptable Object Data 
+	/// </summary>
 	public CharacterStats[] characterStatsData;
 
 	#endregion
@@ -38,22 +41,39 @@ public class CharacterCreationManager : MonoBehaviour
 	/// <summary>
 	///		List of selection UI 
 	/// </summary>
-	[SerializeField] private List<Canvas> m_SelectionUI = new List<Canvas>();
+	private List<Canvas> m_SelectionUI = new List<Canvas>();
 
 	/// <summary>
 	///		List of the Wizard Prefab Spawn Positions 
 	/// </summary>
-	[SerializeField] private List<Transform> m_WizardCharacterPlatformSpawnPositions = new List<Transform>();
+	private List<Transform> m_WizardCharacterPlatformSpawnPositions = new List<Transform>();
 
 	/// <summary>
 	///		List of all the platform prefab spawn points after they are set 
 	/// </summary>
-	[SerializeField] private List<Transform> m_PlatformPrefabSpawnPoints = new List<Transform>();
+	private List<Transform> m_PlatformPrefabSpawnPoints = new List<Transform>();
 
 	/// <summary>
 	///		Do we gave the wizard selection spawn points? 
 	/// </summary>
 	private bool hasWizardSelectionSpawnPoints = false;
+
+	[SerializeField] private int m_ReadyPlayers;
+
+	/// <summary>
+	///		The coroutine for the starting game timer 
+	/// </summary>
+	private Coroutine m_Routine;
+
+	/// <summary>
+	///		Whether the countdown should begin 
+	/// </summary>
+	private bool countdownStarted;
+
+	/// <summary>
+	///		The start game countdown timer value 
+	/// </summary>
+	private float m_StartGameCountdownTimer;
 
 	#endregion
 
@@ -126,6 +146,9 @@ public class CharacterCreationManager : MonoBehaviour
 		m_PlatformPrefabSpawnPoints.Clear();
 		m_ActivePlayerCameras.Clear();
 		m_Players = GameManager.Instance.ConnectedPlayers;
+		m_ReadyPlayers = 0;
+		countdownStarted = false;
+		m_StartGameCountdownTimer = GameManager.Instance.MatchStartTimer;
 
 		// Loop through potential platform spawn positions 
 		if (platformSpawnPositions.Count > 0)
@@ -136,11 +159,49 @@ public class CharacterCreationManager : MonoBehaviour
 			}
 		}
 		
-
-
 		Setup(m_Players);
 	}
 
+	private void Update()
+	{
+		// If there are active player cameras - then we know that we are ready to watch for the `Ready Players`
+		if (m_ActivePlayerCameras.Count > 0)
+		{
+			m_ReadyPlayers = CheckReadyPlayers();
+
+			if (AllPlayersReady() && !countdownStarted)
+			{
+				StartCountdown(true);
+			}
+		}
+
+		if (countdownStarted)
+		{
+			// Sets the float to deduct from the initial match start timer 
+			m_StartGameCountdownTimer -= 1 * Time.deltaTime;
+
+			if (m_Debugging && m_StartGameCountdownTimer > 0)
+			{ 
+				Debug.Log("[CharacterCreationManager.Update]: " + "Starting match in " + Mathf.RoundToInt(m_StartGameCountdownTimer).ToString("0") + " seconds");
+			}
+
+			// Updates the match started timer UI 
+			// GameUIManager.Instance.DisplayMatchStartUI(true);
+			// GameUIManager.Instance.UpdateMatchStartTimer(m_StartGameCountdownTimer, true);
+		}
+		else
+		{
+			// Otherwise, the countdown has stopped
+
+			// If the coroutine is still playing 
+			if (m_Routine != null)
+			{
+				// Stop the coroutine, and set the timer text to an empty string 
+				StopCoroutine(m_Routine);
+				// GameUIManager.Instance.MatchStartUI.timer.text = "";
+			}
+		}	
+	}
 
 	#endregion
 
@@ -354,6 +415,97 @@ public class CharacterCreationManager : MonoBehaviour
 		}
 	}
 
+	/// <summary>
+	///		Checks for the current amount of ready players 
+	/// </summary>
+	/// <returns></returns>
+	private int CheckReadyPlayers()
+	{
+		int currentReadyPlayers = 0;
+
+		GameObject[] selectionCursors = GameEntity.FindAllByTag(GameTag.Cursor);
+
+		for (int i = 0; i < selectionCursors.Length; i++)
+		{
+			var cursor = selectionCursors[i].GetComponent<CursorSelectionBehaviour>();
+			
+			if (cursor.Status == true)
+			{
+				currentReadyPlayers += 1;
+			}
+		}
+
+		return currentReadyPlayers;
+	}
+
+	/// <summary>
+	///		If the amount of ready players is equal to the amount of players we have 
+	/// </summary>
+	/// <returns>Returns true or false</returns>
+	private bool AllPlayersReady() => m_ReadyPlayers == m_Players;
+
+	/// <summary>
+	///		Whether to start the match countdown timer or not 
+	/// </summary>
+	/// <param name="ShouldBeginCountdown"></param>
+	private void StartCountdown(bool ShouldBeginCountdown = false)
+	{
+		Debug.Log("[CharacterCreationManager.StartCountdown]: " + "Started Countdown!");
+
+		if (ShouldBeginCountdown)
+		{
+			if (m_Routine != null)
+			{
+				StopCoroutine(m_Routine);
+			}
+
+			m_Routine = StartCoroutine(DisplayMatchStartCountdown());
+		}
+		else
+		{
+			StopCoroutine(m_Routine);
+		}
+	}
+
+	/// <summary>
+	///		Begins displaying the match start countdown timer 
+	/// </summary>
+	/// <returns></returns>
+	private IEnumerator DisplayMatchStartCountdown()
+	{
+		// Set the start game countdown timer to (5 ish seconds) 
+		m_StartGameCountdownTimer = GameManager.Instance.MatchStartTimer;
+
+		// Begin the countdown 
+		countdownStarted = true;
+
+		// @TODO - Display match start countdown Modal 
+
+		yield return new WaitForSeconds(GameManager.Instance.MatchStartTimer);
+
+		if (!AllPlayersReady())
+		{
+			Debug.LogWarning("[CharacterCreationManager.DisplayMatchStartCountdown]: " + "Not moving to match scene - not all characters are ready yet!");
+			yield return null;
+		}
+		else
+		{
+			// All players are ready, so we need to transition to the next scene 
+			Debug.LogWarning("[CharacterCreationManager.DisplayMatchStartCountdown]: " + "@WIP - Testing going to game scene - " + GameScenes.EndlessMagic_GameLevel_01);
+			GameScenes.LoadScene(Scenes.EndlessMagic_GameLevel_01, true);
+		}
+
+		// @TODO - Stop Displaying Match Start Countdown modal 
+
+		// Stop counting down 
+		countdownStarted = false;
+
+		// Reset start game countdown timer 
+		m_StartGameCountdownTimer = GameManager.Instance.MatchStartTimer;
+
+		yield return null;
+	}
+	
 	#endregion
 
 }

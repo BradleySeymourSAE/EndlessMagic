@@ -30,6 +30,7 @@ public static class GameEvents
 	public delegate void GameObjectListParameterDelegate(List<GameObject> p_GameObjectList);
 	public delegate void TransformListParameterDelegate(List<Transform> p_TransformList);
 
+	public delegate void IntegerGameObjectListParameterDelegate(int p_Integer, List<GameObject> p_GameObjectList);
 	public delegate void IntegerTransformListParameterDelegate(int p_Integer, List<Transform> p_TransformList);
 
 	public delegate void SoundCategoryParameterDelegate(SoundEffect p_SoundCategory);
@@ -82,6 +83,13 @@ public static class GameEvents
 	///		Once called - Sets the character creation cursor's to persist into the next scene 
 	/// </summary>
 	public static GameObjectListParameterDelegate SetCharacterCreationCursorEvent;
+
+	/// <summary>
+	///		Once called - Sets the selected character's prefabs in the character object spawn manager
+	///		- Integer - The current player's PlayerIndex (Controller) 
+	///		- List<GameObject> - List of selected prefab's to spawn into the game for the player 
+	/// </summary>
+	public static IntegerGameObjectListParameterDelegate HandleOnCharacterSelectedEvent;
 
 	/// <summary>
 	///		Once called - Begins the player join ready up countdown timer

@@ -292,11 +292,6 @@ public static class GameEntity
 	{
 		string search = ReturnGameTag(p_Tag);
 
-		if (Debugging)
-		{
-			Debug.Log("[GameEntity.FindAllByTag]: " + "(Query): `" + search + "`");
-		}
-
 		return FindAllByTag(search);
 	}
 

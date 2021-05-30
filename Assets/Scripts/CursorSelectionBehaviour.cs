@@ -111,7 +111,26 @@ public class CursorSelectionBehaviour : MonoBehaviour
 	/// </summary>
 	[SerializeField] private List<GameObject> m_SelectedPrefabs = new List<GameObject>();
 
+	/// <summary>
+	///		The current ready status of the player 
+	/// </summary>
+	[SerializeField] private bool m_PlayerReady;
+
 	#endregion
+
+	/// <summary>
+	///		Getter / Setter for the Player's Status 
+	/// </summary>
+	public bool Status
+	{
+		get {  return m_PlayerReady; }
+		private set {  m_PlayerReady = value; }
+	}
+
+	/// <summary>
+	///		Getter for the Current User ID 
+	/// </summary>
+	public int ID { get {  return m_CurrentUserID; } }
 
 	#region Unity References 
 
@@ -134,7 +153,7 @@ public class CursorSelectionBehaviour : MonoBehaviour
 		if (wizardSelected && mountableSelected)
 		{
 			allowCharacterSelecting = false;
-			allowCharacterSelecting = false;
+			allowMountableSelecting = false;
 			return;
 		}
 		else
@@ -408,8 +427,6 @@ public class CursorSelectionBehaviour : MonoBehaviour
 			{
 				Debug.Log("[CursorSelectionBehaviour.OnBackButton]: " + "Hide Overlay UI for player " + m_CurrentUserID);
 
-				// Find the current parent selection UI - We do this because the `Ready` UI is a child of that gameobject, which we can search easily 
-
 				// If the selected prefabs contains the mountable selection 
 				if (m_SelectedPrefabs.Contains(mountableSelection))
 				{ 
@@ -417,6 +434,7 @@ public class CursorSelectionBehaviour : MonoBehaviour
 					m_SelectedPrefabs.Remove(mountableSelection);
 				}
 
+				// Stop displaying the Ready Overlay UI 
 				DisplayReadyOverlayUI(false);
 			}
 		}
@@ -670,6 +688,16 @@ public class CursorSelectionBehaviour : MonoBehaviour
 
 			// Set currently displaying overlay ui to true
 			displayingOverlayUI = true;
+
+			if (m_SelectedPrefabs.Count == 2)
+			{ 
+				SetPlayerReady(true);
+			}
+			else
+			{
+				Debug.LogWarning("[CursorSelectionBehaviour.HandleSelectMountable]: " + "Selected prefab count is less than 2, or greater than 2 - Setting player as not ready");
+				SetPlayerReady(false);
+			}
 		}
 		else
 		{
@@ -689,7 +717,11 @@ public class CursorSelectionBehaviour : MonoBehaviour
 			// Set mountable selected to false, which should enable ui interaction again 
 			mountableSelected = false;
 
+			// Stop displaying the mountable selection 
 			mountableSelection.SetActive(true);
+
+			
+			SetPlayerReady(false);
 		}
 	}
 
@@ -700,18 +732,18 @@ public class CursorSelectionBehaviour : MonoBehaviour
 	{
 		// Return the ready up button asset 
 		Button s_ReadyUpButton = GameEntity.FindSceneAsset(m_CurrentUserID, SceneAsset.SelectionUI_ReadyUp).GetComponent<Button>();
-
 		GameObject s_SelectionUIPanel = GameEntity.FindSceneAsset(m_CurrentUserID, SceneAsset.SelectionUI_Panel).gameObject;
 
+		// Find the back button using the selection ui panel as the parent transform 
 		Button s_BackButton = GameEntity.FindGameObjectChildTransform(s_SelectionUIPanel, m_CurrentUserID, SceneAsset.SelectionUI_BackButton).GetComponent<Button>();
 
 		// If a wizard has not been selected yet
 		if (!wizardSelected)
 		{
+			Debug.Log("[CursorSelectionBehaviour.HandleSelectCharacter]: " + "Wizard " + ReturnWizardName() + " has been selected");
+
 			// Then set the wizard as being selected 
 			wizardSelected = true;
-
-			Debug.Log("[CursorSelectionBehaviour.HandleSelectCharacter]: " + "Wizard " + ReturnWizardName() + " has been selected");
 
 			// Return the currently selected wizard character 
 			wizardSelection = ReturnSelectedWizardCharacter();
@@ -728,7 +760,7 @@ public class CursorSelectionBehaviour : MonoBehaviour
 			m_SelectedPrefabs.Add(wizardSelection);
 
 			// Play the sound effect 
-			AudioManager.PlaySound(ReturnWizardSoundEffect(m_SelectedWizardIndex)); // play the sound effect 
+			AudioManager.PlaySound(ReturnWizardSoundEffect(m_SelectedWizardIndex));
 
 			// Set ready up button as not interactable 
 			s_ReadyUpButton.interactable = false;
@@ -885,6 +917,12 @@ public class CursorSelectionBehaviour : MonoBehaviour
 		}
 	}
 	
+	/// <summary>
+	///		Sets the player's ready status 
+	/// </summary>
+	/// <param name="p_SetReadyStatus"></param>
+	private void SetPlayerReady(bool p_SetReadyStatus = false) => Status = p_SetReadyStatus;
+
 	#endregion
 
 }

@@ -291,7 +291,7 @@ public class GameUIManager : MonoBehaviour
 		}
 		else
 		{
-				StopCoroutine(m_Routine);
+			StopCoroutine(m_Routine);
 		}
 	}
 

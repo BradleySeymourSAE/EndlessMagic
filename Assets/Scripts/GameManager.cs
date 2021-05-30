@@ -2,6 +2,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
+using System.Linq;
 #endregion
 
 
@@ -22,11 +24,6 @@ public class GameManager : MonoBehaviour
 	#endregion
 
 	#region Public Getter / Setter's  
-
-	/// <summary>
-	///		The total amount of Connected Devices 
-	/// </summary>
-	public int ConnectedDevices { get; private set; } = 0;
 
 	/// <summary>
 	///		The total amount of Connected Players 
@@ -59,7 +56,7 @@ public class GameManager : MonoBehaviour
 			return (SplitScreenMode)ConnectedPlayers;
 		}
 	}
-
+	
 	#endregion
 
 	#region Public Variables 
@@ -73,6 +70,11 @@ public class GameManager : MonoBehaviour
 	///		The amount of time to wait after all players have ready'd up 
 	/// </summary>
 	[Min(3f)] public float JoinStartTimer = 5f;
+
+	/// <summary>
+	///		The amount of time to wait before the match starts (After players have selected their characters) 
+	/// </summary>
+	[Min(5f)] public float MatchStartTimer = 5f;
 
 	#endregion
 
@@ -116,6 +118,7 @@ public class GameManager : MonoBehaviour
 	private void Awake()
 	{
 		m_SelectionCursors.Clear();
+		
 		
 
 		if (Instance != null)
@@ -162,6 +165,7 @@ public class GameManager : MonoBehaviour
 		CheckPlayerJoiningIsAllowed();
 
 		CheckAllowCharacterSelecting();
+
 
 		if (startDebugging)
 		{
